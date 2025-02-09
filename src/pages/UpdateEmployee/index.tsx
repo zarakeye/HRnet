@@ -1,49 +1,59 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Employee, USStates } from '../../common/types';
 import useEmployeeStore from '../../app/hooks/store';
 
-interface CreateEmployeeProps {
-  activeEmployeeAddForm: boolean;
-  setActiveEmployeeAddForm: React.Dispatch<React.SetStateAction<boolean>>;
-}
+// interface UpdateEmployeeProps {
+//   id: string;
+// }
 
-function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.Element {
-  // const employees = useEmployeeStore.use.employees();
-  const addEmployee = useEmployeeStore.use.addEmployee();
+function UpdateEmployee (/*{id}: UpdateEmployeeProps*/): JSX.Element {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const employees = useEmployeeStore.use.employees();
+  const row = employees.find((employee) => employee.id === id);
+  const updateEmployee = useEmployeeStore.use.updateEmployee();
+  const deleteEmployee = useEmployeeStore.use.removeEmployee();
+  const [displayDeleteInput, setDisplayDeleteInput] = useState<boolean>(false);
+
   const [formData, setFormData] = useState<Employee>({
-    id: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    startDate: '',
-    street: '',
-    city: '',
-    state: '',
-    zipCode: 0,
-    department: ''
+    id: row?.id || '',
+    firstName: row?.firstName || '',
+    lastName: row?.lastName || '',
+    dateOfBirth: row?.dateOfBirth || '',
+    startDate: row?.startDate || '',
+    street: row?.street || '',
+    city: row?.city || '',
+    state: row?.state || '',
+    zipCode: row?.zipCode || 0,
+    department: row?.department || ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      setFormData(prev => ({...prev, [e.target.id]: e.target.value}))
-    }
+    setFormData(prev => ({...prev, [e.target.id]: e.target.value}))
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const newEmployee: Employee = {
-      id: Date.now().toString(),
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      dateOfBirth: formData.dateOfBirth,
-      startDate: formData.startDate,
-      street: formData.street,
-      city: formData.city,
-      state: formData.state,
-      zipCode: formData.zipCode,
-      department: formData.department
-    };
+    if (formData.firstName && formData.lastName && formData.dateOfBirth && formData.startDate && formData.street && formData.city && formData.state && formData.zipCode && !isNaN(formData.zipCode) && formData.department && formData.department !== '') {
+      const newEmployee: Employee = {
+        id: row?.id || '',
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dateOfBirth: formData.dateOfBirth,
+        startDate: formData.startDate,
+        street: formData.street,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        department: formData.department
+      };
 
-    addEmployee(newEmployee);
+      updateEmployee(newEmployee);
+    } else {
+      alert('Please fill in all fields');
+    }
   }
 
   function formatDate(dateString: string) {
@@ -63,10 +73,10 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
 
   return (
     <div className='flex flex-col items-center justify-center'>
+      <p>id : {row?.id}</p>
       <form 
         onSubmit={(e) => {
           handleSubmit(e)
-          setActiveEmployeeAddForm(false)
         }}
       >
         <div className='my-2 w-auto'>
@@ -75,10 +85,10 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
             type="text"
             id="first-name"
             placeholder="John"
-            value={formData.firstName as string}
             onChange={e => setFormData({ ...formData, firstName: e.target.value })}
             required
             className='block border-2 border-zinc-500 rounded-[5px] pl-[5px]'
+            defaultValue={row?.firstName}
           />
         </div>
         
@@ -88,10 +98,10 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
             type="text"
             id="last-name"
             placeholder="Doe"
-            value={formData.lastName as string}
             onChange={e => setFormData({ ...formData, lastName: e.target.value })}
             required
             className='block border-2 border-gray rounded-[5px] pl-[5px]'
+            defaultValue={row?.lastName}
           />
         </div>
 
@@ -101,10 +111,10 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
             id="date-of-birth"
             type="date"
             placeholder='mm/dd/yyyy'
-            value={formatDate(formatDate(formData.dateOfBirth))}
             onChange={e => setFormData({ ...formData, dateOfBirth: e.target.value })}
             required
             className='block border-2 border-gray rounded-[5px] pl-[5px]'
+            defaultValue={row?.dateOfBirth}
           />
         </div>
 
@@ -113,10 +123,10 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
           <input
             id="start-date"
             type="date"
-            value={formatDate(formatDate(formData.startDate))} 
             onChange={e => setFormData({ ...formData, startDate: e.target.value })}
             required
             className='block border-2 border-gray rounded-[5px] pl-[5px]'
+            defaultValue={row?.startDate}
           />
         </div>
 
@@ -128,9 +138,9 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
             <input
               id="street"
               type="text"
-              value={formData.street}
               onChange={handleChange}
               className='block border-2 border-gray rounded-[5px] pl-[5px]'
+              defaultValue={row?.street}
             />
           </div>
 
@@ -139,9 +149,9 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
             <input
               id="city"
               type="text"
-              value={formData.city}
               onChange={handleChange}
               className='block border-2 border-gray rounded-[5px] pl-[5px]'
+              defaultValue={row?.city}
             />
           </div>
 
@@ -149,9 +159,9 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
             <label htmlFor="state" className='block'>State</label>
             <select
               id="state"
-              value={formData.state}
               onChange={handleChange}
               className='block border-2 border-gray rounded-[5px] pl-[5px]'
+              defaultValue={row?.state}
             >
             {Object.values(USStates).map((state: string, index: number) => (
               <option key={index} value={state}>{state}</option>
@@ -164,12 +174,12 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
             <input
               id="zip-code"
               type="number"
-              value={formData.zipCode}
               onChange={(e) => {
                 const value = isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value)
                 setFormData(prev => ({...prev, zipCode: value}))
               }}
               className='block border-2 border-gray rounded-[5px] pl-[5px]'
+              defaultValue={row?.zipCode}
             />
           </div>
         </fieldset>
@@ -178,10 +188,10 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
           <label htmlFor="department" className='block'>Department</label>
           <select
             id="department"
-            value={formData.department}
             onChange={e => setFormData({ ...formData, department: e.target.value })}
             className='block border-2 border-gray rounded-[5px] pl-[5px]'
             required
+            defaultValue={row?.department}
           >
             <option disabled value="">Select a department</option>
             <option value="Sales">Sales</option>
@@ -196,22 +206,43 @@ function CreateEmployee ({ setActiveEmployeeAddForm}: CreateEmployeeProps): JSX.
             type='submit'
             className='bg-emerald-700 text-white rounded-[8px] px-[10px] py-[5px]'
           >
-            Save
+            Update
           </button>
           
           <button
             type='reset'
             className='bg-emerald-700 text-white rounded-[8px] p-1.5'
-            onClick={() => setActiveEmployeeAddForm(false)}
+            onClick={() => navigate(`/`)}
           >
             Cancel
           </button>
         </div>
       </form>
 
+      <button
+        type='button'
+        onClick={() => setDisplayDeleteInput(true)}
+        className='bg-red-700 text-white rounded-[8px] px-[10px] py-[5px]'
+      >
+        Delete Employee
+      </button>
+
+      {displayDeleteInput && (
+        <div className='flex flex-col items-center justify-center'>
+          <p>{`To delete this employee, type "DELETE {employee id}" below:`}</p>
+          <input
+            type="text"
+            onChange={(e) => {
+              if (e.target.value === `DELETE ${row?.id}`) {
+                deleteEmployee(row?.id || '');
+              }
+            }}
+            className='block border-2 border-gray rounded-[5px] pl-[5px]'
+          />
+        </div>
+      )}
     </div>
   )
 }
 
-export default CreateEmployee
-        
+export default UpdateEmployee

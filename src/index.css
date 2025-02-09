@@ -27,6 +27,14 @@
   --moz-osx-font-smoothing: grayscale;
 }
 
+.buttons-container {
+  display: none;
+}
+
+tr:hover .buttons-container {
+  display: flex;
+}
+
 /* a {
   font-weight: 500;
   color: #646cff;

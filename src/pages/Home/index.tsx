@@ -5,9 +5,7 @@ import { Table } from 'react-ts-tab-lib';
 import useEmployeeStore from '../../app/hooks/store';
 import type { Employee } from '../../common/types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Home(): JSX.Element {
-  // const [hoveredRow, setHoveredRow] = useState<Employee | null>(null);
   const [rows, setRows] = useState<Employee[]>([]);
   const employees = useEmployeeStore(state => state.employees);
   
@@ -16,8 +14,17 @@ function Home(): JSX.Element {
   useEffect(() => {
     console.log('Updating rows : ', employees);
     setRows(employees);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [employees]);
+
+/**
+ * Formats a date string into a human-readable date format.
+ * The formatted date is in the format `DD/MM/YYYY`.
+ * If the day or month is a single digit, it is prefixed with a zero.
+ * 
+ * @param dateString - A string representing a date.
+ * @returns A ReactNode containing the formatted date.
+ */
 
   function dateRenderer(dateString: string):ReactNode {
     const date = new Date(dateString);
@@ -83,8 +90,8 @@ function Home(): JSX.Element {
     rows,
     onRowClick: (row: Employee | null) => navigate(`/profile/${row?.id}`),
     globalColumnsClassname: 'bg-[#105924]/90 hover:bg-[#105924]/60  text-white',
-    sampleLengthSelectorClassname: 'border border-[#105924]/90 hover:bg-[#105924]/60 rounded-[5px] mr-[10px] px-[10px] py-[5px]',
-    searchInputClassname: 'border border-[#105924]/90 hover:bg-[#105924]/60 rounded-[5px] ml-[10px] px-[10px] py-[5px]',
+    sampleLengthSelectorClassname: 'border border-[#105924]/90 focus:outline-none rounded-[5px] mr-[10px] px-[10px] py-[5px]',
+    searchInputClassname: 'border border-[#105924]/90 focus:outline-none rounded-[5px] ml-[10px] px-[10px] py-[5px]',
     sortButtonClassname: {
       style: 'scaleAndGlow',
       color: '#FFF'
@@ -103,10 +110,21 @@ function Home(): JSX.Element {
   return (
     <div className='container mx-auto'>
       <h2 className='text-center text-[#105924] font-bold text-4xl py-[25px]'>Current Employees</h2>
-      <div className='flex justify-end'>
-        <button type='button' className='bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded' onClick={() => navigate('/create-employee')}>Add Employee</button>
+      
+      <div className='w-full text-right'>
+        <button
+          type='button'
+          className='bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded'
+          onClick={() => navigate('/create-employee')}
+        >
+          Add Employee
+        </button>
       </div>
-      <Table key={rows.length} {...tableProps} />     
+
+      <Table
+        key={rows.length}
+        {...tableProps}
+      />     
     </div>
   )
 }

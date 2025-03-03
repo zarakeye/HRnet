@@ -15,7 +15,8 @@ import type { Dayjs } from 'dayjs';
  * @returns {JSX.Element} The form component.
  */
 function CreateEmployee (): JSX.Element {
-  const [creationSuccess, setCreationSuccess] = useState<boolean>(false);
+  const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
+  const [employeeFormData, setEmployeeFormData] = useState<Employee | null>(null);
   const addEmployee = useEmployeeStore(state => state.addEmployee);
   const employees = useEmployeeStore(state => state.employees);
   const navigate = useNavigate();
@@ -65,14 +66,13 @@ function CreateEmployee (): JSX.Element {
     }
   }
 
-/**
- * Validates the form data to ensure all required fields are filled.
- * Checks if first name, last name, date of birth, start date, street, city, 
- * state, zip code, and department are not empty or null.
- * 
- * @returns {boolean} True if all fields are valid, false otherwise.
- */
-
+  /**
+   * Validates the form data to ensure all required fields are filled.
+   * Checks if first name, last name, date of birth, start date, street, city, 
+   * state, zip code, and department are not empty or null.
+   * 
+   * @returns {boolean} True if all fields are valid, false otherwise.
+   */
   const validateFormData = (): boolean => {
     return formData.firstName.length > 0
       && formData.lastName.length > 0
@@ -124,16 +124,28 @@ function CreateEmployee (): JSX.Element {
         department: formData.department
       };
 
+      setEmployeeFormData(newEmployee)
+
+
       setSubmitting(true)
-      
       addEmployee(newEmployee);
     }
 
     setSubmitting(false);
   }
 
+  /**
+   * Closes the confirmation modal and navigates to the homepage.
+   */
+  const handleModalClick = () => {
+    setCreationSuccess(false);
+    navigate('/');
+  }
+
   useEffect(() => {
-    setCreationSuccess(true);
+    const employeeisAdded = employees.some(employee => employee.id === employeeFormData?.id);
+    if (employeeisAdded) setCreationSuccess(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employees])
 
   return (
@@ -147,7 +159,6 @@ function CreateEmployee (): JSX.Element {
             </div>
 
             <label htmlFor="first-name" className='block font-bold'>First Name</label>
-
             <input
               type="text"
               id="firstName"
@@ -161,6 +172,7 @@ function CreateEmployee (): JSX.Element {
             <div className={`text-red-600 ${(!submitting && emptyFields.includes('lastName'))  ? '' : 'hidden'}`}>
               The <span className='font-bold'>Last name</span> field is required !
             </div>
+
             <label htmlFor="last-name" className='block font-bold'>Last Name</label>
             <input
               type="text"
@@ -175,6 +187,7 @@ function CreateEmployee (): JSX.Element {
             <div className={`text-red-600 ${!submitting && emptyFields.includes('dateOfBirth') ? 'block' : 'hidden'}`}>
               The <span className='font-bold'>Date of birth</span> field is required !
             </div>
+
             <label htmlFor="date-of-birth" className='block font-bold'>Date of Birth</label>
             <DatePicker
               name='date-of-birth'
@@ -237,6 +250,7 @@ function CreateEmployee (): JSX.Element {
               <div className={`text-red-600 ${!submitting && emptyFields.includes('state') ? '' : 'hidden'}`}>
                 The <span className='font-bold'>State</span> field is required !
               </div>
+
               <label htmlFor="state" className='block font-bold'>State</label>
               <select
                 id="state"
@@ -300,19 +314,17 @@ function CreateEmployee (): JSX.Element {
           </div>
         </form>
 
-        {creationSuccess && (
-          <Modal
-            open={creationSuccess}
-            centered
-            footer={[
-              <Button key="submit" type="primary" style={{ backgroundColor: 'oklch(0.577 0.245 27.325)' }} onClick={() => navigate('/')}>
-                OK
-              </Button>,
-            ]}
-          >
-            <p className='text-center'>Employee created successfully</p>
-          </Modal>
-        )}
+        <Modal
+          open={creationSuccess === true}
+          centered
+          footer={[
+            <Button key="submit" type="primary" style={{ backgroundColor: 'oklch(0.577 0.245 27.325)' }} onClick={handleModalClick}>
+              OK
+            </Button>,
+          ]}
+        >
+          <p className='text-center'>Employee created successfully</p>
+        </Modal>
 
       </div>
     </>

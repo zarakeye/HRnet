@@ -11,12 +11,10 @@
   },
   "dependencies": {
     "@types/uuid": "^10.0.0",
-    "axios": "^1.7.9",
-    "chokidar": "^4.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.2",
-    "react-ts-tab-lib": "^1.0.5",
+    "react-ts-tab-lib": "^1.1.5",
     "uuid": "^11.0.5",
     "zustand": "^5.0.3"
   },
@@ -27,6 +25,7 @@
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react-swc": "^3.5.0",
+    "antd": "^5.24.2",
     "dotenv": "^16.4.7",
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",

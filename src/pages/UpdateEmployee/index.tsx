@@ -3,17 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Employee, USStates } from '../../common/types';
 import useEmployeeStore from '../../app/hooks/store';
 
-// interface UpdateEmployeeProps {
-//   id: string;
-// }
-
-function UpdateEmployee (/*{id}: UpdateEmployeeProps*/): JSX.Element {
+function UpdateEmployee (): JSX.Element {
   const { id } = useParams();
   const navigate = useNavigate();
-  const employees = useEmployeeStore.use.employees();
+  const employees = useEmployeeStore(state => state.employees);
   const row = employees.find((employee) => employee.id === id);
-  const updateEmployee = useEmployeeStore.use.updateEmployee();
-  const deleteEmployee = useEmployeeStore.use.removeEmployee();
+  const updateEmployee = useEmployeeStore(state => state.updateEmployee);
+  const deleteEmployee = useEmployeeStore(state => state.removeEmployee);
   const [displayDeleteInput, setDisplayDeleteInput] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<Employee>({
@@ -25,7 +21,7 @@ function UpdateEmployee (/*{id}: UpdateEmployeeProps*/): JSX.Element {
     street: row?.street || '',
     city: row?.city || '',
     state: row?.state || '',
-    zipCode: row?.zipCode || 0,
+    zipCode: row?.zipCode || '',
     department: row?.department || ''
   });
 
@@ -36,7 +32,7 @@ function UpdateEmployee (/*{id}: UpdateEmployeeProps*/): JSX.Element {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if (formData.firstName && formData.lastName && formData.dateOfBirth && formData.startDate && formData.street && formData.city && formData.state && formData.zipCode && !isNaN(formData.zipCode) && formData.department && formData.department !== '') {
+    if (formData.firstName && formData.lastName && formData.dateOfBirth && formData.startDate && formData.street && formData.city && formData.state && formData.zipCode && !isNaN(parseInt(formData.zipCode)) && formData.department && formData.department !== '') {
       const newEmployee: Employee = {
         id: row?.id || '',
         firstName: formData.firstName,
@@ -55,21 +51,6 @@ function UpdateEmployee (/*{id}: UpdateEmployeeProps*/): JSX.Element {
       alert('Please fill in all fields');
     }
   }
-
-  function formatDate(dateString: string) {
-    if (!dateString) {
-      return '';
-    }
-
-    const date = new Date(dateString);
-
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const year = date.getFullYear();
-
-    return `${year}-${month}-${day}`;
-  }
-
 
   return (
     <div className='flex flex-col items-center justify-center'>
@@ -175,11 +156,11 @@ function UpdateEmployee (/*{id}: UpdateEmployeeProps*/): JSX.Element {
               id="zip-code"
               type="number"
               onChange={(e) => {
-                const value = isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value)
-                setFormData(prev => ({...prev, zipCode: value}))
+                const value = isNaN(parseInt(e.target.value)) ? 0 : e.target.value
+                setFormData(prev => ({...prev, zipCode: String(value)}))
               }}
               className='block border-2 border-gray rounded-[5px] pl-[5px]'
-              defaultValue={row?.zipCode}
+              defaultValue={String(row?.zipCode)}
             />
           </div>
         </fieldset>

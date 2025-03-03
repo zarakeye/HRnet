@@ -7,8 +7,8 @@ function DeleteEmployee() {
   const { id } = useParams();
   console.log(id);
   const navigate = useNavigate();
-  const employees = useEmployeeStore.use.employees();
-  const deleteEmployee = useEmployeeStore.use.removeEmployee();
+  const employees = useEmployeeStore(state => state.employees);
+  const deleteEmployee = useEmployeeStore(state => state.removeEmployee);
   const [formData, setFormData] = useState<string>('') 
   // const [delete, setDelete] = useState<boolean>(false);
   const [displayConfirm, setDisplayConfirm] = useState<boolean>(false);

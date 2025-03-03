@@ -7,7 +7,7 @@ export interface Employee {
   street: string;
   city: string;
   state: string;
-  zipCode: number | null;
+  zipCode: string;
   department: string;
 }
 

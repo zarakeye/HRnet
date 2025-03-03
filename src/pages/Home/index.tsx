@@ -1,13 +1,13 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {Table, type TableProps, type Column} from 'react-ts-tab-lib';
+import type { Column, TableProps } from 'react-ts-tab-lib';
+import { Table } from 'react-ts-tab-lib';
 import useEmployeeStore from '../../app/hooks/store';
-import logo from '../../assets/WealthHealth_Logo.png';
 import type { Employee } from '../../common/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Home(): JSX.Element {
-  const [hoveredRow, setHoveredRow] = useState<Employee | null>(null);
+  // const [hoveredRow, setHoveredRow] = useState<Employee | null>(null);
   const [rows, setRows] = useState<Employee[]>([]);
   const employees = useEmployeeStore(state => state.employees);
   
@@ -24,31 +24,6 @@ function Home(): JSX.Element {
     
     return (
       <span>{date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}/{(date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}/{date.getFullYear()}</span>
-    )
-  }
-
-  function handleUpdateEmployee(employeeId: string) {
-    navigate(`/update-employee/${employeeId}`);
-  }
-
-  function handleDeleteEmployee(employeeId: string) {
-    navigate(`/delete-employee/${employeeId}`);
-  }
-
-  function editAndDeleteEmployeeButtons(id: string): ReactNode {
-    return (
-      <div
-        className='edit-delete-buttons w-[150px] h-[50px] p-0'
-      >
-        <div className='buttons-container top-1/2 flex gap-2'>
-        {hoveredRow?.id && (
-          <>
-          <button type="button" className="bg-emerald-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleUpdateEmployee(id)}>Edit</button>
-          <button type="button" className="bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleDeleteEmployee(id)}>Delete</button>
-          </>
-        )}
-        </div>
-      </div>
     )
   }
   
@@ -100,42 +75,38 @@ function Home(): JSX.Element {
       property: 'department',
       displayName: 'Department',
       type: 'string'
-    },
-    {
-      property: 'id',
-      displayName: '',
-      type: 'string',
-      renderer: (id: string | number | null) => id && editAndDeleteEmployeeButtons(String(id)),
-      className: 'hidden w-[1px] p-0'
     }
   ];
   
   const tableProps: TableProps<Employee> = {
     columns,
     rows,
-    onRowHover: (row: Employee | null) => setHoveredRow(row),
-    columnsClassName: 'bg-emerald-700 hover:bg-emerald-600 text-white',
-    sortButtonClassName: {
+    onRowClick: (row: Employee | null) => navigate(`/profile/${row?.id}`),
+    globalColumnsClassname: 'bg-[#105924]/90 hover:bg-[#105924]/60  text-white',
+    sampleLengthSelectorClassname: 'border border-[#105924]/90 hover:bg-[#105924]/60 rounded-[5px] mr-[10px] px-[10px] py-[5px]',
+    searchInputClassname: 'border border-[#105924]/90 hover:bg-[#105924]/60 rounded-[5px] ml-[10px] px-[10px] py-[5px]',
+    sortButtonClassname: {
       style: 'scaleAndGlow',
       color: '#FFF'
     },
-    rowsClassName: 'odd:bg-emerald-500/20 even:bg-gray-100 hover:odd:bg-emerald-500/40 hover:even:bg-gray-200 py-[10px]',
-    cellClassName: 'first:border-l-0 last:border-r-0 last:bg-white py-[10px]',
+    rowsClassname: 'odd:bg-[#105924]/20 even:bg-gray-100 hover:odd:bg-[#105924]/40 hover:even:bg-gray-200 py-[10px]',
+    currentPagePaginationButtonClassname: 'bg-pink-600 hover:bg-pink-600/80 text-white',
+    pagesPaginationButtonsClassname: 'bg-emerald-600 hover:bg-emerald-600/80 text-white',
+    paginationNavButtonsClassname: 'bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded',
+    cellClassname: 'first:border-l-0 last:border-r-0 py-[10px]',
     defaultOrder: {
       property: 'lastName',
       order: 'asc'
     },
   };
 
-
   return (
     <div className='container mx-auto'>
-      <h1 className='text-emerald-700 text-3xl py-[25px]'><img src={logo} alt="logo" className='h-auto inline-block'/><span className='text-white bg-[#105924] inline-block p-[10px] border-2 border-[#105924]'>HRnet</span><span className='text-[#105924] inline-block p-[10px] border-2 border-[#105924]'>Dashboard</span></h1>
-      <h2 className='text-center text-emerald-700 text-2xl py-[25px]'>Current Employees</h2>
+      <h2 className='text-center text-[#105924] font-bold text-4xl py-[25px]'>Current Employees</h2>
       <div className='flex justify-end'>
-        <button type='button' className='bg-emerald-700 hover:bg-emerald-600 text-white py-2 px-4 rounded' onClick={() => navigate('/create-employee')}>Add Employee</button>
+        <button type='button' className='bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded' onClick={() => navigate('/create-employee')}>Add Employee</button>
       </div>
-      <Table key={rows.length}{...tableProps} />     
+      <Table key={rows.length} {...tableProps} />     
     </div>
   )
 }

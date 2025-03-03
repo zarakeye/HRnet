@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /.git/
+Disallow: /.gitignore
+Disallow: /.env
+Disallow: /.eslint.config.js
+Disallow:
+Allow: /

@@ -1,4 +1,4 @@
-import { DatePicker } from "antd";
+import { DatePicker, Modal, Button } from "antd";
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,8 +6,18 @@ import useEmployeeStore from '../../app/hooks/store';
 import { Employee, USStates } from '../../common/types';
 import type { Dayjs } from 'dayjs';
 
+/**
+ * This component renders a form to create a new employee.
+ * It handles the validation of the form and the submission of the form.
+ * The form is validated by checking that all the required fields are filled.
+ * The submission of the form is handled by adding the new employee to the store and navigating to the homepage.
+ * The component also displays a confirmation message when the employee is created successfully.
+ * @returns {JSX.Element} The form component.
+ */
 function CreateEmployee (): JSX.Element {
+  const [creationSuccess, setCreationSuccess] = useState<boolean>(false);
   const addEmployee = useEmployeeStore(state => state.addEmployee);
+  const employees = useEmployeeStore(state => state.employees);
   const navigate = useNavigate();
 
   const defaultState = Object.values(USStates)[0];
@@ -27,6 +37,14 @@ function CreateEmployee (): JSX.Element {
   const [submitting, setSubmitting] = useState<boolean>(false)
   const [emptyFields, setEmptyFields] = useState<Array<keyof Employee>>([])
 
+  /**
+   * Updates the formData state with the value from the input element.
+   * If the input element is a date picker, the value is converted to a string in the format 'YYYY-MM-DD'.
+   * If the input element is empty, the key is added to the emptyFields array.
+   * If the input element is not empty and is in the emptyFields array, the key is removed from the emptyFields array.
+   * @param e The input element's change event.
+   * @param dateId The key of the formData state to update.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement > | Dayjs | string | null, dateId?: keyof Employee) => {
     setSubmitting(false)
     let targetId: keyof Employee;
@@ -37,13 +55,8 @@ function CreateEmployee (): JSX.Element {
       targetValue = (e as Dayjs)?.format('YYYY-MM-DD') || '';
     } else {
       targetId = (e as React.ChangeEvent<HTMLInputElement>).target.id as keyof Employee;
-      // if (targetId === 'zipCode') {
-      //   targetValue = parseInt((e as React.ChangeEvent<HTMLInputElement>).target.value.trim());
-      // } else {
       targetValue = (e as React.ChangeEvent<HTMLInputElement>).target.value;
     }
-
-    console.log(targetId, targetValue)
 
     setFormData(prev => ({...prev, [targetId]: targetValue}))
 
@@ -51,6 +64,14 @@ function CreateEmployee (): JSX.Element {
       setEmptyFields(prev => prev.filter(field => field !== targetId))
     }
   }
+
+/**
+ * Validates the form data to ensure all required fields are filled.
+ * Checks if first name, last name, date of birth, start date, street, city, 
+ * state, zip code, and department are not empty or null.
+ * 
+ * @returns {boolean} True if all fields are valid, false otherwise.
+ */
 
   const validateFormData = (): boolean => {
     return formData.firstName.length > 0
@@ -64,9 +85,14 @@ function CreateEmployee (): JSX.Element {
       && formData.department.length > 0
   }
 
+  /**
+   * Submits the form, adding the new employee to the store and navigating to the homepage.
+   * Checks for empty fields, and if there are any, sets the emptyFields state to include them, and sets submitting to false.
+   * If there are no empty fields, creates a new employee object, sets submitting to true, adds it to the store, and navigates to the homepage.
+   * @param e The form's submit event.
+   */
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setSubmitting(true)
 
     for (const key in formData) {
       if (key !== 'id' && key !== 'zipCode' && formData[key as keyof Employee] === '') {
@@ -80,7 +106,6 @@ function CreateEmployee (): JSX.Element {
             return prev
           }
         })
-        console.log(emptyFields)
         setSubmitting(false)
       }
     }
@@ -99,32 +124,23 @@ function CreateEmployee (): JSX.Element {
         department: formData.department
       };
 
+      setSubmitting(true)
+      
       addEmployee(newEmployee);
-      navigate('/');
     }
 
     setSubmitting(false);
   }
 
   useEffect(() => {
-    console.log(emptyFields)
-  }, [emptyFields])
-
-  useEffect(() => {
-    console.log('date of birth', formData.dateOfBirth)
-    console.log('start date', formData.startDate)
-  }, [formData.dateOfBirth, formData.startDate])
+    setCreationSuccess(true);
+  }, [employees])
 
   return (
-    // <LocalizationProvider dateAdapter={AdapterDayjs}>
     <>
-    <h2 className='text-center text-[#105924] font-bold text-4xl py-[25px]'>Create an Employee</h2>
+      <h2 className='text-center text-[#105924] font-bold text-4xl py-[25px]'>Create an Employee</h2>
       <div className='flex flex-col items-center justify-center'>
-        <form 
-          onSubmit={(e) => {
-            handleSubmit(e)
-          }}
-        >
+        <form onSubmit={handleSubmit} >
           <div className='my-2 w-auto'>
             <div className={`text-red-600 ${(!submitting && emptyFields.includes('firstName')) ? '' : 'hidden'}`}>
               The <span className='font-bold'>First name</span> field is required !
@@ -224,7 +240,6 @@ function CreateEmployee (): JSX.Element {
               <label htmlFor="state" className='block font-bold'>State</label>
               <select
                 id="state"
-                // defaultValue={String(document.querySelector('option')?.getAttribute('value'))}
                 value={formData.state}
                 onChange={handleChange}
                 className='block border-2 border-zinc-600 rounded-[5px] pl-[5px]'
@@ -256,7 +271,6 @@ function CreateEmployee (): JSX.Element {
             <label htmlFor="department" className='block font-bold'>Department</label>
             <select
               id="department"
-              // value={formData.department}
               onChange={handleChange}
               className='block border-2 border-zinc-600 rounded-[5px] pl-[5px]'
             >
@@ -286,9 +300,22 @@ function CreateEmployee (): JSX.Element {
           </div>
         </form>
 
+        {creationSuccess && (
+          <Modal
+            open={creationSuccess}
+            centered
+            footer={[
+              <Button key="submit" type="primary" style={{ backgroundColor: 'oklch(0.577 0.245 27.325)' }} onClick={() => navigate('/')}>
+                OK
+              </Button>,
+            ]}
+          >
+            <p className='text-center'>Employee created successfully</p>
+          </Modal>
+        )}
+
       </div>
-      </>
-    // </LocalizationProvider>
+    </>
   )
 }
 

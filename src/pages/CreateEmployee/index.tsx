@@ -147,7 +147,7 @@ function CreateEmployee (): JSX.Element {
                 id="firstName"
                 placeholder="John"
                 onChange={handleChange}
-                className='block border-2 border-zinc-600 bg-white rounded-[5px] pl-[5px]'
+                className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
               />
             </div>
             
@@ -162,7 +162,7 @@ function CreateEmployee (): JSX.Element {
                 id="lastName"
                 placeholder="Doe"
                 onChange={handleChange}
-                className='block border-2  border-zinc-600 bg-white rounded-[5px] pl-[5px]'
+                className='block border-2  border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
               />
             </div>
 
@@ -177,7 +177,7 @@ function CreateEmployee (): JSX.Element {
                 inputReadOnly= {true}
                 onChange={e => handleChange(e, 'dateOfBirth')}
                 maxDate={dayjs().subtract(18, 'year')}
-                style={{border: '2px solid #52525c', borderRadius: '5px', padding: '5px'}}
+                style={{border: '2px solid #498058', borderRadius: '5px', padding: '5px'}}
               />
             </div>
 
@@ -194,11 +194,11 @@ function CreateEmployee (): JSX.Element {
                 defaultValue={dayjs()}
                 onChange={e => handleChange(e, 'startDate')}
                 maxDate={dayjs()}
-                style={{border: '2px solid #52525c', borderRadius: '5px', padding: '5px'}}
+                style={{border: '2px solid #498058', borderRadius: '5px', padding: '5px'}}
               />
             </div>
             
-            <fieldset className="border-2 border-zinc-600 rounded-[5px] pb-[10px]">
+            <fieldset className="border-2 border-[#105924]/70 rounded-[5px] pb-[10px]">
               <legend className="ml-[10px] p-[5px] text-[#105924] font-bold">Address</legend>
 
               <div className='ml-[10px] my-1.5'>
@@ -211,7 +211,7 @@ function CreateEmployee (): JSX.Element {
                   id="street"
                   type="text"
                   onChange={handleChange}
-                  className='block border-2 border-zinc-600 bg-white rounded-[5px] pl-[5px]'
+                  className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
                   placeholder="No Where Street"
                 />
               </div>
@@ -226,7 +226,7 @@ function CreateEmployee (): JSX.Element {
                   id="city"
                   type="text"
                   onChange={handleChange}
-                  className='block border-2 border-zinc-600 bg-white rounded-[5px] pl-[5px]'
+                  className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
                   placeholder='Notown City'
                 />
               </div>
@@ -241,7 +241,7 @@ function CreateEmployee (): JSX.Element {
                   id="state"
                   value={formData.state}
                   onChange={handleChange}
-                  className='block border-2 border-zinc-600 bg-white rounded-[5px] pl-[5px]'
+                  className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
                 >
                 {Object.values(USStates).map((state: string, index: number) => (
                   <option key={index} value={state}>{state}</option>
@@ -257,7 +257,7 @@ function CreateEmployee (): JSX.Element {
                   min="0"
                   defaultValue={'00000'}
                   onChange={handleChange}
-                  className='block border-2 border-zinc-600 bg-white rounded-[5px] pl-[5px]'
+                  className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
                 />
               </div>
             </fieldset>
@@ -271,7 +271,7 @@ function CreateEmployee (): JSX.Element {
               <select
                 id="department"
                 onChange={handleChange}
-                className='block border-2 border-zinc-600 bg-white rounded-[5px] pl-[5px]'
+                className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
               >
                 <option value="" >Select a department</option>
                 <option value="Sales">Sales</option>

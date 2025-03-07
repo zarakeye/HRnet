@@ -92,10 +92,6 @@ function Home(): JSX.Element {
     sampleLengthOptionClassname: 'bg-[#105924]/20 hover:bg-[#105924]/40 text-[#105924]',
     sampleOptionsClassname: 'bg-[#105924]/20 hover:bg-[#105924]/40 text-[#105924]',
     customSelect: 'customSelect',
-    // sampleSelectStyle: {
-    //   with: '170px',
-    //   ou
-    // },
     searchLabelClassname: 'text-[#105924]',
     searchInputClassname: 'border border-[#105924]/90 focus:outline-none rounded-[5px] ml-[10px] px-[10px] py-[5px]',
     sortButtonClassname: {
@@ -120,7 +116,7 @@ function Home(): JSX.Element {
       
         <button
           type='button'
-          className='bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded overflow-x-auto'
+          className='bg-[#105924] hover:bg-[#105924]/80 text-white font-bold rounded-[20px] px-[15px] py-[8px] overflow-x-auto whitespace-nowrap'
           onClick={() => navigate('/create-employee')}
         >
           Add Employee

@@ -131,17 +131,17 @@ function CreateEmployee (): JSX.Element {
   }, [employees])
 
   return (
-    <main className="mt-[250px]">
+    <main className="mt-[250px] mb-[100px]">
       <div className="bg-[#105924]/20 rounded-[40px] w-[500px] mt-[25px]">
-        <h2 className='text-center text-[#105924] font-bold text-4xl py-[25px]'>Create an Employee</h2>
-        <div className='flex flex-col items-center justify-center'>
+        <h2 className='text-center bg-[#105924] text-white font-bold text-4xl py-[25px] rounded-t-[40px]'>Create an Employee</h2>
+        <div className='flex flex-col items-center justify-center pt-[25px] pb-[50px]'>
           <form onSubmit={handleSubmit} >
-            <div className='my-2 w-auto'>
+            <div className='w-auto'>
               <div className={`text-red-600 ${(!submitting && emptyFields.includes('firstName')) ? '' : 'hidden'}`}>
                 The <span className='font-bold'>First name</span> field is required !
               </div>
 
-              <label htmlFor="first-name" className='block font-bold'>First Name</label>
+              <label htmlFor="first-name" className='block text-[#105924] font-bold'>First Name</label>
               <input
                 type="text"
                 id="firstName"
@@ -156,7 +156,7 @@ function CreateEmployee (): JSX.Element {
                 The <span className='font-bold'>Last name</span> field is required !
               </div>
 
-              <label htmlFor="last-name" className='block font-bold'>Last Name</label>
+              <label htmlFor="last-name" className='block text-[#105924] font-bold'>Last Name</label>
               <input
                 type="text"
                 id="lastName"
@@ -171,7 +171,7 @@ function CreateEmployee (): JSX.Element {
                 The <span className='font-bold'>Date of birth</span> field is required !
               </div>
 
-              <label htmlFor="date-of-birth" className='block font-bold'>Date of Birth</label>
+              <label htmlFor="date-of-birth" className='block text-[#105924] font-bold'>Date of Birth</label>
               <DatePicker
                 name='date-of-birth'
                 inputReadOnly= {true}
@@ -186,7 +186,7 @@ function CreateEmployee (): JSX.Element {
                 The <span className='font-bold'>Date of beginning</span> field is required !
               </div>
 
-              <label htmlFor="start-date" className='block font-bold'>Date of beginning</label>
+              <label htmlFor="start-date" className='block text-[#105924] font-bold'>Date of beginning</label>
               <DatePicker
                 id="startDate"
                 name='start-date'
@@ -199,19 +199,20 @@ function CreateEmployee (): JSX.Element {
             </div>
             
             <fieldset className="border-2 border-zinc-600 rounded-[5px] pb-[10px]">
-              <legend className="ml-[10px] p-[5px] font-bold">Address</legend>
+              <legend className="ml-[10px] p-[5px] text-[#105924] font-bold">Address</legend>
 
               <div className='ml-[10px] my-1.5'>
                 <div className={`text-red-600 ${!submitting && emptyFields.includes('street') ? 'block' : 'hidden'}`}>
                   The <span className='font-bold'>Street</span> field is required !
                 </div>
 
-                <label htmlFor="street" className='block font-bold'>Street</label>
+                <label htmlFor="street" className='block text-[#105924] font-bold'>Street</label>
                 <input
                   id="street"
                   type="text"
                   onChange={handleChange}
                   className='block border-2 border-zinc-600 bg-white rounded-[5px] pl-[5px]'
+                  placeholder="No Where Street"
                 />
               </div>
 
@@ -220,12 +221,13 @@ function CreateEmployee (): JSX.Element {
                   The <span className='font-bold'>City</span> field is required !
                 </div>
 
-                <label htmlFor="city" className='block font-bold'>City</label>
+                <label htmlFor="city" className='block text-[#105924] font-bold'>City</label>
                 <input
                   id="city"
                   type="text"
                   onChange={handleChange}
                   className='block border-2 border-zinc-600 bg-white rounded-[5px] pl-[5px]'
+                  placeholder='Notown City'
                 />
               </div>
 
@@ -234,7 +236,7 @@ function CreateEmployee (): JSX.Element {
                   The <span className='font-bold'>State</span> field is required !
                 </div>
 
-                <label htmlFor="state" className='block font-bold'>State</label>
+                <label htmlFor="state" className='block text-[#105924] font-bold'>State</label>
                 <select
                   id="state"
                   value={formData.state}
@@ -248,7 +250,7 @@ function CreateEmployee (): JSX.Element {
               </div>
 
               <div className='ml-[10px] my-1.5'>
-                <label htmlFor="zipCode" className='block font-bold'>Zip Code</label>
+                <label htmlFor="zipCode" className='block text-[#105924] font-bold'>Zip Code</label>
                 <input
                   id="zipCode"
                   type="number"
@@ -265,7 +267,7 @@ function CreateEmployee (): JSX.Element {
                 The <span className='font-bold'>Department</span> field is required !
               </div>
 
-              <label htmlFor="department" className='block font-bold'>Department</label>
+              <label htmlFor="department" className='block text-[#105924] font-bold'>Department</label>
               <select
                 id="department"
                 onChange={handleChange}
@@ -279,17 +281,17 @@ function CreateEmployee (): JSX.Element {
               </select>
             </div>
 
-            <div className='flex mt-[20px] mb-[20px] gap-1.5 justify-center'>
+            <div className='flex mt-[50px] gap-[15px] justify-center'>
               <button
                 type='submit'
-                className='bg-[#105924] hover:bg-[#105924]/80 text-white rounded-[8px] px-[10px] py-[5px]'
+                className='bg-[#105924] hover:bg-[#105924]/80 text-white font-bold rounded-[20px] px-[15px] py-[8px]'
               >
                 Save
               </button>
               
               <button
                 type='reset'
-                className='bg-[#105924] hover:bg-[#105924]/80 text-white rounded-[8px] p-1.5'
+                className='bg-[#105924] hover:bg-[#105924]/80 text-white font-bold rounded-[20px] px-[15px] py-[8px]'
                 onClick={() => navigate('/')}
               >
                 Cancel

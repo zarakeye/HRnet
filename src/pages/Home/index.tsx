@@ -87,8 +87,8 @@ function Home(): JSX.Element {
     columns,
     rows,
     onRowClick: (row: Employee | null) => navigate(`/profile/${row?.id}`),
-    componentGlobalClassname: 'p-[200px]',
-    globalColumnsClassname: 'bg-[#105924]/90 hover:bg-[#105924]/60 text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-xs',
+    componentGlobalClassname: 'px-[10px] sm:px-[20px] md:px-[50px] lg:px-[100px] xl:px-[150px] xxl:px-[200px]',
+    globalColumnsClassname: 'bg-[#105924]/90 hover:bg-[#105924]/60 text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-xs px-[10px] py-[5px]',
     sampleLengthOptionClassname: 'bg-[#105924]/20 hover:bg-[#105924]/40 text-[#105924]',
     sampleOptionsClassname: 'bg-[#105924]/20 hover:bg-[#105924]/40 text-[#105924]',
     customSelect: 'customSelect',
@@ -102,11 +102,11 @@ function Home(): JSX.Element {
       style: 'scaleAndGlow',
       color: '#FFF'
     },
-    rowsClassname: 'odd:bg-[#105924]/20 even:bg-gray-100 hover:odd:bg-[#105924]/40 hover:even:bg-gray-200 py-[10px] cursor-pointer',
+    rowsClassname: 'odd:bg-[#105924]/20 even:bg-gray-100 hover:odd:bg-[#105924]/40 hover:even:bg-gray-200 py-[10px] cursor-pointer whitespace-nowrap',
     currentPagePaginationButtonClassname: 'bg-pink-600 hover:bg-pink-600/80 text-white',
     pagesPaginationButtonsClassname: 'bg-emerald-600 hover:bg-emerald-600/80 text-white',
     paginationNavButtonsClassname: 'bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded',
-    cellClassname: 'first:border-l-0 last:border-r-0 py-[10px]',
+    cellClassname: 'first:border-l-0 last:border-r-0 pl-[7px] pr-[20px] py-[10px]',
     defaultOrder: {
       property: 'lastName',
       order: 'asc'
@@ -126,8 +126,8 @@ function Home(): JSX.Element {
           Add Employee
         </button>
       </div>
-      <div className='mx-auto mt-[200px] overflow-x-auto overflow-y-auto'>
-        <div className='w-[460px] sm:w[600px] md:w-[728px] lg:w-[980px] xl:w-[1200px] xxl:w-[1400px] max-h-[500px] overflow-x-auto overflow-y-auto'>
+      <div className='w-full mx-auto mt-[200px] overflow-x-auto'>
+        <div className='w-full xs:px-[10px] sm:px-[10px] md:px-[100px] lg:px-[150px] xl:px-[200px] xxl:px-[250px] max-h-[500px] overflow-x-auto overflow-y-auto'>
           <Table
             key={rows.length}
             {...tableProps}

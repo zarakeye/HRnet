@@ -135,7 +135,7 @@ function Profile(): JSX.Element {
 
 
   return (
-    <main className='flex flex-col justify-center mt-[250px]'>
+    <main className='flex flex-col justify-center mt-[250px] mb-[100px]'>
       <div className='bg-[#105924]/20 rounded-[40px] w-[500px] mt-[25px]'>
         <div hidden={updating} >
           <div>
@@ -180,7 +180,7 @@ function Profile(): JSX.Element {
             </div>
 
             <div className='flex flex-col justify-center items-center mt-[30px]'>
-              <button type="button" className='bg-[#105924] hover:bg-[#105924]/80 text-white rounded-[13px] px-[20px] py-[8px] mt-[25px] mb-[25px] cursor-pointer' onClick={() => setUpdating(true)/*navigate(`/update-employee/${employee?.id}`)*/}>
+              <button type="button" className='bg-[#105924] hover:bg-[#105924]/80 text-white font-bold rounded-[20px] px-[15px] py-[8px] mt-[25px] mb-[25px] cursor-pointer' onClick={() => setUpdating(true)/*navigate(`/update-employee/${employee?.id}`)*/}>
                 Update
               </button>
               <button type="button" className='flex px-[10px] pb-[25px] font-bold text-[#105924] cursor-pointer' onClick={() => navigate('/')}>
@@ -353,14 +353,14 @@ function Profile(): JSX.Element {
             <div className='flex mt-[20px] mb-[20px] gap-1.5 justify-center'>
               <button
                 type='submit'
-                className='bg-emerald-700 text-white rounded-[8px] px-[10px] py-[5px]'
+                className='bg-emerald-700 text-white font-bold rounded-[20px] px-[15px] py-[5px]'
               >
                 Update
               </button>
               
               <button
                 type='reset'
-                className='bg-emerald-700 text-white rounded-[8px] p-1.5'
+                className='bg-emerald-700 text-white rounded-[20px] px-[15px] py-[5px]'
                 onClick={() => setUpdating(false)}
               >
                 Cancel
@@ -371,7 +371,7 @@ function Profile(): JSX.Element {
       </div>
 
       <div className='flex flex-col justify-center items-center text-center m-[20px]'>
-        <button type="button" className='bg-rose-500 hover:bg-rose-500/80 text-white rounded-[8px] px-[10px] py-[5px] cursor-pointer' onClick={() => setDisplayDeleteModal(true)}>
+        <button type="button" className='bg-[#B30000] hover:bg-[#B30000]-500/80 text-white font-bold rounded-[20px] px-[15px] py-[5px] cursor-pointer' onClick={() => setDisplayDeleteModal(true)}>
           Delete
         </button>
       </div>

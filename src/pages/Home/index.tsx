@@ -12,20 +12,18 @@ function Home(): JSX.Element {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('Updating rows : ', employees);
     setRows(employees);
      
   }, [employees]);
 
-/**
- * Formats a date string into a human-readable date format.
- * The formatted date is in the format `DD/MM/YYYY`.
- * If the day or month is a single digit, it is prefixed with a zero.
- * 
- * @param dateString - A string representing a date.
- * @returns A ReactNode containing the formatted date.
- */
-
+  /**
+   * Formats a date string into a human-readable date format.
+   * The formatted date is in the format `DD/MM/YYYY`.
+   * If the day or month is a single digit, it is prefixed with a zero.
+   * 
+   * @param dateString - A string representing a date.
+   * @returns A ReactNode containing the formatted date.
+   */
   function dateRenderer(dateString: string):ReactNode {
     const date = new Date(dateString);
     
@@ -89,14 +87,22 @@ function Home(): JSX.Element {
     columns,
     rows,
     onRowClick: (row: Employee | null) => navigate(`/profile/${row?.id}`),
-    globalColumnsClassname: 'bg-[#105924]/90 hover:bg-[#105924]/60  text-white',
-    sampleLengthSelectorClassname: 'border border-[#105924]/90 focus:outline-none rounded-[5px] mr-[10px] px-[10px] py-[5px]',
+    componentGlobalClassname: 'p-[200px]',
+    globalColumnsClassname: 'bg-[#105924]/90 hover:bg-[#105924]/60 text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-xs',
+    sampleLengthOptionClassname: 'bg-[#105924]/20 hover:bg-[#105924]/40 text-[#105924]',
+    sampleOptionsClassname: 'bg-[#105924]/20 hover:bg-[#105924]/40 text-[#105924]',
+    customSelect: 'customSelect',
+    // sampleSelectStyle: {
+    //   with: '170px',
+    //   ou
+    // },
+    searchLabelClassname: 'text-[#105924]',
     searchInputClassname: 'border border-[#105924]/90 focus:outline-none rounded-[5px] ml-[10px] px-[10px] py-[5px]',
     sortButtonClassname: {
       style: 'scaleAndGlow',
       color: '#FFF'
     },
-    rowsClassname: 'odd:bg-[#105924]/20 even:bg-gray-100 hover:odd:bg-[#105924]/40 hover:even:bg-gray-200 py-[10px]',
+    rowsClassname: 'odd:bg-[#105924]/20 even:bg-gray-100 hover:odd:bg-[#105924]/40 hover:even:bg-gray-200 py-[10px] cursor-pointer',
     currentPagePaginationButtonClassname: 'bg-pink-600 hover:bg-pink-600/80 text-white',
     pagesPaginationButtonsClassname: 'bg-emerald-600 hover:bg-emerald-600/80 text-white',
     paginationNavButtonsClassname: 'bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded',
@@ -108,24 +114,27 @@ function Home(): JSX.Element {
   };
 
   return (
-    <div className='container mx-auto'>
-      <h2 className='text-center text-[#105924] font-bold text-4xl py-[25px]'>Current Employees</h2>
+    <main className='pt-[225px] mx-auto h-[699px] max-h-[700px]'>
+      <div className='w-full bg-white text-center fixed left-[50%] translate-x-[-50%] top-[208px] p-[30px] z-5'>
+        <h2 className='text-center text-[#105924] font-bold text-4xl py-[25px] '>Current Employees</h2>
       
-      <div className='w-full text-right'>
         <button
           type='button'
-          className='bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded'
+          className='bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded overflow-x-auto'
           onClick={() => navigate('/create-employee')}
         >
           Add Employee
         </button>
       </div>
-
-      <Table
-        key={rows.length}
-        {...tableProps}
-      />     
-    </div>
+      <div className='mx-auto mt-[200px] overflow-x-auto overflow-y-auto'>
+        <div className='w-[460px] sm:w[600px] md:w-[728px] lg:w-[980px] xl:w-[1200px] xxl:w-[1400px] max-h-[500px] overflow-x-auto overflow-y-auto'>
+          <Table
+            key={rows.length}
+            {...tableProps}
+          />
+        </div>
+      </div>
+    </main>
   )
 }
 

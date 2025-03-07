@@ -4,7 +4,7 @@ interface ContainerProps {
 
 function Container ({ children }: ContainerProps): JSX.Element {
   return (
-    <div className='flex flex-col justify-center px-[100px]'>
+    <div className='container mx-auto flex flex-col justify-center items-center'>
       {children}
     </div>
   )

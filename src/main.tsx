@@ -15,11 +15,11 @@ const root = createRoot(rootElement)
 
 root.render(
   <React.StrictMode>
-    <Container>
-      <Router>
-        <Header />
+    <Router>
+      <Header />
+      <Container>
         <App />
-      </Router>
-    </Container>
+      </Container>
+    </Router>
   </React.StrictMode>,
 )

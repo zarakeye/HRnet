@@ -1,20 +1,22 @@
-import { DatePicker, Modal, Button } from "antd";
+import { Button, DatePicker, Modal } from "antd";
+import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/store';
 import { Employee, USStates } from '../../common/types';
-import type { Dayjs } from 'dayjs';
 import sanitize from "../../tools/sanitize";
 import validateEmployeeFormData from "../../tools/validateEmployeeFormData";
 
 /**
- * This component renders a form to create a new employee.
- * It handles the validation of the form and the submission of the form.
- * The form is validated by checking that all the required fields are filled.
- * The submission of the form is handled by adding the new employee to the store and navigating to the homepage.
- * The component also displays a confirmation message when the employee is created successfully.
- * @returns {JSX.Element} The form component.
+ * Component for creating a new employee record within the application.
+ * It renders a form with fields for employee details including first name, last name,
+ * date of birth, start date, address (street, city, state, zip code), and department.
+ * The form validates inputs and highlights empty required fields. On successful
+ * submission, it sanitizes and adds the new employee data to the store, displays
+ * a success modal, and redirects to the homepage. Includes options to save or
+ * cancel the operation.
+ * Utilizes 'antd' components for date picking and modals, and 'dayjs' for date formatting.
  */
 function CreateEmployee (): JSX.Element {
   const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
@@ -22,9 +24,7 @@ function CreateEmployee (): JSX.Element {
   const addEmployee = useEmployeeStore(state => state.addEmployee);
   const employees = useEmployeeStore(state => state.employees);
   const navigate = useNavigate();
-
   const defaultState = Object.values(USStates)[0];
-
   const [formData, setFormData] = useState<Employee>({
     id: '',
     firstName: '',
@@ -42,11 +42,11 @@ function CreateEmployee (): JSX.Element {
 
   /**
    * Updates the formData state with the value from the input element.
-   * If the input element is a date picker, the value is converted to a string in the format 'YYYY-MM-DD'.
-   * If the input element is empty, the key is added to the emptyFields array.
+   * If the input element is a date picker, the value is formatted as 'YYYY-MM-DD'.
+   * If the input element is empty, the key is not removed from the emptyFields array.
    * If the input element is not empty and is in the emptyFields array, the key is removed from the emptyFields array.
-   * @param e The input element's change event.
-   * @param dateId The key of the formData state to update.
+   * @param e The input element's change event or a Dayjs object or a string or null.
+   * @param dateId Optional key of the formData state to update when using a date picker.
    */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement > | Dayjs | string | null, dateId?: keyof Employee) => {
     setSubmitting(false)
@@ -69,12 +69,12 @@ function CreateEmployee (): JSX.Element {
   }
 
   /**
-   * Submits the form, adding the new employee to the store and navigating to the homepage.
-   * Checks for empty fields, and if there are any, sets the emptyFields state to include them, and sets submitting to false.
-   * If there are no empty fields, creates a new employee object, sets submitting to true, adds it to the store, and navigates to the homepage.
+   * Handles form submission by first checking for empty fields and adding them to the emptyFields state array.
+   * Then, if the form data is valid, it creates a new employee object with the sanitized form data, adds it to the store, and sets the submitting state to true.
+   * Finally, it sets the submitting state to false.
    * @param e The form's submit event.
    */
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     for (const key in formData) {

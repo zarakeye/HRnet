@@ -5,16 +5,40 @@ import { Table } from 'react-ts-tab-lib';
 import useEmployeeStore from '../../app/hooks/store';
 import type { Employee } from '../../common/types';
 
+/**
+ * This is the homepage component of the application.
+ * It displays all the employees in the store in a table.
+ * The table is a custom component made using 'react-ts-tab-lib'.
+ * The component has a fixed header with the column names.
+ * The component has a sample length option dropdown.
+ * The component has a search bar.
+ * The component has a sort button.
+ * The component has a pagination system.
+ * The component has a style for the odd and even rows.
+ * The component has a style for the current page button.
+ * The component has a style for the pages buttons.
+ * The component has a style for the navigation buttons.
+ * The component has a style for the cells.
+ * The component has a default order for the table.
+ * The component is responsive and adapts to different screen sizes.
+ * The component is fixed at the top of the page.
+ * The component has a button to navigate to the create employee page.
+ */
 function Home(): JSX.Element {
   const [rows, setRows] = useState<Employee[]>([]);
-  const employees = useEmployeeStore(state => state.employees);
-  
   const navigate = useNavigate();
+  const employees = useEmployeeStore(state => state.employees);
+  const [currentDisplayedEmployeeId, setCurrentDisplayedEmployeeId] = useState<string | null>(null);
 
   useEffect(() => {
     setRows(employees);
      
   }, [employees]);
+
+  useEffect(() => {
+    if (currentDisplayedEmployeeId === null) return;
+    navigate(`/profile/${currentDisplayedEmployeeId}`);
+  }, [currentDisplayedEmployeeId, navigate]);
 
   /**
    * Formats a date string into a human-readable date format.
@@ -86,7 +110,15 @@ function Home(): JSX.Element {
   const tableProps: TableProps<Employee> = {
     columns,
     rows,
-    onRowClick: (row: Employee | null) => navigate(`/profile/${row?.id}`),
+    /**
+     * Function to be called when a row in the table is clicked.
+     * Sets the employeeId state to the id of the clicked row.
+     * @param row - The row that was clicked. If null, the function does nothing.
+     */
+    onRowClick: (row: Employee | null) => {
+      if (!row) return;
+      setCurrentDisplayedEmployeeId(row?.id);
+    },
     componentGlobalClassname: 'px-[10px] sm:px-[20px] md:px-[50px] lg:px-[100px] xl:px-[150px] xxl:px-[200px]',
     globalColumnsClassname: 'bg-[#105924]/90 hover:bg-[#105924]/60 text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-xs px-[10px] py-[5px]',
     sampleLengthOptionClassname: 'bg-[#105924]/20 hover:bg-[#105924]/40 text-[#105924]',

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Employee /*, EmployeesState*/ } from '../../common/types';
+import type { Employee } from '../../common/types';
 
 interface EmployeesState {
   employees: Employee[];

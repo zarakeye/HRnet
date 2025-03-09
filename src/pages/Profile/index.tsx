@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/store';
-import DeleteEmployee from '../../components/DeleteEmployee';
-import UpdateEmployee from '../../components/UpdateEmployee';
+const DeleteEmployee = React.lazy(() => import('../../components/DeleteEmployee'));
+const UpdateEmployee = React.lazy(() => import('../../components/UpdateEmployee'));
 
 /**
  * Component for displaying the profile of an employee within the application.
@@ -79,10 +79,12 @@ function Profile(): JSX.Element {
         </div>
 
         {updating && id && (
-          <UpdateEmployee
-            id={id}
-            setUpdating={setUpdating}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <UpdateEmployee
+              id={id}
+              setUpdating={setUpdating}
+            />
+          </Suspense>
         )}
       </div>
 
@@ -93,11 +95,13 @@ function Profile(): JSX.Element {
       </div>
 
       {id && (
-        <DeleteEmployee 
-          id={id}
-          displayDeleteModal={displayDeleteModal}
-          setDisplayDeleteModal={setDisplayDeleteModal}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <DeleteEmployee 
+            id={id}
+            displayDeleteModal={displayDeleteModal}
+            setDisplayDeleteModal={setDisplayDeleteModal}
+          />
+        </Suspense>
       )}
     </main>
   )

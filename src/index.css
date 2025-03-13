@@ -6,7 +6,7 @@
 }
 
 :root {
-  --font-family: Inter, system-ui, Avenir, Helvetica, Arial, "League Spartan", sans-serif;
+  --font-family: Inter, system-ui, Avenir, Helvetica, Arial, "League Spartan", "Varela Round", sans-serif;
   --leading: 1.5;
   --color-scheme: light dark;
   --color: rgba(255, 255, 255, 0.87);
@@ -36,6 +36,13 @@ tr:hover .buttons-container {
   font-style: normal;
 }
 
+.font-varela-round {
+  font-family: 'Varela Round', sans-serif;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 .customSelect {
   color: #105924;
 }
@@ -43,4 +50,45 @@ tr:hover .buttons-container {
 .customSelect:hover {
   background-color: #4fcf71;
 }
+
+.ant-picker-input input::placeholder {
+  color: oklch(0.707 0.022 261.325) !important;
+  opacity: 1;
+}
+
+/* Chrome, Safari, Opera */
+.ant-picker-input input::-webkit-input-placeholder {
+  color: oklch(0.707 0.022 261.325) !important;
+}
+
+/* Firefox 19+ */
+.ant-picker-input input::-moz-placeholder {
+  color: oklch(0.707 0.022 261.325) !important;
+}
+
+/* Firefox 18- */
+.ant-picker-input input:-moz-placeholder {
+  color: oklch(0.707 0.022 261.325) !important;
+}
+
+/* Internet Explorer 10+ */
+.ant-picker-input input:-ms-input-placeholder {
+  color: oklch(0.707 0.022 261.325) !important;
+}
+
+.datepicker .ant-picker-input input::placeholder {
+  color: oklch(0.707 0.022 261.325) !important;
+  opacity: 1;
+}
+
+.ant-picker .ant-picker-suffix svg {
+  fill: white !important; /* Utilisez "fill" pour les SVG */
+}
+
+.ant-picker:hover .ant-picker-suffix svg,
+.ant-picker-focused .ant-picker-suffix svg {
+  fill: white !important;
+  opacity: 1;
+}
+
 

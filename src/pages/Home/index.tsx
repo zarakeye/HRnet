@@ -70,13 +70,13 @@ function Home(): JSX.Element {
     },
     {
       property: 'dateOfBirth',
-      displayName: 'Date of Birth',
+      displayName: 'Birth date',
       type: 'date',
       renderer: (value: string | number | null) => value && dateRenderer(String(value))
     },
     {
       property: 'startDate',
-      displayName: 'Start Date',
+      displayName: 'Start date',
       type: 'date',
       renderer: (value: string | number | null) =>  value && dateRenderer(String(value))
     },
@@ -119,22 +119,35 @@ function Home(): JSX.Element {
       if (!row) return;
       setCurrentDisplayedEmployeeId(row?.id);
     },
-    componentGlobalClassname: 'px-[10px] sm:px-[20px] md:px-[50px] lg:px-[100px] xl:px-[150px] xxl:px-[200px]',
-    globalColumnsClassname: 'bg-[#105924]/90 hover:bg-[#105924]/60 text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-xs px-[10px] py-[5px]',
-    sampleLengthOptionClassname: 'bg-[#105924]/20 hover:bg-[#105924]/40 text-[#105924]',
-    sampleOptionsClassname: 'bg-[#105924]/20 hover:bg-[#105924]/40 text-[#105924]',
-    customSelect: 'customSelect',
-    searchLabelClassname: 'text-[#105924]',
-    searchInputClassname: 'border border-[#105924]/90 focus:outline-none rounded-[5px] ml-[10px] px-[10px] py-[5px]',
-    sortButtonClassname: {
-      style: 'scaleAndGlow',
-      color: '#FFF'
+    classNames: {
+      tableBorders: 'border-2 border-gray-300',
+      tablePaddings: 'p-[5px]',
+      tableHeaders: {
+        borders: 'border-t-2 border-b-2 border-gray-300',
+        borderLeft: 'border-l-2',
+        borderRight: 'border-r-2',
+        roundedLeft: 'rounded-tl-[25px] rounded-bl-[25px]',
+        roundedRight: 'rounded-tr-[25px] rounded-br-[25px]',
+        backgroundColor: 'bg-gray-800 hover:bg-gray-600 hover:shadow-[0_0_7px_0px_#7f7fbe]',
+        padding: 'py-[5px]',
+      },
+      samplingOptions: {
+        buttonBackgroundColor: 'bg-gray-800 hover:bg-gray-600 hover:shadow-[0_0_7px_1px_#7f7fbe]',
+        buttonBorders: 'border-2 border-gray-300',
+        buttonPadding: 'px-[20px]',
+      },
+      searchBar: {
+        label: "sr-only",
+        input: "py-[5px] px-[10px] border-2 border-gray-300 hover:border-gray-400 rounded-[20px] focus:outline-none"
+      },
+      rows: {
+        oddRowBackgroundColor: 'bg-gray-500 hover:bg-gray-600',
+        evenRowBackgroundColor: 'bg-gray-300 hover:bg-gray-700'
+      }
     },
-    rowsClassname: 'odd:bg-[#105924]/20 even:bg-gray-100 hover:odd:bg-[#105924]/40 hover:even:bg-gray-200 py-[10px] cursor-pointer whitespace-nowrap',
-    currentPagePaginationButtonClassname: 'bg-pink-600 hover:bg-pink-600/80 text-white',
-    pagesPaginationButtonsClassname: 'bg-emerald-600 hover:bg-emerald-600/80 text-white',
-    paginationNavButtonsClassname: 'bg-[#105924] hover:bg-[#105924]/80 text-white py-2 px-4 rounded',
-    cellClassname: 'first:border-l-0 last:border-r-0 pl-[7px] pr-[20px] py-[10px]',
+    textContent: {
+      searchPlaceholder: "Search..."
+    },
     defaultOrder: {
       property: 'lastName',
       order: 'asc'
@@ -142,25 +155,26 @@ function Home(): JSX.Element {
   };
 
   return (
-    <main className='pt-[225px] mx-auto h-[699px] max-h-[700px]'>
-      <div className='w-full bg-white text-center fixed left-[50%] translate-x-[-50%] top-[208px] p-[30px] z-5'>
-        <h2 className='text-center text-[#105924] font-bold text-4xl py-[25px] '>Current Employees</h2>
-      
-        <button
-          type='button'
-          className='bg-[#105924] hover:bg-[#105924]/80 text-white font-bold rounded-[20px] px-[15px] py-[8px] overflow-x-auto whitespace-nowrap'
-          onClick={() => navigate('/create-employee')}
-        >
-          Add Employee
-        </button>
-      </div>
-      <div className='w-full mx-auto mt-[200px] overflow-x-auto'>
-        <div className='w-full xs:px-[10px] sm:px-[10px] md:px-[100px] lg:px-[150px] xl:px-[200px] xxl:px-[250px] max-h-[500px] overflow-x-auto overflow-y-auto'>
-          <Table
-            key={rows.length}
-            {...tableProps}
-          />
+    <main className='pt-[225px] h-[699px] max-h-[700px] '>
+      <div className='bg-white text-center fixed left-[50%] translate-x-[-50%] top-[200px] z-5'>
+        <div className='px-[300px] py-[30px] bg-gray-900 rounded-[25px]'>
+          <h2 className='text-center text-white font-bold text-4xl pb-[25px] whitespace-nowrap'>Current Employees</h2>
+        
+          <button
+            type='button'
+            className='bg-red-900 hover:bg-red-800 hover:shadow-[0_0_7px_3px_#9f0712] text-white font-bold rounded-[20px] px-[15px] py-[8px]  whitespace-nowrap'
+            onClick={() => navigate('/create-employee')}
+          >
+            Add Employee
+          </button>
         </div>
+      </div>
+
+      <div className='xs:px-[10px] sm:px-[10px] md:px-[100px] lg:px-[150px]  max-h-[500px] mt-[200px] overflow-y-auto'>
+        <Table
+          key={rows.length}
+          {...tableProps}
+        />
       </div>
     </main>
   )

@@ -109,18 +109,20 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
   }
 
   return (
-    <div className='flex flex-col items-center justify-center'>
+    <div className='flex flex-col px-[70px] justify-center bg-gray-300 rounded-b-[80px] border-b-2 border-x-2 border-gray-900'>
       <form
         onSubmit={(e) => {
           handleSubmit(e)
         }}
       >
-        <div className='my-2 w-auto h-[80px]'>
-          <div key={emptyFields.indexOf('firstName')} className={`text-red-600 ${(!submitting && emptyFields.includes('firstName')) ? '' : 'hidden'}`}>
-            The <span className='font-bold'>First name</span> field is required !
+        <div className='mb-[25px] h-[80px]'>
+          <div className='h-[15px]'>
+            <div key={emptyFields.indexOf('firstName')} className={`text-red-600 text-[10px] ${(!submitting && emptyFields.includes('firstName')) ? '' : 'hidden'}`}>
+              The <span className='font-bold'>First name</span> field is required !
+            </div>
           </div>
 
-          <label htmlFor="first-name" className='block text-[#105924] font-bold'>First Name</label>
+          <label htmlFor="first-name" className='block text-[#105924] font-bold py-[5px]'>First Name</label>
           <input
             type="text"
             id="firstName"
@@ -132,14 +134,16 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
               }
             }}
             onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-            className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
+            className='block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
             defaultValue={employeeToUpdate?.firstName}
           />
         </div>
 
-        <div className='my-1.5 h-[80px]'>
-          <div className={`text-red-600 ${(!submitting && emptyFields.includes('lastName')) ? '' : 'hidden'}`}>
-            The <span className='font-bold'>Last name</span> field is required !
+        <div className='mb-[25px] h-[80px]'>
+          <div className='h-[15px]'>
+            <div className={`text-red-600 text-[10px] ${(!submitting && emptyFields.includes('lastName')) ? '' : 'hidden'}`}>
+              The <span className='font-bold'>Last name</span> field is required !
+            </div>
           </div>
 
           <label htmlFor="last-name" className='block text-[#105924] font-bold'>Last Name</label>
@@ -154,12 +158,12 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
               }
             }}
             onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-            className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
+            className='block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
             defaultValue={employeeToUpdate?.lastName}
           />
         </div>
 
-        <div className='my-1.5 h-[80px]'>
+        <div className='mb-[25px] h-[80px]'>
           <label htmlFor="date-of-birth" className='block text-[#105924] font-bold'>Date of Birth</label>
           <DatePicker
             name='dateOfBirth'
@@ -168,11 +172,11 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
             format='MM/DD/YYYY'
             onChange={e => handleChange(e, 'dateOfBirth')}
             maxDate={dayjs().subtract(18, 'year')}
-            style={{ border: '2px solid #498058', borderRadius: '5px', padding: '5px' }}
+            style={{ border: '2px solid #407a50', borderRadius: '5px', padding: '5px' }}
           />
         </div>
 
-        <div className='my-1.5 h-[80px]'>
+        <div className='mb-[25px] h-[80px]'>
           <label htmlFor="start-date" className='block text-[#105924] font-bold'>Start Date</label>
           <DatePicker
             id="startDate"
@@ -182,96 +186,110 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
             format='MM/DD/YYYY'
             onChange={e => handleChange(e, 'startDate')}
             maxDate={dayjs()}
-            style={{ border: '2px solid #498058', borderRadius: '5px', padding: '5px' }}
+            style={{ border: '2px solid #407a50', borderRadius: '5px', padding: '5px' }}
           />
         </div>
 
-        <fieldset className="border-2 border-[#105924]/70 rounded-[5px] pb-[10px]">
-          <legend className="ml-[10px] p-[5px] text-[#105924] font-bold">Address</legend>
+        <fieldset className="border-2 border-[#105924]/80 rounded-[15px] pb-[25px] mb-[25px]">
+          <legend className="ml-[15px] p-[5px] text-[#105924] font-bold">Address</legend>
 
-          <div className='ml-[10px] my-1.5 h-[80px]'>
-            <div className={`text-red-600 ${!submitting && emptyFields.includes('street') ? 'block' : 'hidden'}`}>
-              The <span className='font-bold'>Street</span> field is required !
+          <div className='flex flex-col items-center'>
+            <div className='w-[270px] h-[80px]'>
+              <div className='h-[24px]'>
+                <div className={`text-red-600 ${!submitting && emptyFields.includes('street') ? 'block' : 'hidden'}`}>
+                  The <span className='font-bold'>Street</span> field is required !
+                </div>
+              </div>
+
+              <label htmlFor="street" className='block text-[#105924] font-bold'>Street</label>
+              <input
+                id="street"
+                type="text"
+                onChange={handleChange}
+                onBlur={e => {
+                  if (!e.target.value) {
+                    setEmptyFields(prev => [...prev, 'street'])
+                  }
+                }}
+                onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
+                className='w-full block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+                defaultValue={employeeToUpdate?.street}
+              />
             </div>
 
-            <label htmlFor="street" className='block text-[#105924] font-bold'>Street</label>
-            <input
-              id="street"
-              type="text"
-              onChange={handleChange}
-              onBlur={e => {
-                if (!e.target.value) {
-                  setEmptyFields(prev => [...prev, 'street'])
-                }
-              }}
-              onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-              className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-              defaultValue={employeeToUpdate?.street}
-            />
-          </div>
+            <div className='w-[270px] my-1.5 h-[80px]'>
+              <div className='h-[24px]'>
+                <div className={`text-red-600 ${!submitting && emptyFields.includes('city') ? 'block' : 'hidden'}`}>
+                  The <span className='font-bold'>City</span> field is required !
+                </div>
+              </div>
 
-          <div className='ml-[10px] my-1.5 h-[80px]'>
-            <div className={`text-red-600 ${!submitting && emptyFields.includes('city') ? 'block' : 'hidden'}`}>
-              The <span className='font-bold'>City</span> field is required !
+              <label htmlFor="city" className='block text-[#105924] font-bold'>City</label>
+              <input
+                id="city"
+                type="text"
+                onChange={handleChange}
+                onBlur={e => {
+                  if (!e.target.value) {
+                    setEmptyFields(prev => [...prev, 'city'])
+                  }
+                }}
+                onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
+                className='w-full block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+                defaultValue={employeeToUpdate?.city}
+              />
             </div>
 
-            <label htmlFor="city" className='block text-[#105924] font-bold'>City</label>
-            <input
-              id="city"
-              type="text"
-              onChange={handleChange}
-              onBlur={e => {
-                if (!e.target.value) {
-                  setEmptyFields(prev => [...prev, 'city'])
-                }
-              }}
-              onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-              className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-              defaultValue={employeeToUpdate?.city}
-            />
-          </div>
+            <div className='w-[270px] my-1.5 mr-[10px] h-[80px]'>
+              <div className='h-[24px]'>
+                <div className={`text-red-600 ${!submitting && emptyFields.includes('state') ? '' : 'hidden'}`}>
+                  The <span className='font-bold'>State</span> field is required !
+                </div>
+              </div>
 
-          <div className='ml-[10px] my-1.5 mr-[10px] h-[80px]'>
-            <div className={`text-red-600 ${!submitting && emptyFields.includes('state') ? '' : 'hidden'}`}>
-              The <span className='font-bold'>State</span> field is required !
+              <label htmlFor="state" className='block text-[#105924] font-bold'>State</label>
+              <select
+                id="state"
+                onChange={handleChange}
+                onBlur={e => {
+                  if (!e.target.value) {
+                    setEmptyFields(prev => [...prev, 'state'])
+                  }
+                }}
+                className='w-full block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+                defaultValue={employeeToUpdate?.state}
+              >
+                {Object.values(USStates).map((state: string, index: number) => (
+                  <option key={index} value={state}>{state}</option>
+                ))}
+              </select>
             </div>
 
-            <label htmlFor="state" className='block text-[#105924] font-bold'>State</label>
-            <select
-              id="state"
-              onChange={handleChange}
-              onBlur={e => {
-                if (!e.target.value) {
-                  setEmptyFields(prev => [...prev, 'state'])
-                }
-              }}
-              className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-              defaultValue={employeeToUpdate?.state}
-            >
-              {Object.values(USStates).map((state: string, index: number) => (
-                <option key={index} value={state}>{state}</option>
-              ))}
-            </select>
-          </div>
+            <div className='w-[270px] my-1.5 h-[80px]'>
+              <div className='h-[24px]'>
+                <div className={`text-red-600 ${!submitting && emptyFields.includes('state') ? '' : 'hidden'}`}>
+                  The <span className='font-bold'>Zip Code</span> field is required !
+                </div>
+              </div>
 
-          <div className='ml-[10px] my-1.5 h-[80px]'>
-            <label htmlFor="zip-code" className='block text-[#105924] font-bold'>Zip Code</label>
-            <input
-              id="zipCode"
-              type="number"
-              onChange={(e) => {
-                const value = isNaN(parseInt(e.target.value)) ? 0 : e.target.value
-                setFormData(prev => ({ ...prev, zipCode: String(value) }))
-              }}
-              onBlur={e => {
-                if (!e.target.value) {
-                  setEmptyFields(prev => [...prev, 'zipCode'])
-                }
-              }}
-              onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-              className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-              defaultValue={String(employeeToUpdate?.zipCode)}
-            />
+              <label htmlFor="zip-code" className='block text-[#105924] font-bold'>Zip Code</label>
+              <input
+                id="zipCode"
+                type="number"
+                onChange={(e) => {
+                  const value = isNaN(parseInt(e.target.value)) ? 0 : e.target.value
+                  setFormData(prev => ({ ...prev, zipCode: String(value) }))
+                }}
+                onBlur={e => {
+                  if (!e.target.value) {
+                    setEmptyFields(prev => [...prev, 'zipCode'])
+                  }
+                }}
+                onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
+                className='w-full block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+                defaultValue={String(employeeToUpdate?.zipCode)}
+              />
+            </div>
           </div>
         </fieldset>
 
@@ -285,7 +303,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                 setEmptyFields(prev => [...prev, 'department'])
               }
             }}
-            className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
+            className='block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
             defaultValue={employeeToUpdate?.department}
           >
             <option disabled value="">Select a department</option>
@@ -299,14 +317,14 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
         <div className='flex mt-[50px] mb-[50px] gap-[15px] justify-center'>
           <button
             type='submit'
-            className='bg-[#105924] hover:bg-[#105924]/80 text-white font-bold rounded-[20px] px-[15px] py-[8px]'
+            className='bg-[#105924] hover:bg-[#105924]/80 hover:shadow-[0_0_7px_1px_#7f7fbe] text-white font-bold rounded-[20px] px-[15px] py-[8px]'
           >
             Update
           </button>
 
           <button
             type='reset'
-            className='bg-[#105924] hover:bg-[#105924]/80 text-white font-bold rounded-[20px] px-[15px] py-[8px]'
+            className='bg-[#105924] hover:bg-[#105924]/80 hover:shadow-[0_0_7px_1px_#7f7fbe] text-white font-bold rounded-[20px] px-[15px] py-[8px]'
             onClick={() => setUpdating(false)}
           >
             Cancel

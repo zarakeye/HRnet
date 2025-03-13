@@ -132,166 +132,178 @@ function CreateEmployee (): JSX.Element {
 
   return (
     <main className="mt-[250px] mb-[100px]">
-      <div className="bg-[#105924]/20 rounded-[40px] w-[500px] mt-[25px]">
-        <h2 className='text-center bg-[#105924] text-white font-bold text-4xl py-[25px] rounded-t-[40px]'>Create an Employee</h2>
-        <div className='flex flex-col items-center justify-center pt-[25px] pb-[50px]'>
+      <div className="bg-gray-300 rounded-[80px] w-[500px] mt-[25px]">
+        <h2 className='text-center bg-gray-900 text-white font-bold text-4xl py-[25px] rounded-t-[80px]'>Create an Employee</h2>
+        <div className='flex flex-col items-center justify-center pt-[25px] pb-[50px] border-b-2 border-x-2 border-gray-900 rounded-b-[80px]'>
           <form onSubmit={handleSubmit} >
-            <div className='w-auto'>
-              <div className={`text-red-600 ${(!submitting && emptyFields.includes('firstName')) ? '' : 'hidden'}`}>
-                The <span className='font-bold'>First name</span> field is required !
+            <div className="flex flex-col gap-[15px]">
+              <div className='w-auto'>
+                <div className='px-[15px] py-[5px] bg-gray-900 border-2 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                  <div className={`text-red-600 ${(!submitting && emptyFields.includes('firstName')) ? '' : 'hidden'}`}>
+                    The <span className='font-bold'>First name</span> field is required !
+                  </div>
+
+                  <label htmlFor="firstName" className='block text-white font-bold'>First Name</label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    placeholder="first name"
+                    onChange={handleChange}
+                    className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
+                  />
+                </div>
               </div>
-
-              <label htmlFor="first-name" className='block text-[#105924] font-bold'>First Name</label>
-              <input
-                type="text"
-                id="firstName"
-                placeholder="John"
-                onChange={handleChange}
-                className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-              />
-            </div>
-            
-            <div className='my-1.5'>
-              <div className={`text-red-600 ${(!submitting && emptyFields.includes('lastName'))  ? '' : 'hidden'}`}>
-                The <span className='font-bold'>Last name</span> field is required !
-              </div>
-
-              <label htmlFor="last-name" className='block text-[#105924] font-bold'>Last Name</label>
-              <input
-                type="text"
-                id="lastName"
-                placeholder="Doe"
-                onChange={handleChange}
-                className='block border-2  border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-              />
-            </div>
-
-            <div className='my-1.5'>
-              <div className={`text-red-600 ${!submitting && emptyFields.includes('dateOfBirth') ? 'block' : 'hidden'}`}>
-                The <span className='font-bold'>Date of birth</span> field is required !
-              </div>
-
-              <label htmlFor="date-of-birth" className='block text-[#105924] font-bold'>Date of Birth</label>
-              <DatePicker
-                name='date-of-birth'
-                inputReadOnly= {true}
-                onChange={e => handleChange(e, 'dateOfBirth')}
-                maxDate={dayjs().subtract(18, 'year')}
-                style={{border: '2px solid #498058', borderRadius: '5px', padding: '5px'}}
-              />
-            </div>
-
-            <div className='my-1.5'>
-              <div className={`text-red-600 ${!submitting && emptyFields.includes('startDate') ? 'block' : 'hidden'}`}>
-                The <span className='font-bold'>Date of beginning</span> field is required !
-              </div>
-
-              <label htmlFor="start-date" className='block text-[#105924] font-bold'>Date of beginning</label>
-              <DatePicker
-                id="startDate"
-                name='start-date'
-                inputReadOnly= {true}
-                defaultValue={dayjs()}
-                onChange={e => handleChange(e, 'startDate')}
-                maxDate={dayjs()}
-                style={{border: '2px solid #498058', borderRadius: '5px', padding: '5px'}}
-              />
-            </div>
-            
-            <fieldset className="border-2 border-[#105924]/70 rounded-[5px] pb-[10px]">
-              <legend className="ml-[10px] p-[5px] text-[#105924] font-bold">Address</legend>
-
-              <div className='ml-[10px] my-1.5'>
-                <div className={`text-red-600 ${!submitting && emptyFields.includes('street') ? 'block' : 'hidden'}`}>
-                  The <span className='font-bold'>Street</span> field is required !
+              
+              <div className='px-[15px] py-[5px] bg-gray-900 border-2 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                <div className={`text-red-600 ${(!submitting && emptyFields.includes('lastName'))  ? '' : 'hidden'}`}>
+                  The <span className='font-bold'>Last name</span> field is required !
                 </div>
 
-                <label htmlFor="street" className='block text-[#105924] font-bold'>Street</label>
+                <label htmlFor="lastName" className='block text-white font-bold'>Last Name</label>
                 <input
-                  id="street"
                   type="text"
+                  id="lastName"
+                  placeholder="Doe"
                   onChange={handleChange}
-                  className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-                  placeholder="No Where Street"
+                  className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
                 />
               </div>
 
-              <div className='ml-[10px] my-1.5'>
-                <div className={`text-red-600 ${!submitting && emptyFields.includes('city') ? 'block' : 'hidden'}`}>
-                  The <span className='font-bold'>City</span> field is required !
+              <div className='px-[15px] pt-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] h-[78px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                <div className={`text-red-600 ${!submitting && emptyFields.includes('dateOfBirth') ? 'block' : 'hidden'}`}>
+                  The <span className='font-bold'>Date of birth</span> field is required !
                 </div>
 
-                <label htmlFor="city" className='block text-[#105924] font-bold'>City</label>
-                <input
-                  id="city"
-                  type="text"
-                  onChange={handleChange}
-                  className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-                  placeholder='Notown City'
+                <label htmlFor="dateOfBirth" className='block text-white font-bold'>Date of Birth</label>
+                <DatePicker
+                  id="dateOfBirth"
+                  name='dateOfBirth'
+                  inputReadOnly= {true}
+                  onChange={e => handleChange(e, 'dateOfBirth')}
+                  maxDate={dayjs().subtract(18, 'year')}
+                  style={{border: 'none', backgroundColor: 'transparent', color: 'white', padding: '5px'}}
+                  popupClassName="text-white "
                 />
               </div>
 
-              <div className='ml-[10px] my-1.5 mr-[10px]'>
-                <div className={`text-red-600 ${!submitting && emptyFields.includes('state') ? '' : 'hidden'}`}>
-                  The <span className='font-bold'>State</span> field is required !
+              <div className='px-[15px] pt-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] h-[78px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                <div className={`text-red-600 ${!submitting && emptyFields.includes('startDate') ? 'block' : 'hidden'}`}>
+                  The <span className='font-bold'>Date of beginning</span> field is required !
                 </div>
 
-                <label htmlFor="state" className='block text-[#105924] font-bold'>State</label>
+                <label htmlFor="startDate" className='block text-white font-bold'>Date of beginning</label>
+                <DatePicker
+                  id="startDate"
+                  name='startDate'
+                  inputReadOnly= {true}
+                  defaultValue={dayjs()}
+                  onChange={e => handleChange(e, 'startDate')}
+                  maxDate={dayjs()}
+                  style={{
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    color: 'white',
+                    padding: '5px',
+                  }}
+                  className="datepicker"
+                />
+              </div>
+              
+              <fieldset className="flex flex-col gap-[10px] border-2 border-gray-500 rounded-[12px] p-[10px]">
+                <legend className="ml-[10px] p-[5px] text-gray-900 font-bold">Address</legend>
+
+                <div className='px-[15px] py-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                  <div className={`text-red-600 ${!submitting && emptyFields.includes('street') ? 'block' : 'hidden'}`}>
+                    The <span className='font-bold'>Street</span> field is required !
+                  </div>
+
+                  <label htmlFor="street" className='block text-white font-bold'>Street</label>
+                  <input
+                    id="street"
+                    type="text"
+                    onChange={handleChange}
+                    className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
+                    placeholder="No Where Street"
+                  />
+                </div>
+
+                <div className='px-[15px] py-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                  <div className={`text-red-600 ${!submitting && emptyFields.includes('city') ? 'block' : 'hidden'}`}>
+                    The <span className='font-bold'>City</span> field is required !
+                  </div>
+
+                  <label htmlFor="city" className='block text-white font-bold'>City</label>
+                  <input
+                    id="city"
+                    type="text"
+                    onChange={handleChange}
+                    className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
+                    placeholder='Notown City'
+                  />
+                </div>
+
+                <div className='px-[15px] py-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                  <div className={`text-red-600 ${!submitting && emptyFields.includes('state') ? '' : 'hidden'}`}>
+                    The <span className='font-bold'>State</span> field is required !
+                  </div>
+
+                  <label htmlFor="state" className='block text-white font-bold'>State</label>
+                  <select
+                    id="state"
+                    value={formData.state}
+                    onChange={handleChange}
+                    className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
+                  >
+                  {Object.values(USStates).map((state: string, index: number) => (
+                    <option key={index} value={state} className="text-black">{state}</option>
+                  ))}
+                  </select>
+                </div>
+
+                <div className='px-[15px] py-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                  <label htmlFor="zipCode" className='block text-white font-bold'>Zip Code</label>
+                  <input
+                    id="zipCode"
+                    type="number"
+                    min="0"
+                    defaultValue={'00000'}
+                    onChange={handleChange}
+                    className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
+                  />
+                </div>
+              </fieldset>
+
+              <div className='px-[15px] py-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                <div key={emptyFields.indexOf('department')} className={`text-red-600 ${!submitting && emptyFields.includes('department') ? 'block' : 'hidden'}`}>
+                  The <span className='font-bold'>Department</span> field is required !
+                </div>
+
+                <label htmlFor="department" className='block text-white font-bold'>Department</label>
                 <select
-                  id="state"
-                  value={formData.state}
+                  id="department"
                   onChange={handleChange}
-                  className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
+                  className='block text-white  h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'
                 >
-                {Object.values(USStates).map((state: string, index: number) => (
-                  <option key={index} value={state}>{state}</option>
-                ))}
+                  <option value="" className="text-black" >Select a department</option>
+                  <option value="Sales" className="text-black" >Sales</option>
+                  <option value="Engineering" className="text-black" >Engineering</option>
+                  <option value="Human Resources" className="text-black" >Human Resources</option>
+                  <option value="Legal" className="text-black" >Legal</option>
                 </select>
               </div>
-
-              <div className='ml-[10px] my-1.5'>
-                <label htmlFor="zipCode" className='block text-[#105924] font-bold'>Zip Code</label>
-                <input
-                  id="zipCode"
-                  type="number"
-                  min="0"
-                  defaultValue={'00000'}
-                  onChange={handleChange}
-                  className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-                />
-              </div>
-            </fieldset>
-
-            <div className='my-1.5'>
-              <div key={emptyFields.indexOf('department')} className={`text-red-600 ${!submitting && emptyFields.includes('department') ? 'block' : 'hidden'}`}>
-                The <span className='font-bold'>Department</span> field is required !
-              </div>
-
-              <label htmlFor="department" className='block text-[#105924] font-bold'>Department</label>
-              <select
-                id="department"
-                onChange={handleChange}
-                className='block border-2 border-[#105924]/70 bg-white rounded-[5px] pl-[5px]'
-              >
-                <option value="" >Select a department</option>
-                <option value="Sales">Sales</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Human Resources">Human Resources</option>
-                <option value="Legal">Legal</option>
-              </select>
             </div>
 
             <div className='flex mt-[50px] gap-[15px] justify-center'>
               <button
                 type='submit'
-                className='bg-[#105924] hover:bg-[#105924]/80 text-white font-bold rounded-[20px] px-[15px] py-[8px]'
+                className='bg-[#105924]/80 hover:bg-[#105924] text-white font-bold rounded-[20px] px-[15px] py-[8px] hover:shadow-[0_0_7px_2px_#00c700]'
               >
                 Save
               </button>
               
               <button
                 type='reset'
-                className='bg-[#105924] hover:bg-[#105924]/80 text-white font-bold rounded-[20px] px-[15px] py-[8px]'
+                className='bg-[#105924]/80 hover:bg-[#105924] text-white font-bold rounded-[20px] px-[15px] py-[8px] hover:shadow-[0_0_7px_2px_#00c700]'
                 onClick={() => navigate('/')}
               >
                 Cancel

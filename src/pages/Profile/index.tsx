@@ -29,13 +29,13 @@ function Profile(): JSX.Element {
         <div className={`bg-gray-300 border-x-2 border-gray-900 rounded-t-[80px] ${!updating ? 'rounded-b-[80px]': ''}`}>
           <h2 className='flex-1 text-3xl bg-gray-900 border-2 border-gray-900 text-center text-white font-bold p-[40px] rounded-t-[80px]'><span className='sr-only'>Profile of </span>{employee?.firstName} {employee?.lastName.toUpperCase()}</h2>
 
-          <div className={`${updating ? '' : 'border-b-2 '}border-x-2 border-gray-300 ${updating ? '' : 'rounded-b-[80px]'} `}>
+          <div className={`border-gray-900 `}>
             <div className='pl-[70px] pt-[40px]'>
                 <p className='font-bold text-[#105924]'>Identifier:</p>
                 <p className='pl-[10px]'>{employee?.id}</p>
             </div>
 
-            <div hidden={updating} >
+            <div hidden={updating} className='border-b-2 border-gray-900 rounded-b-[80px]' >
               <div className='pl-[70px] mt-[25px] mb-[25px]'>
                 <p className='font-bold text-[#105924]'>Date of Birth:</p>
                 <p className='pl-[10px]'>{employee?.dateOfBirth}</p>
@@ -73,12 +73,10 @@ function Profile(): JSX.Element {
 
         {updating && id && (
           <div className=' rounded-b-[80px]'>
-            {/* <Suspense fallback={<div>Loading...</div>}> */}
-              <UpdateEmployee
-                id={id}
-                setUpdating={setUpdating}
-              />
-            {/* </Suspense> */}
+            <UpdateEmployee
+              id={id}
+              setUpdating={setUpdating}
+            />
           </div>
         )}
       </div>

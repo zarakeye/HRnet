@@ -1,51 +1,29 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Column, TableProps } from 'react-ts-tab-lib';
+import type { Column } from 'react-ts-tab-lib';
 import { Table } from 'react-ts-tab-lib';
 import useEmployeeStore from '../../app/hooks/store';
 import type { Employee } from '../../common/types';
 
 /**
- * This is the homepage component of the application.
- * It displays all the employees in the store in a table.
- * The table is a custom component made using 'react-ts-tab-lib'.
- * The component has a fixed header with the column names.
- * The component has a sample length option dropdown.
- * The component has a search bar.
- * The component has a sort button.
- * The component has a pagination system.
- * The component has a style for the odd and even rows.
- * The component has a style for the current page button.
- * The component has a style for the pages buttons.
- * The component has a style for the navigation buttons.
- * The component has a style for the cells.
- * The component has a default order for the table.
- * The component is responsive and adapts to different screen sizes.
- * The component is fixed at the top of the page.
- * The component has a button to navigate to the create employee page.
+ * Component that renders a table of employees in the store.
+ * The table includes columns for the employee's first name, last name, date of birth, start date, street, city, state, zip code, and department.
+ * The table also includes a button to add a new employee.
+ * The component uses the useEmployeeStore hook to get the employees from the store.
+ * The component uses the navigate hook to navigate to the /create-employee page when the add button is clicked.
+ * The component uses the Table component from react-ts-tab-lib to render the table.
+ * The component uses a custom renderer for the date columns to format the date as 'DD/MM/YYYY'.
+ * The component uses a custom renderer for the last name column to format the last name as all uppercase.
+ * The component uses a custom renderer for the search bar to add a search icon.
  */
 function Home(): JSX.Element {
-  const [rows, setRows] = useState<Employee[]>([]);
   const navigate = useNavigate();
   const employees = useEmployeeStore(state => state.employees);
-  const [currentDisplayedEmployeeId, setCurrentDisplayedEmployeeId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setRows(employees);
-     
-  }, [employees]);
-
-  useEffect(() => {
-    if (currentDisplayedEmployeeId === null) return;
-    navigate(`/profile/${currentDisplayedEmployeeId}`);
-  }, [currentDisplayedEmployeeId, navigate]);
 
   /**
-   * Formats a date string into a human-readable date format.
-   * The formatted date is in the format `DD/MM/YYYY`.
-   * If the day or month is a single digit, it is prefixed with a zero.
-   * 
-   * @param dateString - A string representing a date.
+   * Converts a date string into a formatted JSX span element.
+   * The date is formatted as 'DD/MM/YYYY', where days and months are zero-padded if necessary.
+   * @param dateString A string representation of a date.
    * @returns A ReactNode containing the formatted date.
    */
   function dateRenderer(dateString: string):ReactNode {
@@ -106,53 +84,6 @@ function Home(): JSX.Element {
       type: 'string'
     }
   ];
-  
-  const tableProps: TableProps<Employee> = {
-    columns,
-    rows,
-    /**
-     * Function to be called when a row in the table is clicked.
-     * Sets the employeeId state to the id of the clicked row.
-     * @param row - The row that was clicked. If null, the function does nothing.
-     */
-    onRowClick: (row: Employee | null) => {
-      if (!row) return;
-      setCurrentDisplayedEmployeeId(row?.id);
-    },
-    classNames: {
-      tableBorders: 'border-2 border-gray-300',
-      tablePaddings: 'p-[5px]',
-      tableHeaders: {
-        borders: 'border-t-2 border-b-2 border-gray-300',
-        borderLeft: 'border-l-2',
-        borderRight: 'border-r-2',
-        roundedLeft: 'rounded-tl-[25px] rounded-bl-[25px]',
-        roundedRight: 'rounded-tr-[25px] rounded-br-[25px]',
-        backgroundColor: 'bg-gray-800 hover:bg-gray-600 hover:shadow-[0_0_7px_0px_#7f7fbe]',
-        padding: 'py-[5px]',
-      },
-      samplingOptions: {
-        buttonBackgroundColor: 'bg-gray-800 hover:bg-gray-600 hover:shadow-[0_0_7px_1px_#7f7fbe]',
-        buttonBorders: 'border-2 border-gray-300',
-        buttonPadding: 'px-[20px]',
-      },
-      searchBar: {
-        label: "sr-only",
-        input: "py-[5px] px-[10px] border-2 border-gray-300 hover:border-gray-400 rounded-[20px] focus:outline-none"
-      },
-      rows: {
-        oddRowBackgroundColor: 'bg-gray-500 hover:bg-gray-600',
-        evenRowBackgroundColor: 'bg-gray-300 hover:bg-gray-700'
-      }
-    },
-    textContent: {
-      searchPlaceholder: "Search..."
-    },
-    defaultOrder: {
-      property: 'lastName',
-      order: 'asc'
-    },
-  };
 
   return (
     <main className='pt-[225px] h-[699px] max-h-[700px] '>
@@ -172,8 +103,57 @@ function Home(): JSX.Element {
 
       <div className='xs:px-[10px] sm:px-[10px] md:px-[100px] lg:px-[150px]  max-h-[500px] mt-[200px] overflow-y-auto'>
         <Table
-          key={rows.length}
-          {...tableProps}
+          columns={columns}
+          rows={employees}
+          onRowClick={
+            (row: Employee | null) => {
+              if (!row) return;
+              navigate(`/profile/${row?.id}`);
+          }}
+          defaultOrder={{
+            property: 'lastName',
+            order: 'asc'
+          }}
+          textContent={{
+            searchPlaceholder: "Search..."
+          }}
+          classNames={{
+            tableBorders: 'border-2 border-gray-300',
+            tablePaddings: 'pt-[5px] pb-[15px] px-[5px]',
+            tableHeaders: {
+              borderY: 'border-y-2',
+              borderColor: 'border-gray-300',
+              borderL: 'border-l-2',
+              borderR: 'border-r-2',
+              roundedL: 'rounded-tl-[25px] rounded-bl-[25px]',
+              roundedR: 'rounded-tr-[25px] rounded-br-[25px]',
+              backgroundColor: 'bg-gray-800 hover:bg-gray-600 hover:shadow-[0_0_7px_0px_#7f7fbe]',
+              padding: 'py-[5px]',
+              margin: 'mb-[10px]',
+            },
+            samplingOptions: {
+              buttonBackgroundColor: 'bg-gray-800 hover:bg-gray-600 hover:shadow-[0_0_7px_1px_#7f7fbe]',
+              buttonBorder: 'border-2',
+              buttonBorderColor: 'border-gray-300',
+              buttonPadding: 'px-[20px]',
+            },
+            searchBar: {
+              label: "sr-only",
+              inputBorder: " border-2",
+              inputBorderColor: "border-gray-300 hover:border-gray-400",
+              inputFocusOutLine: "focus:outline-none",
+              inputPadding: "py-[5px] px-[10px]",
+              inputBackgroundColor: "bg-gray-300 hover:shadow-[0_0_7px_1px_#7f7fbe]",
+              inputRounded: "rounded-[20px]",
+      
+            },
+            rows: {
+              oddRowBackgroundColor: 'bg-gray-500 hover:bg-gray-600',
+              evenRowBackgroundColor: 'bg-gray-300 hover:bg-gray-700',
+              paddingX: 'px-[15px]',
+              paddingT: 'pt-0',
+            }
+          }}
         />
       </div>
     </main>

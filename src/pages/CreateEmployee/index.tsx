@@ -9,14 +9,14 @@ import sanitize from "../../tools/sanitize";
 import validateEmployeeFormData from "../../tools/validateEmployeeFormData";
 
 /**
- * Component for creating a new employee record within the application.
- * It renders a form with fields for employee details including first name, last name,
- * date of birth, start date, address (street, city, state, zip code), and department.
- * The form validates inputs and highlights empty required fields. On successful
- * submission, it sanitizes and adds the new employee data to the store, displays
- * a success modal, and redirects to the homepage. Includes options to save or
- * cancel the operation.
- * Utilizes 'antd' components for date picking and modals, and 'dayjs' for date formatting.
+ * A React component that renders a form to create a new employee.
+ * The component uses the `useEmployeeStore` hook to access the employee store.
+ * The component uses the `useNavigate` hook to navigate to the homepage after submitting the form.
+ * The component uses the `useState` hook to manage the state of the form data.
+ * The component renders a form with inputs for the employee's first name, last name, date of birth, start date, street, city, state, zip code, and department.
+ * The component renders a button to submit the form.
+ * The component renders a button to cancel the form.
+ * The component renders a modal to display a success message after submitting the form.
  */
 function CreateEmployee (): JSX.Element {
   const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
@@ -43,9 +43,8 @@ function CreateEmployee (): JSX.Element {
   /**
    * Updates the formData state with the value from the input element.
    * If the input element is a date picker, the value is formatted as 'YYYY-MM-DD'.
-   * If the input element is empty, the key is not removed from the emptyFields array.
-   * If the input element is not empty and is in the emptyFields array, the key is removed from the emptyFields array.
-   * @param e The input element's change event or a Dayjs object or a string or null.
+   * Checks if the input element corresponds to an empty field and removes it from the emptyFields array if it is not empty.
+   * @param e The input element's change event, a Dayjs object, a string, or null.
    * @param dateId Optional key of the formData state to update when using a date picker.
    */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement > | Dayjs | string | null, dateId?: keyof Employee) => {
@@ -69,9 +68,10 @@ function CreateEmployee (): JSX.Element {
   }
 
   /**
-   * Handles form submission by first checking for empty fields and adding them to the emptyFields state array.
-   * Then, if the form data is valid, it creates a new employee object with the sanitized form data, adds it to the store, and sets the submitting state to true.
-   * Finally, it sets the submitting state to false.
+   * Submits the form and adds a new employee to the store.
+   * Validates inputs and sets the emptyFields state if a required field is empty.
+   * If the inputs are valid, sanitizes the new employee data and adds it to the store,
+   * displays a success modal, and redirects to the homepage.
    * @param e The form's submit event.
    */
    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

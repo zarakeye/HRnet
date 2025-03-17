@@ -2,14 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/WealthHealth_Logo.avif';
 
 /**
- * A sticky header component that displays the WealthHealth logo and the title of the
- * application. Clicking on the logo or the title will navigate to the homepage.
- *
- * The component is rendered with a white background and a gradient that fades to
- * transparent at the bottom. The gradient is used to create a visual effect that
- * makes the header look like it's floating on top of the page.
- *
- * The component is responsive and will adapt to different screen sizes.
+ * A React component that renders a header with the WealthHealth logo and the title "HRnet".
+ * The logo is clickable and navigates to the homepage.
+ * The title is also clickable and navigates to the homepage.
  */
 function Header (): JSX.Element {
   const navigate = useNavigate();

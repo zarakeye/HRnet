@@ -18,7 +18,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.2",
-    "react-ts-tab-lib": "^1.5.0",
+    "react-ts-tab-lib": "^1.6.11",
     "rsuite": "^5.78.0",
     "uuid": "^11.0.5",
     "zustand": "^5.0.3"

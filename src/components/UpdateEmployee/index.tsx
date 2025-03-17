@@ -13,12 +13,12 @@ interface UpdateEmployeeProps {
 }
 
 /**
- * Component that renders a form to update an employee in the store.
- * The form has fields for first name, last name, date of birth, start date, street, city, state, zip code, and department.
- * The form also has a submit and cancel button. When the submit button is clicked, the form data is validated and if it is valid, the employee is updated in the store and the updating modal is closed. If the form data is invalid, the fields that are empty are highlighted.
- * When the cancel button is clicked, the updating modal is closed without updating the employee in the store.
- * @param id The id of the employee to update.
- * @param setUpdating A function that sets whether the updating modal is open or not.
+ * A form to update an existing employee in the store.
+ * The form is controlled and has validation.
+ * The form is divided into sections for the employee's personal information, address and department.
+ * The form has a submit and a cancel button.
+ * The submit button is disabled if the form is not valid.
+ * The cancel button closes the update modal.
  */
 function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
   const employees = useEmployeeStore(state => state.employees);
@@ -43,9 +43,8 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
   /**
    * Updates the formData state with the value from the input element.
    * If the input element is a date picker, the value is formatted as 'DD/MM/YYYY'.
-   * If the input element is empty, the key is not removed from the emptyFields array.
-   * If the input element is not empty and is in the emptyFields array, the key is removed from the emptyFields array.
-   * @param e The input element's change event or a Dayjs object or a string or null.
+   * Checks if the input element corresponds to an empty field and removes it from the emptyFields array if it is not empty.
+   * @param e The input element's change event, a Dayjs object, a string, or null.
    * @param dateId Optional key of the formData state to update when using a date picker.
    */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | Dayjs | string | null, dateId?: keyof Employee) => {
@@ -69,8 +68,8 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
   }
 
   /**
-   * Handles input changes by removing the target field from the emptyFields array if it exists.
-   * This indicates that the field is no longer considered empty.
+   * Updates the emptyFields state when an input element has a value.
+   * If the input element's id is in the emptyFields array and the value is not empty, the id is removed from the array.
    * @param e The input element's change event or a string or null.
    */
   const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | string | null) => {
@@ -82,9 +81,9 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
   }
 
   /**
-   * Submits the form, updating the employee in the store and closing the updating modal.
-   * Checks for empty fields, and if there are any, sets the emptyFields state to include them, and sets submitting to false.
-   * If there are no empty fields, creates an updated employee object, sets submitting to true, updates it in the store, and closes the updating modal.
+   * Submits the form and updates the employee in the store.
+   * Validates the updated employee data and sanitizes it.
+   * If the updated employee data is valid, updates the employee in the store and closes the update modal.
    * @param e The form's submit event.
    */
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -134,7 +133,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
               }
             }}
             onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-            className='block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+            className='block border-2 border-gray-900 bg-white rounded-[20px] pl-[10px] h-[36px]'
             defaultValue={employeeToUpdate?.firstName}
           />
         </div>
@@ -146,7 +145,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
             </div>
           </div>
 
-          <label htmlFor="last-name" className='block text-[#105924] font-bold'>Last Name</label>
+          <label htmlFor="last-name" className='block text-[#105924] font-bold pb-[5px]'>Last Name</label>
           <input
             type="text"
             id="lastName"
@@ -158,12 +157,13 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
               }
             }}
             onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-            className='block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
-            defaultValue={employeeToUpdate?.lastName}
+            className='block border-2 border-gray-900 bg-white rounded-[20px] pl-[10px] h-[36px]'
+            defaultValue={employeeToUpdate?.lastName.toUpperCase()}
           />
         </div>
 
         <div className='mb-[25px] h-[80px]'>
+          <div className='h-[15px]'></div>
           <label htmlFor="date-of-birth" className='block text-[#105924] font-bold'>Date of Birth</label>
           <DatePicker
             name='dateOfBirth'
@@ -172,11 +172,12 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
             format='MM/DD/YYYY'
             onChange={e => handleChange(e, 'dateOfBirth')}
             maxDate={dayjs().subtract(18, 'year')}
-            style={{ border: '2px solid #407a50', borderRadius: '5px', padding: '5px' }}
+            style={{ border: '2px solid #101828', borderRadius: '20px', paddingBottom: '10px', height: '36px' }}
           />
         </div>
 
         <div className='mb-[25px] h-[80px]'>
+        <div className='h-[15px]'></div>
           <label htmlFor="start-date" className='block text-[#105924] font-bold'>Start Date</label>
           <DatePicker
             id="startDate"
@@ -186,12 +187,12 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
             format='MM/DD/YYYY'
             onChange={e => handleChange(e, 'startDate')}
             maxDate={dayjs()}
-            style={{ border: '2px solid #407a50', borderRadius: '5px', padding: '5px' }}
+            style={{ border: '2px solid #101828', borderRadius: '20px', padding: '10px', height: '36px' }}
           />
         </div>
 
-        <fieldset className="border-2 border-[#105924]/80 rounded-[15px] pb-[25px] mb-[25px]">
-          <legend className="ml-[15px] p-[5px] text-[#105924] font-bold">Address</legend>
+        <fieldset className="border-2 border-gray-900 rounded-[20px] pb-[25px] mb-[25px]">
+          <legend className="ml-[15px] p-[5px] text-gray-900 font-bold">Address</legend>
 
           <div className='flex flex-col items-center'>
             <div className='w-[270px] h-[80px]'>
@@ -212,7 +213,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                   }
                 }}
                 onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-                className='w-full block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+                className='w-full block border-2 border-gray-900 bg-white rounded-[20px] pl-[10px] h-[36px]'
                 defaultValue={employeeToUpdate?.street}
               />
             </div>
@@ -235,7 +236,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                   }
                 }}
                 onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-                className='w-full block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+                className='w-full block border-2 border-gray-900 bg-white rounded-[20px] pl-[10px] h-[36px]'
                 defaultValue={employeeToUpdate?.city}
               />
             </div>
@@ -256,7 +257,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                     setEmptyFields(prev => [...prev, 'state'])
                   }
                 }}
-                className='w-full block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+                className='w-full block border-2 border-gray-900 bg-white rounded-[20px] pl-[10px] h-[36px]'
                 defaultValue={employeeToUpdate?.state}
               >
                 {Object.values(USStates).map((state: string, index: number) => (
@@ -286,7 +287,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                   }
                 }}
                 onInput={(e) => handleInput(e as React.ChangeEvent<HTMLInputElement>)}
-                className='w-full block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+                className='w-full block border-2 border-gray-900 bg-white rounded-[20px] pl-[10px] h-[36px]'
                 defaultValue={String(employeeToUpdate?.zipCode)}
               />
             </div>
@@ -303,7 +304,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                 setEmptyFields(prev => [...prev, 'department'])
               }
             }}
-            className='block border-2 border-[#105924]/80 bg-white rounded-[5px] pl-[5px] h-[36px]'
+            className='block border-2 border-gray-900 bg-white rounded-[20px] px-[10px] h-[36px]'
             defaultValue={employeeToUpdate?.department}
           >
             <option disabled value="">Select a department</option>

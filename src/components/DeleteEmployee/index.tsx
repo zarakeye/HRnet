@@ -15,22 +15,15 @@ interface DeleteEmployeeProps {
   setDisplayDeleteModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-
 /**
- * Component that renders a modal to delete an employee from the store.
- * The modal renders a form with a single input field to input a specific text to confirm the deletion.
- * The form also renders a checkbox to confirm that the user understand that the deletion is irreversible.
- * If the input is correct, the employee is deleted from the store and the result modal is displayed with a success message.
- * If the input is incorrect, the result modal is displayed with an error message.
- * If the employee is not found in the store, the result modal is displayed with an error message.
- * The component uses the useEmployeeStore hook to fetch the employees from the store and the deleteEmployee function to delete the employee.
- * The component uses the useState hook to track the state of the deleting modal and the result modal.
- * The component uses the useEffect hook to track the state of the deleting modal and display the result modal accordingly.
- * The component uses the navigate hook to navigate to the homepage if the deletion is successful.
+ * Component that renders a modal to confirm the deletion of an employee.
+ * The modal prompts the user to type a specific text in order to confirm the deletion.
+ * If the user does not type the correct text, the modal displays an error message and does not close.
+ * If the user types the correct text, the component removes the employee from the store and displays a success message.
+ * If the deletion is successful, the component navigates to the homepage.
  * @param id The id of the employee to delete.
- * @param displayDeleteModal The boolean state of the delete modal.
- * @param setDisplayDeleteModal The function to set the state of the delete modal.
- * @returns The JSX element of the DeleteEmployee component.
+ * @param displayDeleteModal A boolean that indicates whether the modal should be displayed or not.
+ * @param setDisplayDeleteModal A function that sets the boolean value of displayDeleteModal.
  */
 function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteEmployeeProps): JSX.Element {
   const navigate = useNavigate();
@@ -42,15 +35,15 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
   const [deletionError, setDeletionError] = useState<boolean | null>(null);
   const [badInput, setBadInput] = useState<boolean>(false);
   const employee = employees.find((employee) => employee.id === id);
-  
+
   /**
-   * Handles the form submission for deleting an employee.
-   * Checks if the input text matches the expected deletion phrase and whether the user agrees with the irreversible action.
-   * If the input is correct and the agreement checkbox is checked, the function proceeds to delete the employee from the store.
-   * Displays result modals with error messages if the employee is not found or if the input is incorrect.
-   * Sets the deleting state to true when deletion is in process, and updates the bad input state when input validation fails.
-   * 
-   * @param values - The form field values containing the delete phrase and agreement checkbox state.
+   * Handles the submission of the deletion form.
+   * Verifies if the input text matches the required deletion confirmation format.
+   * Checks if the user has agreed to the irreversible deletion.
+   * If the employee exists, deletes the employee from the store.
+   * If the employee does not exist, sets an error state and displays an error message.
+   * If the input is incorrect or the agreement checkbox is not checked, sets a bad input state.
+   * @param values The form values containing the delete confirmation text and agreement checkbox.
    */
   const handleSubmit: FormProps<FieldType>['onFinish'] = (values) => {
     if (values.delete === `DELETE ${employee?.id} ${employee?.startDate}`) {
@@ -72,9 +65,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
   }
 
   /**
-   * Handles the close event of the result modal.
-   * Resets the deleting state and the input validation state.
-   * Resets the error state.
+   * Closes the result modal and resets the state of the DeleteEmployee component.
    * If the deletion was successful, navigates to the homepage.
    */
   const handleResultModalClose = () => {

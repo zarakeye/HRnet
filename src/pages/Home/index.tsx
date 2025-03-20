@@ -152,6 +152,7 @@ function Home(): JSX.Element {
               evenRowBackgroundColor: 'bg-gray-300 hover:bg-gray-700',
               paddingX: 'px-[15px]',
               paddingT: 'pt-0',
+              textColor: 'text-white'
             }
           }}
         />

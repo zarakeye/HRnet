@@ -1,7 +1,7 @@
-import { Button, DatePicker, Modal } from "antd";
+import { Button, DatePicker, Modal, Select } from "antd";
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/store';
 import { Employee, USStates } from '../../common/types';
@@ -24,7 +24,9 @@ function CreateEmployee (): JSX.Element {
   const addEmployee = useEmployeeStore(state => state.addEmployee);
   const employees = useEmployeeStore(state => state.employees);
   const navigate = useNavigate();
-  const defaultState = Object.values(USStates)[0];
+  const [states, setStates] = useState<Array<{label: string, value: string}>>([]);
+  // const defaultState = Object.values(USStates)[0];
+
   const [formData, setFormData] = useState<Employee>({
     id: '',
     firstName: '',
@@ -33,12 +35,29 @@ function CreateEmployee (): JSX.Element {
     startDate: dayjs(Date.now()).format('YYYY-MM-DD'),
     street: '',
     city: '',
-    state: defaultState,
+    state: '',
     zipCode: '00000',
     department: ''
   });
   const [submitting, setSubmitting] = useState<boolean>(false)
   const [emptyFields, setEmptyFields] = useState<Array<keyof Employee>>([])
+
+  /**
+   * Handles the selection of a state from the dropdown.
+   * Updates the formData state with the selected state value.
+   * @param value The value of the selected state.
+   */
+  const handleStateSelect = (value: string/*, option: {label: string, value: string}*/): void => {
+    setFormData(prev => ({...prev, state: value}))
+  }
+
+  /**
+   * Updates the formData state with the value from the department dropdown.
+   * @param value The value of the selected department.
+   */
+  const handleDepartmentChange = (value: string): void => {
+    setFormData(prev => ({...prev, department: value}))
+  }
 
   /**
    * Updates the formData state with the value from the input element.
@@ -116,12 +135,33 @@ function CreateEmployee (): JSX.Element {
     setSubmitting(false);
   }
 
+  const formRef = useRef<HTMLFormElement>(null);
+
   /**
    * Closes the confirmation modal and navigates to the homepage.
    */
   const handleModalClick = () => {
-    setCreationSuccess(false);
-    navigate('/');
+    // setCreationSuccess(false);
+    // navigate('/');
+    setCreationSuccess(null);
+
+    // if (formRef.current) {
+    //   formRef.current.reset();
+    // }
+
+    setFormData({
+      id: '',
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
+      startDate: dayjs(Date.now()).format('YYYY-MM-DD'),
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '00000',
+      department: ''
+    });
+    setEmptyFields([]);
   }
 
   useEffect(() => {
@@ -130,12 +170,21 @@ function CreateEmployee (): JSX.Element {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employees])
 
+  useEffect(() => {
+    const statesArray = Object.values(USStates).map(state => ({
+      label: state,
+      value: state
+    }));
+
+    setStates(statesArray);
+  }, [])
+
   return (
     <main className="mt-[250px] mb-[100px]">
       <div className="bg-gray-300 rounded-[80px] w-[500px] mt-[25px]">
         <h2 className='text-center bg-gray-900 text-white font-bold text-4xl py-[25px] rounded-t-[80px]'>Create an Employee</h2>
         <div className='flex flex-col items-center justify-center pt-[25px] pb-[50px] border-b-2 border-x-2 border-gray-900 rounded-b-[80px]'>
-          <form onSubmit={handleSubmit} >
+          <form ref={formRef} onSubmit={handleSubmit} >
             <div className="flex flex-col gap-[15px]">
               <div className='w-auto'>
                 <div className='px-[15px] py-[5px] bg-gray-900 border-2 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
@@ -148,6 +197,7 @@ function CreateEmployee (): JSX.Element {
                     type="text"
                     id="firstName"
                     placeholder="first name"
+                    value={formData.firstName}
                     onChange={handleChange}
                     className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
                   />
@@ -164,6 +214,7 @@ function CreateEmployee (): JSX.Element {
                   type="text"
                   id="lastName"
                   placeholder="Doe"
+                  value={formData.lastName}
                   onChange={handleChange}
                   className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
                 />
@@ -175,15 +226,24 @@ function CreateEmployee (): JSX.Element {
                 </div>
 
                 <label htmlFor="dateOfBirth" className='block text-white font-bold'>Date of Birth</label>
-                <DatePicker
-                  id="dateOfBirth"
-                  name='dateOfBirth'
-                  inputReadOnly= {true}
-                  onChange={e => handleChange(e, 'dateOfBirth')}
-                  maxDate={dayjs().subtract(18, 'year')}
-                  style={{border: 'none', backgroundColor: 'transparent', color: 'white', padding: '5px'}}
-                  popupClassName="text-white "
-                />
+                <div className="rounded-[10px] bg-gray-900 border-gray-500 hover:shadow-[0_0_7px_0px_#7f7fbe]">
+                  <DatePicker
+                    id="dateOfBirth"
+                    name='dateOfBirth'
+                    inputReadOnly= {true}
+                    onChange={e => handleChange(e, 'dateOfBirth')}
+                    maxDate={dayjs().subtract(18, 'year')}
+                    value={formData.dateOfBirth ? dayjs(formData.dateOfBirth) : null}
+                    style={{
+                      border: 'none',
+                      backgroundColor: 'transparent',
+                      color: 'white',
+                      padding: '5px',
+                      width: '100%'
+                    }}
+                    popupClassName="text-white "
+                  />
+                </div>
               </div>
 
               <div className='px-[15px] pt-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] h-[78px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
@@ -192,21 +252,23 @@ function CreateEmployee (): JSX.Element {
                 </div>
 
                 <label htmlFor="startDate" className='block text-white font-bold'>Date of beginning</label>
-                <DatePicker
-                  id="startDate"
-                  name='startDate'
-                  inputReadOnly= {true}
-                  defaultValue={dayjs()}
-                  onChange={e => handleChange(e, 'startDate')}
-                  maxDate={dayjs()}
-                  style={{
-                    border: 'none',
-                    backgroundColor: 'transparent',
-                    color: 'white',
-                    padding: '5px',
-                  }}
-                  className="datepicker"
-                />
+                <div className="rounded-[10px] bg-gray-900 border-gray-500 hover:shadow-[0_0_7px_0px_#7f7fbe]">
+                  <DatePicker
+                    id="startDate"
+                    name='startDate'
+                    inputReadOnly= {true}
+                    defaultValue={dayjs()}
+                    onChange={e => handleChange(e, 'startDate')}
+                    maxDate={dayjs()}
+                    style={{
+                      border: 'none',
+                      backgroundColor: 'transparent',
+                      color: 'white',
+                      padding: '5px',
+                      width: '100%',
+                    }}
+                  />
+                </div>
               </div>
               
               <fieldset className="flex flex-col gap-[10px] border-2 border-gray-500 rounded-[12px] p-[10px]">
@@ -221,6 +283,7 @@ function CreateEmployee (): JSX.Element {
                   <input
                     id="street"
                     type="text"
+                    value={formData.street}
                     onChange={handleChange}
                     className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
                     placeholder="No Where Street"
@@ -236,6 +299,7 @@ function CreateEmployee (): JSX.Element {
                   <input
                     id="city"
                     type="text"
+                    value={formData.city}
                     onChange={handleChange}
                     className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
                     placeholder='Notown City'
@@ -248,16 +312,24 @@ function CreateEmployee (): JSX.Element {
                   </div>
 
                   <label htmlFor="state" className='block text-white font-bold'>State</label>
-                  <select
-                    id="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
-                  >
-                  {Object.values(USStates).map((state: string, index: number) => (
-                    <option key={index} value={state} className="text-black">{state}</option>
-                  ))}
-                  </select>
+                  <div className="rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]">
+                    <Select
+                      id="state"
+                      showSearch
+                      placeholder="Select a state"
+                      value={formData.state.length ? formData.state : null}
+                      onChange={handleStateSelect}
+                      style={{
+                        width: '100%',
+                        height: '40px',
+                      }}
+                      dropdownStyle={{
+                        color: 'white',
+                        border: '2px solid #99a1af'
+                      }}
+                      options={states}
+                    />
+                  </div>
                 </div>
 
                 <div className='px-[15px] py-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
@@ -279,17 +351,42 @@ function CreateEmployee (): JSX.Element {
                 </div>
 
                 <label htmlFor="department" className='block text-white font-bold'>Department</label>
-                <select
-                  id="department"
-                  onChange={handleChange}
-                  className='block text-white  h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'
-                >
-                  <option value="" className="text-black" >Select a department</option>
-                  <option value="Sales" className="text-black" >Sales</option>
-                  <option value="Engineering" className="text-black" >Engineering</option>
-                  <option value="Human Resources" className="text-black" >Human Resources</option>
-                  <option value="Legal" className="text-black" >Legal</option>
-                </select>
+                <div className="rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]">
+                  <Select
+                    id="department"
+                    showSearch
+                    placeholder="Select a department"
+                    optionFilterProp="label"
+                    value={formData.department.length ? formData.department : null}
+                    onChange={handleDepartmentChange}
+                    style={{
+                      width: '100%',
+                      height: '40px',
+                    }}
+                    dropdownStyle={{
+                      color: 'white',
+                      border: '2px solid #99a1af'
+                    }}
+                    options={[
+                      {
+                        value: 'Sales',
+                        label: 'Sales',
+                      },
+                      {
+                        value: 'Engineering',
+                        label: 'Engineering',
+                      },
+                      {
+                        value: 'Human Resources',
+                        label: 'Human Resources',
+                      },
+                      {
+                        value: 'Legal',
+                        label: 'Legal',
+                      },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
 
@@ -315,10 +412,33 @@ function CreateEmployee (): JSX.Element {
             open={creationSuccess === true}
             centered
             footer={[
-              <Button key="submit" type="primary" style={{ backgroundColor: 'oklch(0.577 0.245 27.325)' }} onClick={handleModalClick}>
-                OK
-              </Button>,
+                <Button
+                  key="back"
+                  onClick={() => navigate('/')}
+                  style={{
+                    backgroundColor: '#105924',
+                    color: 'white'
+                  }}
+                >
+                  Back to employees list
+                </Button>,
+                <Button
+                  key="submit"
+                  type="primary"
+                  style={{
+                    backgroundColor: 'oklch(0.577 0.245 27.325)',
+                    color: 'white'
+                  }}
+                  onClick={handleModalClick}
+                >
+                  OK
+                </Button>,
+
             ]}
+
+            style={{
+              color: 'white'
+            }}
           >
             <p className='text-center'>Employee created successfully</p>
           </Modal>

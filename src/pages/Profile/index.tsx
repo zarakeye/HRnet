@@ -30,24 +30,24 @@ function Profile(): JSX.Element {
           <h2 className='flex-1 text-3xl bg-gray-900 border-2 border-gray-900 text-center text-white font-bold p-[40px] rounded-t-[80px]'><span className='sr-only'>Profile of </span>{employee?.firstName} {employee?.lastName.toUpperCase()}</h2>
 
           <div className={`border-gray-900 `}>
-            <div className='pl-[70px] pt-[40px]'>
-                <p className='font-bold text-[#105924]'>Identifier:</p>
+            <div className='pl-[70px] py-[40px]'>
+                <p className='font-bold text-gray-900'>Identifier:</p>
                 <p className='pl-[10px]'>{employee?.id}</p>
             </div>
 
             <div hidden={updating} className='border-b-2 border-gray-900 rounded-b-[80px]' >
-              <div className='pl-[70px] mt-[25px] mb-[25px]'>
-                <p className='font-bold text-[#105924]'>Date of Birth:</p>
+              <div className='pl-[70px] mb-[40px]'>
+                <p className='font-bold text-gray-900'>Date of Birth:</p>
                 <p className='pl-[10px]'>{employee?.dateOfBirth}</p>
               </div>
 
-              <div className='pl-[70px] mb-[25px]'>
-                  <p className='font-bold text-[#105924]'>Start Date:</p>
+              <div className='pl-[70px] mb-[40px]'>
+                  <p className='font-bold text-gray-900'>Start Date:</p>
                   <p  className='pl-[10px]'>{employee?.startDate}</p>
               </div>
 
-              <div className='pl-[70px] mb-[25px]'>
-                <p className='font-bold text-[#105924]'>Address:</p>
+              <div className='pl-[70px] mb-[40px]'>
+                <p className='font-bold text-gray-900'>Address:</p>
                 <p className='pl-[20px]'>{employee?.street}</p>
                 <p className='pl-[20px]'>{employee?.city}</p>
                 <p className='pl-[20px]'>{employee?.state}</p>
@@ -55,7 +55,7 @@ function Profile(): JSX.Element {
               </div>
 
               <div className='pl-[70px] mb-[25px]'>
-                <p className='font-bold text-[#105924]'>Department:</p>
+                <p className='font-bold text-gray-900'>Department:</p>
                 <p className='pl-[20px]'>{employee?.department}</p>
               </div>
 
@@ -63,8 +63,8 @@ function Profile(): JSX.Element {
                 <button type="button" className='bg-[#105924] hover:bg-[#105924]/80 hover:shadow-[0_0_7px_1px_#7f7fbe] text-white font-bold rounded-[20px] px-[15px] py-[8px] mt-[25px] mb-[40px] cursor-pointer' onClick={() => setUpdating(true)/*navigate(`/update-employee/${employee?.id}`)*/}>
                   Update
                 </button>
-                <button type="button" className='flex px-[10px] pb-[50px] font-bold text-[#105924] cursor-pointer' onClick={() => navigate('/')}>
-                  <svg className='inline-block' xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#105924"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg> Back to the list of employees
+                <button type="button" className='flex px-[10px] pb-[50px] font-bold text-gray-900 cursor-pointer' onClick={() => navigate('/')}>
+                  <svg className='inline-block' xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#101828"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg> Back to the list of employees
                 </button>
               </div>
             </div>

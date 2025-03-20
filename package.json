@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/cssinjs": "^1.23.0",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@types/uuid": "^10.0.0",
@@ -18,8 +19,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.2",
-    "react-ts-tab-lib": "^1.6.11",
-    "rsuite": "^5.78.0",
+    "react-ts-tab-lib": "^1.6.13",
     "uuid": "^11.0.5",
     "zustand": "^5.0.3"
   },
@@ -37,6 +37,8 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^15.14.0",
+    "less": "^4.2.2",
+    "less-loader": "^12.2.0",
     "rollup-plugin-visualizer": "^5.14.0",
     "tailwindcss": "4.0.0",
     "terser": "^5.39.0",

@@ -5,10 +5,8 @@ import type { Employee } from '../../common/types';
 interface EmployeesState {
   employees: Employee[];
   addEmployee: (employee: Employee) => void;
-  addEmployees: (employees: Employee[]) => void;
   updateEmployee: (employee: Employee) => void;
   removeEmployee: (id: string) => void;
-  resetEmployeesList: () => void;
 }
 
 const useEmployeeStore = create<EmployeesState>()(
@@ -16,10 +14,8 @@ const useEmployeeStore = create<EmployeesState>()(
     (set) => ({
       employees: [],
       addEmployee: (employee: Employee) => set((state) => ({ employees: [...state.employees, employee] })),
-      addEmployees: (employees: Employee[]) => set((state) => ({ employees: [...state.employees, ...employees] })),
       updateEmployee: (employee: Employee) => set((state) => ({ employees: state.employees.map((e) => e.id === employee.id ? employee : e) })),
       removeEmployee: (id: string) => set((state) => ({ employees: state.employees.filter((employee) => employee.id !== id) })),
-      resetEmployeesList: () => set({ employees: [] }),
     }),
   )
 );

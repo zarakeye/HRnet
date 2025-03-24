@@ -47,7 +47,7 @@ function CreateEmployee (): JSX.Element {
    * Updates the formData state with the selected state value.
    * @param value The value of the selected state.
    */
-  const handleStateSelect = (value: string/*, option: {label: string, value: string}*/): void => {
+  const handleStateSelect = (value: string): void => {
     setFormData(prev => ({...prev, state: value}))
   }
 
@@ -76,10 +76,10 @@ function CreateEmployee (): JSX.Element {
       targetValue = (e as Dayjs)?.format('YYYY-MM-DD') || '';
     } else {
       targetId = (e as React.ChangeEvent<HTMLInputElement>).target.id as keyof Employee;
-      targetValue = (e as React.ChangeEvent<HTMLInputElement>).target.value;
+      targetValue = sanitize((e as React.ChangeEvent<HTMLInputElement>).target.value.trim());
     }
 
-    setFormData(prev => ({...prev, [targetId]: targetValue}))
+    setFormData(prev => ({...prev, [targetId]: sanitize(targetValue.trim())}))
 
     if (emptyFields.includes(targetId)) {
       setEmptyFields(prev => prev.filter(field => field !== targetId))
@@ -115,15 +115,15 @@ function CreateEmployee (): JSX.Element {
     if (validateEmployeeFormData(formData)) {
       const newEmployee: Employee = {
         id: Date.now().toString(),
-        firstName: sanitize(formData.firstName.trim()),
-        lastName: sanitize(formData.lastName.trim()),
-        dateOfBirth: sanitize(formData.dateOfBirth.trim()),
-        startDate: sanitize(formData.startDate.trim()),
-        street: sanitize(formData.street.trim()),
-        city: sanitize(formData.city.trim()),
-        state: sanitize(formData.state.trim()),
-        zipCode: sanitize(formData.zipCode.trim()),
-        department: sanitize(formData.department.trim())
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dateOfBirth: formData.dateOfBirth,
+        startDate: formData.startDate,
+        street: formData.street,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        department: formData.department
       };
 
       setEmployeeFormData(newEmployee)
@@ -141,13 +141,7 @@ function CreateEmployee (): JSX.Element {
    * Closes the confirmation modal and navigates to the homepage.
    */
   const handleModalClick = () => {
-    // setCreationSuccess(false);
-    // navigate('/');
     setCreationSuccess(null);
-
-    // if (formRef.current) {
-    //   formRef.current.reset();
-    // }
 
     setFormData({
       id: '',
@@ -166,7 +160,11 @@ function CreateEmployee (): JSX.Element {
 
   useEffect(() => {
     const employeeisAdded = employees.some(employee => employee.id === employeeFormData?.id);
-    if (employeeisAdded) setCreationSuccess(true);
+    if (employeeisAdded) {
+      setCreationSuccess(true);
+    } else {
+      setCreationSuccess(false)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employees])
 
@@ -393,14 +391,14 @@ function CreateEmployee (): JSX.Element {
             <div className='flex mt-[50px] gap-[15px] justify-center'>
               <button
                 type='submit'
-                className='bg-[#105924]/80 hover:bg-[#105924] text-white font-bold rounded-[20px] px-[15px] py-[8px] hover:shadow-[0_0_7px_2px_#00c700]'
+                className='bg-[#105924]/80 hover:bg-[#105924] text-white font-bold rounded-[20px] px-[15px] py-[8px] hover:shadow-[0_0_7px_1px_#7f7fbe]'
               >
                 Save
               </button>
               
               <button
                 type='reset'
-                className='bg-[#105924]/80 hover:bg-[#105924] text-white font-bold rounded-[20px] px-[15px] py-[8px] hover:shadow-[0_0_7px_2px_#00c700]'
+                className='bg-[#105924]/80 hover:bg-[#105924] text-white font-bold rounded-[20px] px-[15px] py-[8px] hover:shadow-[0_0_7px_1px_#7f7fbe]'
                 onClick={() => navigate('/')}
               >
                 Cancel
@@ -417,32 +415,37 @@ function CreateEmployee (): JSX.Element {
                   onClick={() => navigate('/')}
                   style={{
                     backgroundColor: '#105924',
-                    color: 'white'
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '20px',
+                    padding: '0 15px'
                   }}
                 >
                   Back to employees list
                 </Button>,
                 <Button
                   key="submit"
-                  type="primary"
                   style={{
-                    backgroundColor: 'oklch(0.577 0.245 27.325)',
-                    color: 'white'
+                    backgroundColor: '#B30000',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '20px',
+                    padding: '0 15px'
                   }}
                   onClick={handleModalClick}
                 >
-                  OK
+                  Create another employee
                 </Button>,
 
             ]}
-
+            closeIcon={false}
+            
             style={{
               color: 'white'
             }}
           >
             <p className='text-center'>Employee created successfully</p>
           </Modal>
-
         </div>
       </div>
     </main>

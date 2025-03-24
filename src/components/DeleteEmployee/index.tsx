@@ -178,7 +178,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
           <Button
             key="submit"
             type="primary"
-            style={{ backgroundColor: 'oklch(0.577 0.245 27.325)' }}
+            style={{ backgroundColor: '#B30000' }}
             onClick={handleResultModalClose}
           >
             OK

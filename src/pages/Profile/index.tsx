@@ -1,4 +1,4 @@
-import React, { /*Suspense,*/ useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/store';
 const DeleteEmployee = React.lazy(() => import('../../components/DeleteEmployee'));
@@ -88,13 +88,11 @@ function Profile(): JSX.Element {
       </div>
 
       {id && (
-        // <Suspense fallback={<div>Loading...</div>}>
-          <DeleteEmployee 
-            id={id}
-            displayDeleteModal={displayDeleteModal}
-            setDisplayDeleteModal={setDisplayDeleteModal}
-          />
-        // </Suspense>
+        <DeleteEmployee 
+          id={id}
+          displayDeleteModal={displayDeleteModal}
+          setDisplayDeleteModal={setDisplayDeleteModal}
+        />
       )}
     </main>
   )

@@ -26,7 +26,7 @@ function Home(): JSX.Element {
    * @param dateString A string representation of a date.
    * @returns A ReactNode containing the formatted date.
    */
-  function dateRenderer(dateString: string):ReactNode {
+  function renderDate(dateString: string):ReactNode {
     const date = new Date(dateString);
     
     return (
@@ -44,19 +44,19 @@ function Home(): JSX.Element {
       property: 'lastName',
       displayName: 'Last Name',
       type: 'string',
-      renderer: (value: string | number | null) => value && String(value).toUpperCase()
+      render: (value: string | number | null) => value && String(value).toUpperCase()
     },
     {
       property: 'dateOfBirth',
       displayName: 'Birth date',
       type: 'date',
-      renderer: (value: string | number | null) => value && dateRenderer(String(value))
+      render: (value: string | number | null) => value && renderDate(String(value))
     },
     {
       property: 'startDate',
       displayName: 'Start date',
       type: 'date',
-      renderer: (value: string | number | null) =>  value && dateRenderer(String(value))
+      render: (value: string | number | null) =>  value && renderDate(String(value))
     },
     {
       property: 'street',
@@ -131,7 +131,7 @@ function Home(): JSX.Element {
               padding: 'py-[5px]',
               margin: 'mb-[10px]',
             },
-            samplingOptions: {
+            rangeLengthOptions: {
               buttonBackgroundColor: 'bg-gray-800 hover:bg-gray-600 hover:shadow-[0_0_7px_1px_#7f7fbe]',
               buttonBorder: 'border-2',
               buttonBorderColor: 'border-gray-300',

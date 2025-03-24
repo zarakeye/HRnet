@@ -11,7 +11,6 @@ const theme = {
   token: {
     colorBgBase: '#101828',
     colorBgContainer: '#101828',
-    // colorBgElevated: '#101828',
   },
   components: {
     Select: {
@@ -53,7 +52,7 @@ const theme = {
       panelBg: '#fff',
     },
     Modal: {
-      
+      contentBg: '#99a1af'
     }
   }
 }

@@ -300,21 +300,6 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
               </div>
 
               <label htmlFor="state" className='w-full block text-white font-bold'>State</label>
-              {/* <select
-                id="state"
-                onChange={handleChange}
-                onBlur={e => {
-                  if (!e.target.value) {
-                    setEmptyFields(prev => [...prev, 'state'])
-                  }
-                }}
-                className='w-full block border-2 border-gray-900 text-white rounded-[20px] pl-[10px] h-[36px]'
-                defaultValue={employeeToUpdate?.state}
-              >
-                {Object.values(USStates).map((state: string, index: number) => (
-                  <option key={index} value={state}>{state}</option>
-                ))}
-              </select> */}
 
               <div className="rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] w-[270px]">
                 <Select
@@ -368,24 +353,6 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
 
         <div className='mb-[25px] px-[10px] pt-[24px] h-[100px] bg-gray-900 rounded-[10px]'>
           <label htmlFor="department" className='block text-white font-bold'>Department</label>
-          {/* <select
-            id="department"
-            onChange={e => setFormData({ ...formData, department: e.target.value })}
-            onBlur={e => {
-              if (!e.target.value) {
-                setEmptyFields(prev => [...prev, 'department'])
-              }
-            }}
-            className='w-full block border-2 border-gray-900 text-white rounded-[20px] px-[10px] h-[36px]'
-            defaultValue={employeeToUpdate?.department}
-          >
-            <option disabled value="">Select a department</option>
-            <option value="Sales">Sales</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Human Resources">Human Resources</option>
-            <option value="Legal">Legal</option>
-          </select> */}
-
           <div className="rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]">
             <Select
               id="department"

@@ -160,8 +160,8 @@ function Home(): JSX.Element {
       
             },
             rows: {
-              oddRowBackgroundColor: 'bg-gray-400 hover:bg-gray-600',
-              evenRowBackgroundColor: 'bg-gray-500 hover:bg-gray-600',
+              oddRowBackgroundColor: 'bg-gray-500 hover:bg-gray-700',
+              evenRowBackgroundColor: 'bg-gray-600 hover:bg-gray-700',
               paddingX: 'px-[15px]',
               paddingT: 'pt-0',
               textColor: 'text-white hover:text-black',

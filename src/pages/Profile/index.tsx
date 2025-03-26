@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, lazy } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/store';
-import DeleteEmployee from '../../components/DeleteEmployee';
-import UpdateEmployee from '../../components/UpdateEmployee';
+
+const DeleteEmployee = lazy(() => import('../../components/DeleteEmployee'));
+const UpdateEmployee = lazy(() => import('../../components/UpdateEmployee'));
+
 
 /**
  * Component for displaying the profile of an employee within the application.

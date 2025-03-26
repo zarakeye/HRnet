@@ -115,7 +115,18 @@ function Home(): JSX.Element {
             order: 'asc'
           }}
           textContent={{
-            searchPlaceholder: "Search..."
+            searchPlaceholder: "Search...",
+            sampleLabelPrefix: 'Affiche ',
+            sampleLabelSuffix: ' employés par page',
+            emptyTableText: 'Aucun employé',
+            rangeInfoText: {
+              showEntries_altText: 'Affichage des employés ',
+              to_altText: ' à ',
+              of_altText: ' sur ',
+              entries_altText: ''
+            },
+            previousPageButtonLabel: 'Page précédente',
+            nextPageButtonLabel: 'Page suivante'
           }}
           classNames={{
             tableBorders: 'border-2 border-gray-300',
@@ -131,11 +142,12 @@ function Home(): JSX.Element {
               padding: 'py-[5px]',
               margin: 'mb-[10px]',
             },
+            rangeOptionsAndSearchBarArea: 'lg:flex-row',
             rangeLengthOptions: {
               buttonBackgroundColor: 'bg-gray-800 hover:bg-gray-600 hover:shadow-[0_0_7px_1px_#7f7fbe]',
               buttonBorder: 'border-2',
               buttonBorderColor: 'border-gray-300',
-              buttonPadding: 'px-[20px]',
+              buttonPadding: 'px-[20px] py-[5px]',
             },
             searchBar: {
               label: "sr-only",
@@ -148,11 +160,11 @@ function Home(): JSX.Element {
       
             },
             rows: {
-              oddRowBackgroundColor: 'bg-gray-500 hover:bg-gray-600',
-              evenRowBackgroundColor: 'bg-gray-300 hover:bg-gray-700',
+              oddRowBackgroundColor: 'bg-gray-400 hover:bg-gray-600',
+              evenRowBackgroundColor: 'bg-gray-500 hover:bg-gray-600',
               paddingX: 'px-[15px]',
               paddingT: 'pt-0',
-              textColor: 'text-white'
+              textColor: 'text-white hover:text-black',
             }
           }}
         />

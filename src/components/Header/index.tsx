@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/WealthHealth_Logo.avif';
+import logo from '../../assets/logo.webp';
 
 /**
  * A React component that renders a header with the WealthHealth logo and the title "HRnet".
@@ -11,7 +11,7 @@ function Header (): JSX.Element {
   return (
     <header className='w-full fixed flex flex-row items-end flex-1 bg-transparent backdrop-blur-md py-[20px] pl-[20px] z-10'>
       <figure className='flex flex-col items-center justify-center bg-white mr-[20px]'>
-        <img src={logo} alt="WealthHealth Logo" className='h-[70px] cursor-pointer' onClick={() => navigate('/')} />
+        <img src={logo} alt="WealthHealth Logo" className='h-[70px] w-[70.67px] cursor-pointer' onClick={() => navigate('/')} />
         <figcaption className='font-bold text-[#5B7006]'>
           <span className='font-league-spartan-500 text-[15px]'>W</span>
           <span className='font-league-spartan-500 text-[10px]'>EALTH</span>

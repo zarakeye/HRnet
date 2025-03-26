@@ -25,7 +25,6 @@ function CreateEmployee (): JSX.Element {
   const employees = useEmployeeStore(state => state.employees);
   const navigate = useNavigate();
   const [states, setStates] = useState<Array<{label: string, value: string}>>([]);
-  // const defaultState = Object.values(USStates)[0];
 
   const [formData, setFormData] = useState<Employee>({
     id: '',
@@ -211,7 +210,7 @@ function CreateEmployee (): JSX.Element {
                 <input
                   type="text"
                   id="lastName"
-                  placeholder="Doe"
+                  placeholder="Last name"
                   value={formData.lastName}
                   onChange={handleChange}
                   className='block text-white placeholder:text-gray-400 h-[40px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
@@ -228,6 +227,7 @@ function CreateEmployee (): JSX.Element {
                   <DatePicker
                     id="dateOfBirth"
                     name='dateOfBirth'
+                    format="DD-MM-YYYY"
                     inputReadOnly= {true}
                     onChange={e => handleChange(e, 'dateOfBirth')}
                     maxDate={dayjs().subtract(18, 'year')}
@@ -254,6 +254,7 @@ function CreateEmployee (): JSX.Element {
                   <DatePicker
                     id="startDate"
                     name='startDate'
+                    format="DD-MM-YYYY"
                     inputReadOnly= {true}
                     defaultValue={dayjs()}
                     onChange={e => handleChange(e, 'startDate')}

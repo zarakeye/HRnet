@@ -1,11 +1,11 @@
+import { ConfigProvider } from 'antd'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
-import './index.css'
 import App from './app/App'
 import Container from './components/Container'
 import Header from './components/Header'
-import { ConfigProvider } from 'antd'
+import './index.css'
 
 const theme = {
   token: {
@@ -53,6 +53,10 @@ const theme = {
     },
     Modal: {
       contentBg: '#99a1af'
+    },
+    Checkbox: {
+      colorBgContainer: '#fff',
+      colorText: 'black'
     }
   }
 }

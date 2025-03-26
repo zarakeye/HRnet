@@ -98,13 +98,13 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
   return (
     <div>
       <Modal
-        title="Delete Employee"
         centered
+        closeIcon={false}
         open={displayDeleteModal}
         footer={null}
       >
-        <p className='text-red-500'>This action cannot be undone !!!</p>
-        <p className='text-red-500'>Are you sure you want to delete this employee ? If yes, please type "DELETE {employee?.id} {employee?.startDate}"</p>
+        <p className='text-red-500 mb-[10px]'>This action cannot be undone !!!</p>
+        <p className='text-red-500 mb-[10px]'>Are you sure you want to delete this employee ? If yes, please type "DELETE employee_id employee_startDate"</p>
 
         <Form
           layout='vertical'
@@ -115,7 +115,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
             rules={[
               {
                 required: true,
-                message: 'Please type "DELETE {employee?.id} {employee?.startDate} before submitting or cancel this action',
+                message: 'Please type "DELETE employee_id employee_startDate" before submitting or cancel this action',
               },
             ]}
           >
@@ -125,6 +125,13 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
                 if (e.target.value.trim() !== `DELETE ${employee?.id} ${employee?.startDate}`) {
                   setBadInput(true);
                 }
+              }}
+              style={{
+                backgroundColor: 'white',
+                border: 'none',
+                borderRadius: '20px',
+                padding: '0 15px',
+                height: '40px',
               }}
             />
           </Form.Item>
@@ -151,9 +158,11 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
               <Button
                 htmlType="submit"
                 style={{
-                  backgroundColor: 'red',
+                  backgroundColor: '#B30000',
                   color: 'white',
-                  marginRight: '10px',
+                  border: 'none',
+                  borderRadius: '20px',
+                  padding: '0 15px'
                 }}
               >
                 Delete
@@ -161,8 +170,15 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
 
               <Button
                 htmlType="button"
-                type="primary"
                 onClick={() =>  setDisplayDeleteModal(false)}
+                style={{
+                  backgroundColor: '#105924',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '20px',
+                  padding: '0 15px',
+                  marginLeft: '10px'
+                }}
               >
                 Cancel
               </Button>

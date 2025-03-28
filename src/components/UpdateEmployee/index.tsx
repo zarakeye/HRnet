@@ -78,23 +78,6 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
   }
 
   /**
-   * Handles the selection of a state from the dropdown.
-   * Updates the formData state with the selected state value.
-   * @param value The value of the selected state.
-   */
-  const handleStateSelect = (value: string/*, option: {label: string, value: string}*/): void => {
-    setFormData(prev => ({...prev, state: value}))
-  }
-
-  /**
-   * Updates the formData state with the value from the department dropdown.
-   * @param value The value of the selected department.
-   */
-  const handleDepartmentChange = (value: string): void => {
-    setFormData(prev => ({...prev, department: value}))
-  }
-
-  /**
    * Updates the emptyFields state when an input element has a value.
    * If the input element's id is in the emptyFields array and the value is not empty, the id is removed from the array.
    * @param e The input element's change event or a string or null.
@@ -307,7 +290,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                   showSearch
                   placeholder="Select a state"
                   value={formData.state.length ? formData.state : null}
-                  onChange={handleStateSelect}
+                  onChange={(value: string) => setFormData(prev => ({...prev, state: value.trim()}))}
                   style={{
                     width: '100%',
                     height: '40px',
@@ -360,7 +343,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
               placeholder="Select a department"
               optionFilterProp="label"
               value={formData.department.length ? formData.department : null}
-              onChange={handleDepartmentChange}
+              onChange={(value: string) => setFormData(prev => ({...prev, department: value.trim()}))}
               style={{
                 width: '100%',
                 height: '40px',

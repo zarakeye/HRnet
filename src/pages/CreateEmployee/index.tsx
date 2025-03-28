@@ -19,10 +19,10 @@ import validateEmployeeFormData from "../../tools/validateEmployeeFormData";
  * The component renders a modal to display a success message after submitting the form.
  */
 function CreateEmployee (): JSX.Element {
-  const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
-  const [employeeFormData, setEmployeeFormData] = useState<Employee | null>(null);
-  const addEmployee = useEmployeeStore(state => state.addEmployee);
   const employees = useEmployeeStore(state => state.employees);
+  const addEmployee = useEmployeeStore(state => state.addEmployee);
+  const [employeeFormData, setEmployeeFormData] = useState<Employee | null>(null);
+  const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const [states, setStates] = useState<Array<{label: string, value: string}>>([]);
 
@@ -42,30 +42,13 @@ function CreateEmployee (): JSX.Element {
   const [emptyFields, setEmptyFields] = useState<Array<keyof Employee>>([])
 
   /**
-   * Handles the selection of a state from the dropdown.
-   * Updates the formData state with the selected state value.
-   * @param value The value of the selected state.
-   */
-  const handleStateSelect = (value: string): void => {
-    setFormData(prev => ({...prev, state: value}))
-  }
-
-  /**
-   * Updates the formData state with the value from the department dropdown.
-   * @param value The value of the selected department.
-   */
-  const handleDepartmentChange = (value: string): void => {
-    setFormData(prev => ({...prev, department: value}))
-  }
-
-  /**
    * Updates the formData state with the value from the input element.
    * If the input element is a date picker, the value is formatted as 'YYYY-MM-DD'.
    * Checks if the input element corresponds to an empty field and removes it from the emptyFields array if it is not empty.
    * @param e The input element's change event, a Dayjs object, a string, or null.
    * @param dateId Optional key of the formData state to update when using a date picker.
    */
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement > | Dayjs | string | null, dateId?: keyof Employee) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement > | Dayjs | string | null, dateId?: keyof Employee) => {
     setSubmitting(false)
     let targetId: keyof Employee;
     let targetValue: string | number | null;
@@ -136,8 +119,10 @@ function CreateEmployee (): JSX.Element {
 
   const formRef = useRef<HTMLFormElement>(null);
 
+ 
   /**
-   * Closes the confirmation modal and navigates to the homepage.
+   * Resets the state of the CreateEmployee component when the modal is closed.
+   * Clears the creationSuccess state and resets the formData and emptyFields states.
    */
   const handleModalClick = () => {
     setCreationSuccess(null);
@@ -317,7 +302,7 @@ function CreateEmployee (): JSX.Element {
                       showSearch
                       placeholder="Select a state"
                       value={formData.state.length ? formData.state : null}
-                      onChange={handleStateSelect}
+                      onChange={(value: string) => setFormData(prev => ({...prev, state: value.trim()}))}
                       style={{
                         width: '100%',
                         height: '40px',
@@ -357,7 +342,7 @@ function CreateEmployee (): JSX.Element {
                     placeholder="Select a department"
                     optionFilterProp="label"
                     value={formData.department.length ? formData.department : null}
-                    onChange={handleDepartmentChange}
+                    onChange={(value: string) => setFormData(prev => ({...prev, department: value.trim()}))}
                     style={{
                       width: '100%',
                       height: '40px',

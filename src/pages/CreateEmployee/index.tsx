@@ -58,10 +58,10 @@ function CreateEmployee (): JSX.Element {
       targetValue = (e as Dayjs)?.format('YYYY-MM-DD') || '';
     } else {
       targetId = (e as React.ChangeEvent<HTMLInputElement>).target.id as keyof Employee;
-      targetValue = sanitize((e as React.ChangeEvent<HTMLInputElement>).target.value.trim());
+      targetValue = sanitize((e as React.ChangeEvent<HTMLInputElement>).target.value);
     }
 
-    setFormData(prev => ({...prev, [targetId]: sanitize(targetValue.trim())}))
+    setFormData(prev => ({...prev, [targetId]: sanitize(targetValue)}))
 
     if (emptyFields.includes(targetId)) {
       setEmptyFields(prev => prev.filter(field => field !== targetId))
@@ -97,15 +97,15 @@ function CreateEmployee (): JSX.Element {
     if (validateEmployeeFormData(formData)) {
       const newEmployee: Employee = {
         id: Date.now().toString(),
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        dateOfBirth: formData.dateOfBirth,
-        startDate: formData.startDate,
-        street: formData.street,
-        city: formData.city,
-        state: formData.state,
-        zipCode: formData.zipCode,
-        department: formData.department
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        dateOfBirth: formData.dateOfBirth.trim(),
+        startDate: formData.startDate.trim(),
+        street: formData.street.trim(),
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        zipCode: formData.zipCode.trim(),
+        department: formData.department.trim()
       };
 
       setEmployeeFormData(newEmployee)
@@ -302,7 +302,7 @@ function CreateEmployee (): JSX.Element {
                       showSearch
                       placeholder="Select a state"
                       value={formData.state.length ? formData.state : null}
-                      onChange={(value: string) => setFormData(prev => ({...prev, state: value.trim()}))}
+                      onChange={(value: string) => setFormData(prev => ({...prev, state: value}))}
                       style={{
                         width: '100%',
                         height: '40px',
@@ -342,7 +342,7 @@ function CreateEmployee (): JSX.Element {
                     placeholder="Select a department"
                     optionFilterProp="label"
                     value={formData.department.length ? formData.department : null}
-                    onChange={(value: string) => setFormData(prev => ({...prev, department: value.trim()}))}
+                    onChange={(value: string) => setFormData(prev => ({...prev, department: value}))}
                     style={{
                       width: '100%',
                       height: '40px',

@@ -12,13 +12,6 @@ export interface Employee {
   department: string;
 }
 
-export interface EmployeesState {
-  employees: Employee[];
-  addEmployee: (employee: Employee) => void;
-  removeEmployee: (id: string) => void;
-  resetEmployeesList: () => void;
-}
-
 export enum USStates {
   AL = "Alabama",
   AK = "Alaska",

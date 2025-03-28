@@ -215,7 +215,7 @@ function CreateEmployee (): JSX.Element {
                     format="DD-MM-YYYY"
                     inputReadOnly= {true}
                     onChange={e => handleChange(e, 'dateOfBirth')}
-                    maxDate={dayjs().subtract(18, 'year')}
+                    maxDate={dayjs()}
                     value={formData.dateOfBirth ? dayjs(formData.dateOfBirth) : null}
                     style={{
                       border: 'none',

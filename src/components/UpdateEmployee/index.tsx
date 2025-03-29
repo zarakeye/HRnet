@@ -81,8 +81,6 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
       targetValue = sanitize((e as React.ChangeEvent<HTMLInputElement>).target.value);
     }
 
-    console.log('targetValue', targetValue)
-
     if (type === 'string') {
       if (!isOnlyLetters(targetValue)) {
         if (!wrongValueType.includes(targetId)) {
@@ -162,7 +160,6 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
   useEffect(() => {
     if (isValidZipCode(zipCodeCandidate)) {
       setFormData(prev => ({...prev, zipCode: sanitize(zipCodeCandidate)}))
-      console.log('formData', formData)
     }
   }, [zipCodeCandidate])
 

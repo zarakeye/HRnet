@@ -171,7 +171,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
         }}
       >
         <div className=' flex flex-col gap-[15px]'>
-          <div className='w-[404px]'>
+          <div className='w-full'>
             <div className="flex items-center h-[29px]">
               {fieldsErrors.firstName && <p className='text-red-600 font-bold'>{fieldsErrors.firstName}</p>}
             </div>
@@ -196,7 +196,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
             </div>
           </div>
 
-          <div className="w-[404px]">
+          <div className="w-full">
             <div className="flex items-center h-[29px]">
               {fieldsErrors.lastName && <p className='text-red-600 font-bold'>{fieldsErrors.lastName}</p>}
             </div>
@@ -221,7 +221,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
             </div>
           </div>
 
-          <div className='w-[404px]'>
+          <div className='w-full'>
             <div className="flex items-center h-[29px]">
               {fieldsErrors.dateOfBirth && <p className='text-red-600 font-bold'>{fieldsErrors.dateOfBirth}</p>}
             </div>
@@ -250,7 +250,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
             </div>
           </div>
 
-          <div className='w-[404px]'>
+          <div className='w-full'>
             <div className='flex flex-col gap-[5px] px-[15px] pt-[5px] mt-[29px] border-2 bg-gray-900 border-gray-500 rounded-[10px] h-[82px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
               <label htmlFor="start-date" className='block text-white font-bold'>Start Date</label>
               <div className='rounded-[10px]  hover:shadow-[0_0_7px_0px_#7f7fbe]'>
@@ -279,7 +279,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
           <fieldset className="flex flex-col gap-[5px] border-2 border-gray-900 rounded-[20px] px-[25px] pb-[25px] mb-[25px]">
             <legend className="ml-[15px] p-[5px] text-gray-900 font-bold">Address</legend>
 
-            <div className="w-[360px]">
+            <div className="w-[380px]">
               <div className="flex items-center h-[29px]">
                 {fieldsErrors.street && <p className='text-red-600 font-bold'>{fieldsErrors.street}</p>}
               </div>
@@ -305,7 +305,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
               </div>
             </div>
 
-            <div className="w-[360px]">
+            <div className="w-[380px]">
               <div className="flex items-center h-[29px]">
                 {fieldsErrors.city && <p className='text-red-600 font-bold'>{fieldsErrors.city}</p>}
               </div>
@@ -331,14 +331,14 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
               </div>
             </div>
 
-            <div className='w-[360px]'>
+            <div className='w-[380px]'>
               <div className="flex items-center h-[29px]">
                 {fieldsErrors.state && <p className='text-red-600 font-bold'>{fieldsErrors.state}</p>}
               </div>
 
               <div className='flex flex-col gap-[5px] px-[15px] pt-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] h-[82px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
                 <label htmlFor="state" className='w-full block text-white font-bold'>State</label>
-                <div className="rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] w-[270px]">
+                <div className="w-full rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] w-[270px]">
                   <Select
                     id="state"
                     showSearch
@@ -362,7 +362,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
               </div>
             </div>
 
-            <div className='w-[360px]'>
+            <div className='w-[380px]'>
               <div className="flex items-center h-[29px]">
                 {fieldsErrors.zipCode && <p className='text-red-600 font-bold'>{fieldsErrors.zipCode}</p>}
               </div>
@@ -389,7 +389,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
             </div>
           </fieldset>
 
-          <div className='w-[404px]'>
+          <div className='w-full'>
             <div className='flex flex-col gap-[5px] w-full px-[15px] py-[5px] h-[82px] border-2 bg-gray-900 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
               <label htmlFor="department" className='block text-white font-bold'>Department</label>
               <div className="rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]">

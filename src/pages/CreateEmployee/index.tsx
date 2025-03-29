@@ -212,8 +212,7 @@ function CreateEmployee (): JSX.Element {
         <div className='flex flex-col items-center justify-center pt-[25px] pb-[50px] border-b-2 border-x-2 border-gray-900 rounded-b-[80px]'>
           <form ref={formRef} onSubmit={handleSubmit} >
             <div className="flex flex-col gap-[15px]">
-              <div className='w-auto'>
-                <div className="w-[404px]">
+                <div className="w-full">
                   <div className="flex items-center h-[29px]">
                     {fieldsErrors.firstName && <p className='text-red-600 font-bold'>{fieldsErrors.firstName}</p>}
                   </div>
@@ -236,9 +235,8 @@ function CreateEmployee (): JSX.Element {
                     />
                   </div>
                 </div>
-              </div>
               
-              <div className="w-[404px]">
+              <div className="w-full">
                 <div className="flex items-center h-[29px]">
                   {fieldsErrors.lastName && <p className='text-red-600 font-bold'>{fieldsErrors.lastName}</p>}
                 </div>
@@ -262,7 +260,7 @@ function CreateEmployee (): JSX.Element {
                 </div>
               </div>
 
-              <div className='w-[404px]'>
+              <div className='w-full'>
                 <div className="flex items-center h-[29px]">
                   {fieldsErrors.dateOfBirth && <p className='text-red-600 font-bold'>{fieldsErrors.dateOfBirth}</p>}
                 </div>
@@ -292,7 +290,7 @@ function CreateEmployee (): JSX.Element {
                 </div>
               </div>
 
-              <div className='w-[404px]'>
+              <div className='w-full'>
                 <div className="w-full flex flex-col justify-between gap-[5px] px-[15px] pt-[5px] pb-[10px] mt-[29px] border-2 bg-gray-900 border-gray-500 rounded-[10px] h-[82px] hover:shadow-[0_0_7px_0px_#7f7fbe]">
                   <label htmlFor="startDate" className='block text-white font-bold'>Date of beginning</label>
                   <div className="rounded-[10px] bg-gray-900 border-gray-500 hover:shadow-[0_0_7px_0px_#7f7fbe]">
@@ -345,7 +343,7 @@ function CreateEmployee (): JSX.Element {
                   </div>
                 </div>
 
-                <div className="w-[360px]">
+                <div className="w-[380px]">
                   <div className="flex items-center h-[29px]">
                     {fieldsErrors.city && <p className='text-red-600 font-bold'>{fieldsErrors.city}</p>}
                   </div>
@@ -369,7 +367,7 @@ function CreateEmployee (): JSX.Element {
                   </div>
                 </div>
 
-                <div className='w-[360px]'>
+                <div className='w-[380px]'>
                   <div className="flex items-center h-[29px]">
                     {fieldsErrors.state && <p className='text-red-600 font-bold'>{fieldsErrors.state}</p>}
                   </div>
@@ -400,7 +398,7 @@ function CreateEmployee (): JSX.Element {
                   </div>
                 </div>
 
-                <div className='w-[360px]'>
+                <div className='w-[380px]'>
                   <div className="flex items-center h-[29px]">
                     {fieldsErrors.zipCode && <p className='text-red-600 font-bold'>{fieldsErrors.zipCode}</p>}
                   </div>
@@ -424,7 +422,7 @@ function CreateEmployee (): JSX.Element {
                 </div>
               </fieldset>
 
-              <div className='w-[404px]'>
+              <div className='w-full'>
                 <div className="flex items-center h-[29px]">
                   {fieldsErrors.department && <p className='text-red-600 font-bold'>{fieldsErrors.department}</p>}
                 </div>

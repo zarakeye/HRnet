@@ -128,7 +128,7 @@ function Home(): JSX.Element {
             previousPageButtonLabel: 'Page précédente',
             nextPageButtonLabel: 'Page suivante'
           }}
-          classNames={{
+          styleClassNames={{
             tableBorders: 'border-2 border-gray-300',
             tablePaddings: 'pt-[5px] pb-[15px] px-[5px]',
             tableHeaders: {
@@ -155,6 +155,7 @@ function Home(): JSX.Element {
               inputBorderColor: "border-gray-300 hover:border-gray-400",
               inputFocusOutLine: "focus:outline-none",
               inputPadding: "py-[5px] px-[10px]",
+              inputMarginL: "lg:ml-[10px]",
               inputBackgroundColor: "bg-gray-300 hover:shadow-[0_0_7px_1px_#7f7fbe]",
               inputRounded: "rounded-[20px]",
       

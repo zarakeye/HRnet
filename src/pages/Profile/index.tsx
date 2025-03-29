@@ -32,12 +32,12 @@ function Profile(): JSX.Element {
           <h2 className='flex-1 text-3xl bg-gray-900 border-2 border-gray-900 text-center text-white font-bold p-[40px] rounded-t-[80px]'><span className='sr-only'>Profile of </span>{employee?.firstName} {employee?.lastName.toUpperCase()}</h2>
 
           <div className={`border-gray-900 `}>
-            <div className='pl-[70px] py-[40px]'>
+            <div className='pl-[70px] pt-[40px]'>
                 <p className='font-bold text-gray-900'>Identifier:</p>
                 <p className='pl-[10px]'>{employee?.id}</p>
             </div>
 
-            <div hidden={updating} className='border-b-2 border-gray-900 rounded-b-[80px]' >
+            <div hidden={updating} className='border-b-2 border-gray-900 rounded-b-[80px] mt-[40px]' >
               <div className='pl-[70px] mb-[40px]'>
                 <p className='font-bold text-gray-900'>Date of Birth:</p>
                 <p className='pl-[10px]'>{employee?.dateOfBirth}</p>

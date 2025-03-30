@@ -37,7 +37,7 @@ export function isSubmittableFormData(formData: Employee): boolean {
     && formData.street.length > 0
     && formData.city.length > 0
     && formData.state.length > 0
-    && formData.zipCode !== null
+    && formData.zipCode.length > 0
     && formData.department.length > 0
 }
 

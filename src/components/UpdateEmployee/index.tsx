@@ -340,7 +340,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
 
               <div className='flex flex-col gap-[5px] px-[15px] pt-[5px] border-2 bg-gray-900 border-gray-500 rounded-[10px] h-[82px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
                 <label htmlFor="state" className='w-full block text-white font-bold'>State</label>
-                <div className="w-full rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] w-[270px]">
+                <div className="w-full rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]">
                   <Select
                     id="state"
                     showSearch

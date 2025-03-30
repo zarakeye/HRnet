@@ -1,7 +1,5 @@
 import type { Employee } from "../common/types"
 
-
-
 /**
  * Checks if any of the fields in the `formData` object are empty.
  * If any fields are empty, they are added to the `emptyFields` array.
@@ -28,7 +26,6 @@ export function checkEmptyFields(formData: Employee, ): Array<keyof Employee> {
  * @param formData The employee form data to validate.
  * @returns True if all required fields are filled, false otherwise.
  */
-
 export function isSubmittableFormData(formData: Employee): boolean {
   return formData.firstName.length > 0
     && formData.lastName.length > 0

@@ -115,7 +115,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
             rules={[
               {
                 required: true,
-                message: 'Please type "DELETE employee_id employee_startDate" before submitting or cancel this action',
+                message: 'Please type "DELETE employee_id employee_startDate_with_format_YYYY-MM-DD" before submitting or cancel this action',
               },
             ]}
           >

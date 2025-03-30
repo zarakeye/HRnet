@@ -158,6 +158,8 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
   }
 
   useEffect(() => {
+    setFormData(prev => ({...prev, zipCode: ''}))
+
     if (isValidZipCode(zipCodeCandidate)) {
       setFormData(prev => ({...prev, zipCode: sanitize(zipCodeCandidate)}))
     }

@@ -19,6 +19,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.2",
+    "react-ts-tab-lib": "^1.9.3",
     "uuid": "^11.0.5",
     "zustand": "^5.0.3"
   },

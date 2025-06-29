@@ -25,16 +25,16 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
   const updateEmployee = useEmployeeStore(state => state.updateEmployee);
   const [states, setStates] = useState<Array<{label: string, value: string}>>([]);
   const [formData, setFormData] = useState<Employee>({
-    id: employeeToUpdate?.id || '',
-    firstName: employeeToUpdate?.firstName || '',
-    lastName: employeeToUpdate?.lastName || '',
-    dateOfBirth: employeeToUpdate?.dateOfBirth || '',
-    startDate: employeeToUpdate?.startDate || '',
-    street: employeeToUpdate?.street || '',
-    city: employeeToUpdate?.city || '',
-    state: employeeToUpdate?.state || '',
-    zipCode: employeeToUpdate?.zipCode || '',
-    department: employeeToUpdate?.department || ''
+    id: employeeToUpdate?.id ?? '',
+    firstName: employeeToUpdate?.firstName ?? '',
+    lastName: employeeToUpdate?.lastName ?? '',
+    dateOfBirth: employeeToUpdate?.dateOfBirth ?? '',
+    startDate: employeeToUpdate?.startDate ?? '',
+    street: employeeToUpdate?.street ?? '',
+    city: employeeToUpdate?.city ?? '',
+    state: employeeToUpdate?.state ?? '',
+    zipCode: employeeToUpdate?.zipCode ?? '',
+    department: employeeToUpdate?.department ?? ''
   });
   const [fieldsErrors, setFieldsErrors] = useState<Employee>({
     id: '',
@@ -191,9 +191,10 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                     setWrongValueType(prev => prev.filter(field => field !== 'firstName'))
                   }
                 }}
-                value={formData.firstName}
+                // value={formData.firstName}
+                value={formData.firstName ?? employeeToUpdate?.firstName}
                 className='w-full block text-white placeholder:text-gray-400 py-[5px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
-                defaultValue={employeeToUpdate?.firstName}
+                // defaultValue={employeeToUpdate?.firstName}
               />
             </div>
           </div>

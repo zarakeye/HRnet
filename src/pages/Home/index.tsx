@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Column } from 'react-ts-tab-lib';
 import { Table } from 'react-ts-tab-lib';
@@ -18,7 +18,12 @@ import type { Employee } from '../../common/types';
  */
 function Home(): JSX.Element {
   const navigate = useNavigate();
+  const loadEmployees = useEmployeeStore(state => state.loadEmployees);
   const employees = useEmployeeStore(state => state.employees);
+
+  useEffect(() => {
+    loadEmployees();
+  }, [employees.length]);
 
   /**
    * Converts a date string into a formatted JSX span element.
@@ -103,6 +108,7 @@ function Home(): JSX.Element {
 
       <div className='xs:px-[10px] sm:px-[10px] md:px-[100px] lg:px-[150px]  max-h-[500px] mt-[200px] overflow-y-auto'>
         <Table
+          key={employees.length}
           columns={columns}
           rows={employees}
           onRowClick={

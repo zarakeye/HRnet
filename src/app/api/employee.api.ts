@@ -1,0 +1,66 @@
+import type { Employee } from "../../common/types";
+
+const API_URL = import.meta.env.MODE === "development" ? import.meta.env.VITE_DEV_API_URL_DEVELOPMENT : import.meta.env.VITE_API_URL_PRODUCTION;
+
+export const getEmployees = async (): Promise<Employee[]> => {
+  const response = await fetch(`${API_URL}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch employees");
+  }
+  
+  const employees: Employee[] = await response.json();
+  console.log(employees);
+  
+  return employees;
+};
+
+export const createEmployee = async (employee: Omit<Employee, "id">): Promise<Employee> => {
+  const response = await fetch(`${API_URL}/new`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(employee),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create employee");
+  }
+
+  return response.json();
+}
+
+export const updateEmployee = async (employee: Employee): Promise<Employee> => {
+  const response = await fetch(`${API_URL}/${employee.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(employee),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update employee");
+  }
+
+  return response.json();
+}
+
+export const deleteEmployee = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete employee");
+  }
+}
+
+

@@ -5,6 +5,8 @@ const API_URL =
     ? import.meta.env.VITE_API_URL_DEVELOPMENT
     : import.meta.env.VITE_API_URL_PRODUCTION;
 console.log("mode: ", import.meta.env.MODE);
+console.log("DEV_URL: ", import.meta.env.VITE_API_URL_DEVELOPMENT);
+console.log("PROD_URL: ", import.meta.env.VITE_API_URL_PRODUCTION);
 console.log("API_URL: ", API_URL);
 
 export const getEmployees = async (): Promise<Employee[]> => {

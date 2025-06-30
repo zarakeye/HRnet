@@ -1,6 +1,8 @@
 import type { Employee } from "../../common/types";
 
 const API_URL = import.meta.env.MODE === "development" ? import.meta.env.VITE_DEV_API_URL_DEVELOPMENT : import.meta.env.VITE_API_URL_PRODUCTION;
+console.log("mode: ", import.meta.env.MODE);
+console.log("API_URL: ", API_URL);
 
 export const getEmployees = async (): Promise<Employee[]> => {
   const response = await fetch(`${API_URL}`, {

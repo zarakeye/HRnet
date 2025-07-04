@@ -153,6 +153,8 @@ function CreateEmployee (): JSX.Element {
       setEmployeeFormData(newEmployee)
 
       addEmployee(newEmployee);
+
+      setCreationSuccess(true);
     }
   }
 

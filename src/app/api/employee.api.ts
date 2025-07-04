@@ -45,12 +45,13 @@ export const createEmployee = async (employee: Omit<Employee, "id">): Promise<Em
 }
 
 export const updateEmployee = async (employee: Employee): Promise<Employee> => {
+  const { id, ...rest } = employee;
   const response = await fetch(`${API_URL}/${employee.id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(employee),
+    body: JSON.stringify(rest),
   });
 
   if (!response.ok) {

@@ -546,7 +546,7 @@ function CreateEmployee (): JSX.Element {
               color: 'white'
             }}
           >
-            <p className='text-center text-red-500'>{submitError || "Error creating employee"}</p>
+            <p className='text-center text-red-500'>{submitError && "Error creating employee"}</p>
             <p className='text-center'>Employee created successfully</p>
           </Modal>
         </div>

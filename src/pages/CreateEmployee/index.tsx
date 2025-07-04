@@ -18,10 +18,7 @@ import { isOnlyLetters, isOnlyAlphanumeric, isValidZipCode, isSubmittableFormDat
  * The component renders a modal to display a success message after submitting the form.
  */
 function CreateEmployee (): JSX.Element {
-  // const employees = useEmployeeStore(state => state.employees);
-  // const loadEmployees = useEmployeeStore(state => state.loadEmployees);
   const addEmployee = useEmployeeStore(state => state.addEmployee);
-  // const [employeeFormData, setEmployeeFormData] = useState<Employee | null>(null);
   const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const [states, setStates] = useState<Array<{label: string, value: string}>>([]);
@@ -139,7 +136,7 @@ function CreateEmployee (): JSX.Element {
 
     if (isSubmittableFormData(formData)) {
       try {
-        await addEmployee({
+        const newEmployee: Omit<Employee, 'id'> = {
           firstName: formData.firstName.trim(),
           lastName: formData.lastName.trim(),
           dateOfBirth: formData.dateOfBirth.trim(),
@@ -149,7 +146,9 @@ function CreateEmployee (): JSX.Element {
           state: formData.state.trim(),
           zipCode: formData.zipCode.trim(),
           department: formData.department.trim()
-        });
+        }
+
+        await addEmployee(newEmployee);
 
         setCreationSuccess(true);
       } catch (error) {

@@ -1,5 +1,5 @@
 import type { Employee } from "../../common/types";
-import dateToISO from "../../tools/dateToIso";
+// import dateToISO from "../../tools/dateToIso";
 
 const API_URL =
   import.meta.env.MODE === "development"
@@ -9,6 +9,11 @@ console.log("mode: ", import.meta.env.MODE);
 console.log("DEV_URL: ", import.meta.env.VITE_API_URL_DEVELOPMENT);
 console.log("PROD_URL: ", import.meta.env.VITE_API_URL_PRODUCTION);
 console.log("API_URL: ", API_URL);
+
+const dateToISO = (dateString: string) => {
+  const [day, month, year] = dateString.split('/');
+  return new Date(`${year}-${month}-${day}`).toISOString(); // ⚠️ attention à l'ordre
+};
 
 export const getEmployees = async (): Promise<Employee[]> => {
   const response = await fetch(`${API_URL}`, {

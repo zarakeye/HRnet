@@ -1,6 +1,7 @@
-import { useState, lazy, ReactNode } from 'react';
+import { useState, lazy, ReactNode, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/store';
+import { Employee } from '../../common/types';
 
 const DeleteEmployee = lazy(() => import('../../components/DeleteEmployee'));
 const UpdateEmployee = lazy(() => import('../../components/UpdateEmployee'));
@@ -21,8 +22,13 @@ function Profile(): JSX.Element {
   const navigate = useNavigate();
   const [displayDeleteModal, setDisplayDeleteModal] = useState<boolean>(false);
   const employees = useEmployeeStore(state => state.employees);
-  const employee = employees.find((employee) => employee.id === id);
+  const [employee, setEmployee] = useState<Employee>();
   const [updating, setUpdating] = useState<boolean>(false);
+
+  useEffect(() => {
+    const employee = employees.find((employee) => employee.id === id);
+    setEmployee(employee);
+  }, [employees, id]);
 
   /**
    * Converts a date string into a formatted JSX span element.

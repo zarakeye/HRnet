@@ -195,18 +195,6 @@ function CreateEmployee (): JSX.Element {
     setEmptyFields([]);
   }
 
-  // useEffect(() => {
-  //   loadEmployees();
-  //   const employeeisAdded = employees.some(employee => employee.id === employeeFormData?.id);
-
-  //   if (employeeisAdded) {
-  //     setCreationSuccess(true);
-  //   } else {
-  //     setCreationSuccess(false)
-  //   }
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [employees])
-
   useEffect(() => {
     const statesArray = Object.values(USStates).map(state => ({
       label: state,

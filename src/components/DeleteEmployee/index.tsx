@@ -62,8 +62,6 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
         setDeletionResultMessage('Employee not found');
         setOpenDeletionResultModal(true);
       }
-    } else {
-      setBadInput(true);
     }
   }
 

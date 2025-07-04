@@ -51,15 +51,15 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
     console.log("employeeToDelete", employeeToDelete);
     const [year, month, dayPlusHour] = employee?.startDate?.split('-') || [];
     const [day, hour] = dayPlusHour?.split('T') || [];
-    console.log(hour)
+    console.log(`day: ${day}, hour: ${hour}`); // day and hour are now strings (day and hour)
     console.log(`year: ${year}, month: ${month}, day: ${day}`);
     console.log(`DELETE ${employeeToDelete?.id} ${day}/${month}/${year}`);
     console.log(values.delete);
     if (values.delete === `DELETE ${employeeToDelete?.id} ${day}/${month}/${year}`) {
       if (values.agree) {
-        if (employee) {
+        if (employeeToDelete) {
           setDeleting(true);
-          deleteEmployee(employee.id);
+          deleteEmployee(employeeToDelete.id);
         } else {
           setDeletionError(true);
           setDeletionResultMessage('Employee not found');

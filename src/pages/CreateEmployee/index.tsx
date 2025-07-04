@@ -152,9 +152,6 @@ function CreateEmployee (): JSX.Element {
         });
 
         setCreationSuccess(true);
-        setTimeout(() => {
-          navigate('/')
-        }, 1000)
       } catch (error) {
         setCreationSuccess(false);
       }

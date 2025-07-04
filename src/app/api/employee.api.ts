@@ -1,4 +1,5 @@
 import type { Employee } from "../../common/types";
+import dateToISO from "../../tools/dateToIso";
 
 const API_URL =
   import.meta.env.MODE === "development"
@@ -47,8 +48,8 @@ export const createEmployee = async (employee: Omit<Employee, "id">): Promise<Em
 export const updateEmployee = async (employee: Employee): Promise<Employee> => {
   const employeeData = {
     ...employee,
-    startDate: new Date(employee.startDate).toISOString(),
-    dateOfBirth: new Date(employee.dateOfBirth).toISOString(),
+    startDate: dateToISO(employee.startDate),
+    dateOfBirth: dateToISO(employee.dateOfBirth),
   }
   const { id, ...rest } = employeeData;
   const response = await fetch(`${API_URL}/${employeeData.id}`, {

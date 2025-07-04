@@ -47,9 +47,10 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
    */
   const handleSubmit: FormProps<FieldType>['onFinish'] = (values) => {
     console.log(employee?.startDate);
-    const [day, month, year] = employee?.startDate?.split('-') || [];
-    // values.delete = `${values.delete} ${day}/${month}/${year}`;
-    if (values.delete === `DELETE ${employee?.id} ${day}/${month}/${year}`) {
+    const employeeToDelete = employees.find((e) => e.id === employee?.id);
+    console.log("employeeToDelete", employeeToDelete);
+    const [day, month, year] = employeeToDelete?.startDate?.split('-') || [];
+    if (values.delete === `DELETE ${employeeToDelete?.id} ${day}/${month}/${year}`) {
       if (values.agree) {
         if (employee) {
           setDeleting(true);

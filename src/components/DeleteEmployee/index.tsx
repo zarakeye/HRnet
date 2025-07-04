@@ -126,6 +126,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
                 const [year, month, dayPlusHour] = employee?.startDate?.split('-') || [];
                 const [day, hour] = dayPlusHour?.split('T') || [];
                 console.log(`day: ${day}, hour: ${hour}`);
+                console.log(`e.target.value: ${e.target.value.trim()}`);
                 if (e.target.value.trim() !== `DELETE ${employee?.id} ${day}/${month}/${year}`) {
                   setBadInput(true);
                 }

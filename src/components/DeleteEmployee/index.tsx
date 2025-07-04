@@ -33,7 +33,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
   const [deletionResultMessage, setDeletionResultMessage] = useState<string>('');
   const [deleting, setDeleting] = useState<boolean>(false);
   const [deletionError, setDeletionError] = useState<boolean | null>(null);
-  const [badInput, setBadInput] = useState<boolean>(false);
+  const [badInput, setBadInput] = useState<boolean | null>(false);
   const employee = employees.find((employee) => employee.id === id);
 
   /**
@@ -123,7 +123,10 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
             <Input
               onChange={() => setBadInput(false)}
               onBlur={(e) => {
-                if (e.target.value.trim() !== `DELETE ${employee?.id} ${employee?.startDate}`) {
+                const [year, month, dayPlusHour] = employee?.startDate?.split('-') || [];
+                const [day, hour] = dayPlusHour?.split('T') || [];
+                console.log(`day: ${day}, hour: ${hour}`);
+                if (e.target.value.trim() !== `DELETE ${employee?.id} ${day}/${month}/${year}`) {
                   setBadInput(true);
                 }
               }}
@@ -137,7 +140,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
             />
           </Form.Item>
 
-          <p key={badInput? 'badInput' : 'goodInput'} hidden={badInput === false } className='text-red-500'>The input is incorrect</p>
+          <p key={badInput? 'badInput' : 'goodInput'} hidden={badInput ?  } className='text-red-500'>The input is incorrect</p>
 
           <Form.Item<FieldType>
             name="agree"

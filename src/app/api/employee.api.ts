@@ -45,7 +45,7 @@ export const createEmployee = async (employee: Omit<Employee, "id">): Promise<Em
 }
 
 export const updateEmployee = async (employee: Employee): Promise<Employee> => {
-  const response = await fetch(`${API_URL}/patch/${employee.id}`, {
+  const response = await fetch(`${API_URL}/${employee.id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const updateEmployee = async (employee: Employee): Promise<Employee> => {
 }
 
 export const deleteEmployee = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_URL}/delete/${id}`, {
+  const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
   });
 

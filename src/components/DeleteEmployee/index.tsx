@@ -51,6 +51,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
     console.log("employeeToDelete", employeeToDelete);
     const [year, month, dayPlusHour] = employee?.startDate?.split('-') || [];
     const [day, hour] = dayPlusHour?.split('T') || [];
+    console.log(hour)
     console.log(`year: ${year}, month: ${month}, day: ${day}`);
     console.log(`DELETE ${employeeToDelete?.id} ${day}/${month}/${year}`);
     console.log(values.delete);

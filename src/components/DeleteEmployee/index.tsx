@@ -46,27 +46,21 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
    * @param values The form values containing the delete confirmation text and agreement checkbox.
    */
   const handleSubmit: FormProps<FieldType>['onFinish'] = (values) => {
-    console.log(employee?.startDate);
     const employeeToDelete = employees.find((e) => e.id === employee?.id);
-    console.log("employeeToDelete", employeeToDelete);
     const [year, month, dayPlusHour] = employee?.startDate?.split('-') || [];
     const [day, hour] = dayPlusHour?.split('T') || [];
     console.log(`day: ${day}, hour: ${hour}`); // day and hour are now strings (day and hour)
-    console.log(`year: ${year}, month: ${month}, day: ${day}`);
-    console.log(`DELETE ${employeeToDelete?.id} ${day}/${month}/${year}`);
-    console.log(values.delete);
-    if (values.delete === `DELETE ${employeeToDelete?.id} ${day}/${month}/${year}`) {
-      if (values.agree) {
-        if (employeeToDelete) {
-          setDeleting(true);
-          deleteEmployee(employeeToDelete.id);
-        } else {
-          setDeletionError(true);
-          setDeletionResultMessage('Employee not found');
-          setOpenDeletionResultModal(true);
-        }
+
+    if (values.delete !== `DELETE ${employeeToDelete?.id} ${day}/${month}/${year}`) {
+      setBadInput(true);
+    } else if (values.agree) {
+      if (employeeToDelete) {
+        setDeleting(true);
+        deleteEmployee(employeeToDelete.id);
       } else {
-        setBadInput(true);
+        setDeletionError(true);
+        setDeletionResultMessage('Employee not found');
+        setOpenDeletionResultModal(true);
       }
     } else {
       setBadInput(true);

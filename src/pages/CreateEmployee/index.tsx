@@ -18,10 +18,10 @@ import { isOnlyLetters, isOnlyAlphanumeric, isValidZipCode, isSubmittableFormDat
  * The component renders a modal to display a success message after submitting the form.
  */
 function CreateEmployee (): JSX.Element {
-  const employees = useEmployeeStore(state => state.employees);
-  const loadEmployees = useEmployeeStore(state => state.loadEmployees);
+  // const employees = useEmployeeStore(state => state.employees);
+  // const loadEmployees = useEmployeeStore(state => state.loadEmployees);
   const addEmployee = useEmployeeStore(state => state.addEmployee);
-  const [employeeFormData, setEmployeeFormData] = useState<Employee | null>(null);
+  // const [employeeFormData, setEmployeeFormData] = useState<Employee | null>(null);
   const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const [states, setStates] = useState<Array<{label: string, value: string}>>([]);
@@ -128,7 +128,7 @@ function CreateEmployee (): JSX.Element {
    * displays a success modal, and redirects to the homepage.
    * @param e The form's submit event.
    */
-   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     for (const key in formData) {
@@ -138,22 +138,26 @@ function CreateEmployee (): JSX.Element {
     }
 
     if (isSubmittableFormData(formData)) {
-      const newEmployee: Employee = {
-        id: Date.now().toString(),
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        dateOfBirth: formData.dateOfBirth.trim(),
-        startDate: formData.startDate.trim(),
-        street: formData.street.trim(),
-        city: formData.city.trim(),
-        state: formData.state.trim(),
-        zipCode: formData.zipCode.trim(),
-        department: formData.department.trim()
-      };
+      try {
+        await addEmployee({
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          dateOfBirth: formData.dateOfBirth.trim(),
+          startDate: formData.startDate.trim(),
+          street: formData.street.trim(),
+          city: formData.city.trim(),
+          state: formData.state.trim(),
+          zipCode: formData.zipCode.trim(),
+          department: formData.department.trim()
+        });
 
-      setEmployeeFormData(newEmployee)
-
-      addEmployee(newEmployee);
+        setCreationSuccess(true);
+        setTimeout(() => {
+          navigate('/')
+        }, 1000)
+      } catch (error) {
+        setCreationSuccess(false);
+      }
     }
   }
 
@@ -181,17 +185,17 @@ function CreateEmployee (): JSX.Element {
     setEmptyFields([]);
   }
 
-  useEffect(() => {
-    loadEmployees();
-    const employeeisAdded = employees.some(employee => employee.id === employeeFormData?.id);
+  // useEffect(() => {
+  //   loadEmployees();
+  //   const employeeisAdded = employees.some(employee => employee.id === employeeFormData?.id);
 
-    if (employeeisAdded) {
-      setCreationSuccess(true);
-    } else {
-      setCreationSuccess(false)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employees])
+  //   if (employeeisAdded) {
+  //     setCreationSuccess(true);
+  //   } else {
+  //     setCreationSuccess(false)
+  //   }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [employees])
 
   useEffect(() => {
     const statesArray = Object.values(USStates).map(state => ({

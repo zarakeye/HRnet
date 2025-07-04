@@ -46,6 +46,9 @@ export const createEmployee = async (employee: Omit<Employee, "id">): Promise<Em
 }
 
 export const updateEmployee = async (employee: Employee): Promise<Employee> => {
+console.log(employee);
+
+
   const employeeData = {
     ...employee,
     dateOfBirth: dateToISO(employee.dateOfBirth),
@@ -53,6 +56,8 @@ export const updateEmployee = async (employee: Employee): Promise<Employee> => {
   }
   const { id, ...rest } = employeeData;
   console.log(employeeData);
+  console.log(employeeData.dateOfBirth);
+  console.log(employeeData.startDate);
   const response = await fetch(`${API_URL}/${employeeData.id}`, {
     method: "PATCH",
     headers: {

@@ -50,6 +50,8 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
     const employeeToDelete = employees.find((e) => e.id === employee?.id);
     console.log("employeeToDelete", employeeToDelete);
     const [year, month, day] = employee?.startDate?.split('-') || [];
+    console.log(`DELETE ${employeeToDelete?.id} ${day}/${month}/${year}`);
+    console.log(values.delete);
     if (values.delete === `DELETE ${employeeToDelete?.id} ${day}/${month}/${year}`) {
       if (values.agree) {
         if (employee) {

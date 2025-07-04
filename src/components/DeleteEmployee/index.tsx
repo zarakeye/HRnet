@@ -140,7 +140,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
             />
           </Form.Item>
 
-          <p key={badInput? 'badInput' : 'goodInput'} hidden={badInput === true} className='text-red-500'>The input is incorrect</p>
+          <p key={badInput? 'badInput' : 'goodInput'} hidden={badInput === true ? false : true} className='text-red-500'>The input is incorrect</p>
 
           <Form.Item<FieldType>
             name="agree"

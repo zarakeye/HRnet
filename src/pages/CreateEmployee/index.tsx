@@ -161,6 +161,7 @@ function CreateEmployee (): JSX.Element {
         });
 
         setCreationSuccess(true);
+        setSubmitError(null);
       } catch (error) {
         setCreationSuccess(false);
         setSubmitError("Failed to create employee. Please try again.");
@@ -547,7 +548,7 @@ function CreateEmployee (): JSX.Element {
             }}
           >
             <p className='text-center text-red-500'>{submitError && "Error creating employee"}</p>
-            <p className='text-center'>Employee created successfully</p>
+            <p className='text-center'>{submitError === null && "Employee created successfully"}</p>
           </Modal>
         </div>
       </div>

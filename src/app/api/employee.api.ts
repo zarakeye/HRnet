@@ -61,7 +61,7 @@ export const updateEmployee = async (employee: Employee): Promise<Employee> => {
   return response.json();
 }
 
-export const deleteEmployee = async (id: number): Promise<void> => {
+export const deleteEmployee = async (id: string): Promise<void> => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
   });

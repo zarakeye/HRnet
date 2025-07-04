@@ -31,7 +31,7 @@ const useEmployeeStore = create<EmployeesState>()(
       },
       // removeEmployee: (id: string) => set((state) => ({ employees: state.employees.filter((employee: loyee) => employee.id !== id) })),
       removeEmployee: async (id) => {
-        await deleteEmployee(parseInt(id));
+        await deleteEmployee(id);
         set((state) => ({ employees: state.employees.filter((employee: Employee) => employee.id !== id) }));
       },
     }),

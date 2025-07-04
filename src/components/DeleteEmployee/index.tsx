@@ -46,7 +46,9 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
    * @param values The form values containing the delete confirmation text and agreement checkbox.
    */
   const handleSubmit: FormProps<FieldType>['onFinish'] = (values) => {
-    if (values.delete === `DELETE ${employee?.id} ${employee?.startDate}`) {
+    const [day, month, year] = employee?.startDate?.split('-') || [];
+    // values.delete = `${values.delete} ${day}/${month}/${year}`;
+    if (values.delete === `DELETE ${employee?.id} ${day}/${month}/${year}`) {
       if (values.agree) {
         if (employee) {
           setDeleting(true);

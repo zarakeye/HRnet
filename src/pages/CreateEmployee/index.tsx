@@ -49,6 +49,7 @@ function CreateEmployee (): JSX.Element {
   const [emptyFields, setEmptyFields] = useState<Array<keyof Employee>>([]);
   const [wrongValueType, setWrongValueType] = useState<Array<keyof Employee>>([]);
   const [zipCodeCandidate, setZipCodeCandidate] = useState<string>('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
     
   /**
    * Updates the formData state with the value from the input element.
@@ -128,15 +129,26 @@ function CreateEmployee (): JSX.Element {
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    // Validation des champs
+    let hasEmptyField = false;
+    const newEmptyFields: Array<keyof Employee> = [];
+    
     for (const key in formData) {
       if (key !== 'id' && formData[key as keyof Employee] === '') {
-        setFieldsErrors(prev => ({...prev, [key as keyof Employee]: 'This field  is required !'}))
+        setFieldsErrors(prev => ({...prev, [key]: 'This field  is required !'}))
+        newEmptyFields.push(key as keyof Employee);
+        hasEmptyField = true;
       }
+    }
+
+    if (hasEmptyField) {
+      setEmptyFields(newEmptyFields);
+      return;
     }
 
     if (isSubmittableFormData(formData)) {
       try {
-        const newEmployee: Omit<Employee, 'id'> = {
+        await addEmployee({
           firstName: formData.firstName.trim(),
           lastName: formData.lastName.trim(),
           dateOfBirth: formData.dateOfBirth.trim(),
@@ -146,13 +158,14 @@ function CreateEmployee (): JSX.Element {
           state: formData.state.trim(),
           zipCode: formData.zipCode.trim(),
           department: formData.department.trim()
-        }
-
-        await addEmployee(newEmployee);
+        });
 
         setCreationSuccess(true);
       } catch (error) {
         setCreationSuccess(false);
+        setSubmitError("Failed to create employee. Please try again.");
+        console.error("Creation error:", error);
+
       }
     }
   }
@@ -533,6 +546,7 @@ function CreateEmployee (): JSX.Element {
               color: 'white'
             }}
           >
+            <p className='text-center text-red-500'>{submitError || "Error creating employee"}</p>
             <p className='text-center'>Employee created successfully</p>
           </Modal>
         </div>

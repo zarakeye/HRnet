@@ -19,6 +19,7 @@ import { isOnlyLetters, isOnlyAlphanumeric, isValidZipCode, isSubmittableFormDat
  */
 function CreateEmployee (): JSX.Element {
   const employees = useEmployeeStore(state => state.employees);
+  const loadEmployees = useEmployeeStore(state => state.loadEmployees);
   const addEmployee = useEmployeeStore(state => state.addEmployee);
   const [employeeFormData, setEmployeeFormData] = useState<Employee | null>(null);
   const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
@@ -153,8 +154,6 @@ function CreateEmployee (): JSX.Element {
       setEmployeeFormData(newEmployee)
 
       addEmployee(newEmployee);
-
-      setCreationSuccess(true);
     }
   }
 
@@ -183,7 +182,9 @@ function CreateEmployee (): JSX.Element {
   }
 
   useEffect(() => {
+    loadEmployees();
     const employeeisAdded = employees.some(employee => employee.id === employeeFormData?.id);
+
     if (employeeisAdded) {
       setCreationSuccess(true);
     } else {

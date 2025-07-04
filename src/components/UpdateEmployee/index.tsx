@@ -167,11 +167,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
 
   return (
     <div className='flex flex-col justify-center items-center bg-gray-300 rounded-b-[80px] border-b-2 border-x-2 border-gray-900'>
-      <form
-        onSubmit={(e) => {
-          handleSubmit(e)
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <div className=' flex flex-col gap-[15px]'>
           <div className='w-full'>
             <div className="flex items-center h-[29px]">

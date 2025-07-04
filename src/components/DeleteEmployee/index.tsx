@@ -33,7 +33,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
   const [deletionResultMessage, setDeletionResultMessage] = useState<string>('');
   const [deleting, setDeleting] = useState<boolean>(false);
   const [deletionError, setDeletionError] = useState<boolean | null>(null);
-  const [badInput, setBadInput] = useState<boolean | null>(false);
+  const [badInput, setBadInput] = useState<boolean>(false);
   const employee = employees.find((employee) => employee.id === id);
 
   /**
@@ -140,7 +140,7 @@ function DeleteEmployee({id, displayDeleteModal, setDisplayDeleteModal}: DeleteE
             />
           </Form.Item>
 
-          <p key={badInput? 'badInput' : 'goodInput'} hidden={badInput ?  } className='text-red-500'>The input is incorrect</p>
+          <p key={badInput? 'badInput' : 'goodInput'} hidden={badInput} className='text-red-500'>The input is incorrect</p>
 
           <Form.Item<FieldType>
             name="agree"

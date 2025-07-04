@@ -1,5 +1,4 @@
 import type { Employee } from "../../common/types";
-// import dateToISO from "../../tools/dateToIso";
 
 const API_URL =
   import.meta.env.MODE === "development"
@@ -9,11 +8,6 @@ console.log("mode: ", import.meta.env.MODE);
 console.log("DEV_URL: ", import.meta.env.VITE_API_URL_DEVELOPMENT);
 console.log("PROD_URL: ", import.meta.env.VITE_API_URL_PRODUCTION);
 console.log("API_URL: ", API_URL);
-
-const dateToISO = (dateString: string) => {
-  const [day, month, year] = dateString.split('/');
-  return new Date(`${year}-${month}-${day}`).toISOString(); // ⚠️ attention à l'ordre
-};
 
 export const getEmployees = async (): Promise<Employee[]> => {
   const response = await fetch(`${API_URL}`, {
@@ -51,19 +45,8 @@ export const createEmployee = async (employee: Omit<Employee, "id">): Promise<Em
 }
 
 export const updateEmployee = async (employee: Employee): Promise<Employee> => {
-console.log(employee);
-
-
-  const employeeData = {
-    ...employee,
-    dateOfBirth: dateToISO(employee.dateOfBirth),
-    startDate: dateToISO(employee.startDate),
-  }
-  const { id, ...rest } = employeeData;
-  console.log(employeeData);
-  console.log(employeeData.dateOfBirth);
-  console.log(employeeData.startDate);
-  const response = await fetch(`${API_URL}/${employeeData.id}`, {
+  const { id, ...rest } = employee;
+  const response = await fetch(`${API_URL}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

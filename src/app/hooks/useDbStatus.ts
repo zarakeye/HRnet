@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 
+const API_URL =
+  import.meta.env.MODE === "development"
+    ? import.meta.env.VITE_API_URL_DEVELOPMENT
+    : import.meta.env.VITE_API_URL_PRODUCTION;
+
 export function useDbStatus() {
   const [isDbWaking, setIsDbWaking] = useState<boolean>(false);
   const [lastActive, setLastActive] = useState<Date | null>(null);
@@ -11,7 +16,13 @@ export function useDbStatus() {
         setIsDbWaking(true);
 
         // Utilisez un endpoint dédié plutôt qu'une requête métier
-        const response = await fetch('/api/health');
+        const response = await fetch(`${API_URL}/api/health`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store',
+        });
 
         if (!response.ok) throw new Error('DB not ready');
 

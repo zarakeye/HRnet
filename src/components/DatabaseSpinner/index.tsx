@@ -1,5 +1,7 @@
+
+
 // components/DatabaseSpinner.tsx
-const DatabaseSpinner = () => (
+const DatabaseSpinner = (): JSX.Element => (
   <div 
     className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90"
     style={{ backdropFilter: 'blur(4px)' }}

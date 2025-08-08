@@ -1,6 +1,4 @@
 // components/DatabaseSpinner.tsx
-import React from 'react';
-
 const DatabaseSpinner = () => (
   <div 
     className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90"

@@ -4,7 +4,6 @@ import type { Column } from 'react-ts-tab-lib';
 import { Table } from 'react-ts-tab-lib';
 import useEmployeeStore from '../../app/hooks/store';
 import type { Employee } from '../../common/types';
-import { useDbStatus } from '../../app/hooks/useDbStatus';
 
 /**
  * Component that renders a table of employees in the store.

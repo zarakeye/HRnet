@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 
 const API_URL =
   import.meta.env.MODE === "development"
-    ? import.meta.env.VITE_API_URL_DEVELOPMENT
-    : import.meta.env.VITE_API_URL_PRODUCTION;
+    ? import.meta.env.VITE_API_URL_DEVELOPMENT_HEALTHCHECK
+    : import.meta.env.VITE_API_URL_PRODUCTION_HEALTHCHECK;
 
 export function useDbStatus() {
   const [isDbWaking, setIsDbWaking] = useState<boolean>(false);

@@ -95,7 +95,6 @@ function Home(): JSX.Element {
 
   return (
     <main className='pt-[225px] h-[699px] max-h-[700px] '>
-      {isDbWaking && <DatabaseSpinner />}
       <div className='bg-white text-center fixed left-[50%] translate-x-[-50%] top-[200px] z-5'>
         <div className='px-[300px] py-[30px] bg-gray-900 rounded-[25px]'>
           <h2 className='text-center text-white font-bold text-4xl pb-[25px] whitespace-nowrap'>Current Employees</h2>
@@ -111,6 +110,7 @@ function Home(): JSX.Element {
       </div>
 
       <div className='xs:px-[10px] sm:px-[10px] md:px-[100px] lg:px-[150px]  max-h-[500px] mt-[200px] overflow-y-auto'>
+        {isDbWaking && <DatabaseSpinner />}
         <Table
           key={employees.length}
           columns={columns}

@@ -43,3 +43,15 @@ tr:hover .buttons-container {
   color: 'white';
   border: '2px solid #99a1af';
 }
+
+/* Dans votre fichier index.css */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes progress {
+  0% { width: 0%; }
+  50% { width: 50%; }
+  100% { width: 100%; }
+}

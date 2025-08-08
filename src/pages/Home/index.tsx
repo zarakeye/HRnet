@@ -5,7 +5,6 @@ import { Table } from 'react-ts-tab-lib';
 import useEmployeeStore from '../../app/hooks/store';
 import type { Employee } from '../../common/types';
 import { useDbStatus } from '../../app/hooks/useDbStatus';
-import DatabaseSpinner from '../../components/DatabaseSpinner';
 
 /**
  * Component that renders a table of employees in the store.
@@ -19,7 +18,6 @@ import DatabaseSpinner from '../../components/DatabaseSpinner';
  * The component uses a custom renderer for the search bar to add a search icon.
  */
 function Home(): JSX.Element {
-  const { isDbWaking } = useDbStatus();
   const navigate = useNavigate();
   const loadEmployees = useEmployeeStore(state => state.loadEmployees);
   const employees = useEmployeeStore(state => state.employees);
@@ -110,7 +108,6 @@ function Home(): JSX.Element {
       </div>
 
       <div className='xs:px-[10px] sm:px-[10px] md:px-[100px] lg:px-[150px]  max-h-[500px] mt-[200px] overflow-y-auto'>
-        {isDbWaking && <DatabaseSpinner />}
         <Table
           key={employees.length}
           columns={columns}

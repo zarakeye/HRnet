@@ -1,5 +1,5 @@
 import { ConfigProvider } from 'antd'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
 import App from './app/App'
@@ -7,14 +7,28 @@ import Container from './components/Container'
 import Header from './components/Header'
 import './index.css'
 import DatabaseSpinner from './components/DatabaseSpinner'
-import { useDbStatus } from './app/hooks/useDbStatus'
+// import { useDbStatus } from './app/hooks/useDbStatus'
+import useEmployeeStore from './app/hooks/store'
 
 const RootComponent = () => {
-  const { isDbWaking } = useDbStatus();
+  // const { isDbWaking } = useDbStatus();
+  // const [isLoading, setIsLoading] = useState(true);
+  const loadEmployees = useEmployeeStore(state => state.loadEmployees);
+  const loading = useEmployeeStore(state => state.loading);
+  const lastFetched = useEmployeeStore(state => state.lastFetched);
+
+  const employees = useEmployeeStore(state => state.employees);
+
+  useEffect(() => {
+    // Charger les employés seulement si nécessaire
+    if (!lastFetched || Date.now() - lastFetched > 5 * 6 * 1000) {
+      loadEmployees();
+    }
+  }, [employees.length]);
 
   const theme = {
     token: {
-      motion: !isDbWaking,
+      motion: !loading,
       colorBgBase: '#101828',
       colorBgContainer: '#101828',
     },
@@ -71,10 +85,10 @@ const RootComponent = () => {
     <React.StrictMode>
       <Router>
         <ConfigProvider theme={theme}>
-          {isDbWaking && <DatabaseSpinner />}  {/* Spinner au niveau racine */}
+          {loading && <DatabaseSpinner />}  {/* Spinner au niveau racine */}
 
 
-        <div className={isDbWaking ? 'blur-sm' : ''}>
+        <div className={loading ? 'blur-sm' : ''}>
           <Header />
           <Container>
             <App />

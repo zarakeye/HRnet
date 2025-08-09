@@ -5,11 +5,28 @@ const API_URL =
     ? import.meta.env.VITE_API_URL_DEVELOPMENT_HEALTHCHECK
     : import.meta.env.VITE_API_URL_PRODUCTION_HEALTHCHECK;
 
+  /**
+   * Renvoie un objet avec une propriété `isDbWaking` pour indiquer si la base de données est en train de se réveiller.
+   *
+   * Lorsque la base de données est inactive plus de 5 minutes, la fonction lance une requête pour vérifier si la base de données
+   * est prête. Si la réponse prend plus de 500ms, la base de données est considérée comme en train de se réveiller.
+   *
+   * @returns {Object}
+   * @property {boolean} isDbWaking - True si la base de données est en train de se réveiller
+   */
 export function useDbStatus() {
   const [isDbWaking, setIsDbWaking] = useState<boolean>(false);
   const [lastActive, setLastActive] = useState<Date | null>(null);
 
   useEffect(() => {
+    /**
+     * Checks the status of the database by sending a GET request to the health endpoint.
+     * If the response time exceeds 500ms, it is assumed that the database is waking up.
+     * Continues to poll the database status every second until it is ready.
+     * 
+     * Sets `isDbWaking` to true if the database is waking up or an error occurs.
+     * Sets `isDbWaking` to false and updates `lastActive` when the database is confirmed ready.
+     */
     const checkDbStatus = async () => {
       try {
         const start = Date.now();
@@ -41,8 +58,8 @@ export function useDbStatus() {
       }
     };
 
-    // Vérifier seulement si la dernière activité était il y a plus de 5 mins
-    if (!lastActive || Date.now() - lastActive.getTime() > 5 * 60 * 1000) {
+    // Vérifier seulement si la dernière activité était il y a plus de 4 mins
+    if (!lastActive || Date.now() - lastActive.getTime() > 4 * 60 * 1000) {
       checkDbStatus();
     }
   }, [lastActive]);

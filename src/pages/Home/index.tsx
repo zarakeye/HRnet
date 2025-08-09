@@ -18,12 +18,17 @@ import type { Employee } from '../../common/types';
  */
 function Home(): JSX.Element {
   const navigate = useNavigate();
-  const loadEmployees = useEmployeeStore(state => state.loadEmployees);
-  const employees = useEmployeeStore(state => state.employees);
+  // const loadEmployees = useEmployeeStore(state => state.loadEmployees);
+  // const employees = useEmployeeStore(state => state.employees);
+  const { employees, loading, loadEmployees } = useEmployeeStore();
+
 
   useEffect(() => {
-    loadEmployees();
-  }, [employees.length]);
+    // S'assurer que les employés sont chargés
+    if (employees.length === 0 && !loading) {
+      loadEmployees();
+    }
+  }, [employees.length, loading]);
 
   /**
    * Converts a date string into a formatted JSX span element.

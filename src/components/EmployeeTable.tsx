@@ -1,4 +1,4 @@
-import React, { memo, ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Column } from 'react-ts-tab-lib';
 import { Table } from 'react-ts-tab-lib';

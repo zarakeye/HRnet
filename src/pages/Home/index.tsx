@@ -1,9 +1,10 @@
-import { ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Column } from 'react-ts-tab-lib';
-import { Table } from 'react-ts-tab-lib';
+// import type { Column } from 'react-ts-tab-lib';
+// import { Table } from 'react-ts-tab-lib';
 import useEmployeeStore from '../../app/hooks/store';
-import type { Employee } from '../../common/types';
+// import type { Employee } from '../../common/types';
+import EmployeeTable from '../../components/EmployeeTable';
 
 /**
  * Component that renders a table of employees in the store.
@@ -30,70 +31,70 @@ function Home(): JSX.Element {
     }
   }, [employees.length, loading]);
 
-  /**
-   * Converts a date string into a formatted JSX span element.
-   * The date is formatted as 'DD/MM/YYYY', where days and months are zero-padded if necessary.
-   * @param dateString A string representation of a date.
-   * @returns A ReactNode containing the formatted date.
-   */
-  function renderDate(dateString: string):ReactNode {
-    const date = new Date(dateString);
+  // /**
+  //  * Converts a date string into a formatted JSX span element.
+  //  * The date is formatted as 'DD/MM/YYYY', where days and months are zero-padded if necessary.
+  //  * @param dateString A string representation of a date.
+  //  * @returns A ReactNode containing the formatted date.
+  //  */
+  // function renderDate(dateString: string):ReactNode {
+  //   const date = new Date(dateString);
     
-    return (
-      <span>{date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}/{(date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}/{date.getFullYear()}</span>
-    )
-  }
+  //   return (
+  //     <span>{date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}/{(date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}/{date.getFullYear()}</span>
+  //   )
+  // }
   
-  const columns: Column<Employee>[] = [
-    {
-      property: 'firstName',
-      displayName: 'First Name',
-      type: 'string'
-    },
-    {
-      property: 'lastName',
-      displayName: 'Last Name',
-      type: 'string',
-      render: (value: string | number | null) => value && String(value).toUpperCase()
-    },
-    {
-      property: 'dateOfBirth',
-      displayName: 'Birth date',
-      type: 'date',
-      render: (value: string | number | null) => value && renderDate(String(value))
-    },
-    {
-      property: 'startDate',
-      displayName: 'Start date',
-      type: 'date',
-      render: (value: string | number | null) =>  value && renderDate(String(value))
-    },
-    {
-      property: 'street',
-      displayName: 'Street',
-      type: 'string',
-    },
-    {
-      property: 'city',
-      displayName: 'City',
-      type: 'string'
-    },
-    {
-      property: 'state',
-      displayName: 'State',
-      type: 'string'
-    },
-    {
-      property: 'zipCode',
-      displayName: 'Zip Code',
-      type: 'number'
-    },
-    {
-      property: 'department',
-      displayName: 'Department',
-      type: 'string'
-    }
-  ];
+  // const columns: Column<Employee>[] = [
+  //   {
+  //     property: 'firstName',
+  //     displayName: 'First Name',
+  //     type: 'string'
+  //   },
+  //   {
+  //     property: 'lastName',
+  //     displayName: 'Last Name',
+  //     type: 'string',
+  //     render: (value: string | number | null) => value && String(value).toUpperCase()
+  //   },
+  //   {
+  //     property: 'dateOfBirth',
+  //     displayName: 'Birth date',
+  //     type: 'date',
+  //     render: (value: string | number | null) => value && renderDate(String(value))
+  //   },
+  //   {
+  //     property: 'startDate',
+  //     displayName: 'Start date',
+  //     type: 'date',
+  //     render: (value: string | number | null) =>  value && renderDate(String(value))
+  //   },
+  //   {
+  //     property: 'street',
+  //     displayName: 'Street',
+  //     type: 'string',
+  //   },
+  //   {
+  //     property: 'city',
+  //     displayName: 'City',
+  //     type: 'string'
+  //   },
+  //   {
+  //     property: 'state',
+  //     displayName: 'State',
+  //     type: 'string'
+  //   },
+  //   {
+  //     property: 'zipCode',
+  //     displayName: 'Zip Code',
+  //     type: 'number'
+  //   },
+  //   {
+  //     property: 'department',
+  //     displayName: 'Department',
+  //     type: 'string'
+  //   }
+  // ];
 
   return (
     <main className='pt-[225px] h-[699px] max-h-[700px] '>
@@ -112,7 +113,7 @@ function Home(): JSX.Element {
       </div>
 
       <div className='xs:px-[10px] sm:px-[10px] md:px-[100px] lg:px-[150px]  max-h-[500px] mt-[200px] overflow-y-auto'>
-        <Table
+        {/* <Table
           key={employees.length}
           columns={columns}
           rows={employees}
@@ -179,10 +180,11 @@ function Home(): JSX.Element {
               textColor: 'text-white hover:text-black',
             }
           }}
-        />
+        /> */}
+        <EmployeeTable employees={employees} />
       </div>
     </main>
-  )
+  );
 }
 
 export default Home;

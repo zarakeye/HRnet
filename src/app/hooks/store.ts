@@ -11,7 +11,6 @@ export type EmployeesState = {
   lastFetched: number | null;
   cacheVersion: number;
   hasChanges: boolean;
-  
   loadEmployees: (preventInterval?: boolean) => Promise<void>;
   addEmployee: (employee: Omit<Employee, 'id'>) => Promise<void>;
   updateEmployee: (employee: Employee) => Promise<void>;
@@ -48,8 +47,8 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
       const hasChanges = (
         freshEmployees.length !== currentEmployees.length ||
         freshEmployees.some((emp, i) => 
-          emp.id !== currentEmployees[i]?.id || 
-          JSON.stringify(emp) !== JSON.stringify(currentEmployees[i])
+          emp.id !== currentEmployees[i]?.id &&
+          emp.lastModified !== currentEmployees[i]?.lastModified
         )
       );
 
@@ -65,7 +64,8 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
       } else {
         set({
           lastFetched: now,
-          loading: false
+          loading: false,
+          hasChanges: false
         });
       }
 
@@ -98,6 +98,7 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
         cacheVersion: state.cacheVersion + 1,
         hasChanges: true
       }));
+    
       await saveEmployeesToCache(get().employees);
     } catch (error: any) {
       set({ error: error.message, loading: false });

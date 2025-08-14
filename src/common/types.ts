@@ -1,5 +1,6 @@
 
 export interface Employee {
+  lastModified: any;
   id: string;
   firstName: string;
   lastName: string;

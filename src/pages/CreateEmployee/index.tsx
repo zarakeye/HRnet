@@ -32,7 +32,8 @@ function CreateEmployee (): JSX.Element {
     city: '',
     state: '',
     zipCode: '',
-    department: ''
+    department: '',
+    lastModified: ''
   });
   const [fieldsErrors, setFieldsErrors] = useState<Employee>({
     id: '',
@@ -44,7 +45,8 @@ function CreateEmployee (): JSX.Element {
     city: '',
     state: '',
     zipCode: '',
-    department: ''
+    department: '',
+    lastModified: ''
   });
   const [emptyFields, setEmptyFields] = useState<Array<keyof Employee>>([]);
   const [wrongValueType, setWrongValueType] = useState<Array<keyof Employee>>([]);
@@ -157,7 +159,8 @@ function CreateEmployee (): JSX.Element {
           city: formData.city.trim(),
           state: formData.state.trim(),
           zipCode: formData.zipCode.trim(),
-          department: formData.department.trim()
+          department: formData.department.trim(),
+          lastModified: new Date().toISOString()
         });
 
         setCreationSuccess(true);
@@ -190,7 +193,8 @@ function CreateEmployee (): JSX.Element {
       city: '',
       state: '',
       zipCode: '',
-      department: ''
+      department: '',
+      lastModified: ''
     });
     setEmptyFields([]);
   }

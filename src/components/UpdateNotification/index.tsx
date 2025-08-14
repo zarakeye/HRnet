@@ -2,14 +2,14 @@ import { useEffect, useState, useRef } from "react";
 import useEmployeeStore from '../../app/hooks/store';
 
 const UpdateNotification = () => {
-  const hasChanges = useEmployeeStore(state => state.hasChanges);
+  const isUpdateAvailable = useEmployeeStore(state => state.isUpdateAvailable);
   const [visible, setVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const autoCloseTimer = useRef<NodeJS.Timeout | null>(null);
   const closingTimer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (hasChanges) {
+    if (isUpdateAvailable) {
       // Annuler les timers précédents
       if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current);
       if (closingTimer.current) clearTimeout(closingTimer.current);
@@ -31,7 +31,7 @@ const UpdateNotification = () => {
       if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current);
       if (closingTimer.current) clearTimeout(closingTimer.current);
     };
-  }, [hasChanges]);
+  }, [isUpdateAvailable]);
 
   const handleClose = () => {
     // Annuler la fermeture automatique

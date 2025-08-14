@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/store';
 import EmployeeTable from '../../components/EmployeeTable';
+import DatabaseSpinner from '../../components/DatabaseSpinner';
 
 /**
  * Component that renders a table of employees in the store.
@@ -16,10 +17,19 @@ import EmployeeTable from '../../components/EmployeeTable';
  */
 function Home(): JSX.Element {
   const navigate = useNavigate();
-  const employees = useEmployeeStore(state => state.employees);
-  const loading = useEmployeeStore(state => state.loading);
-  const loadEmployees = useEmployeeStore(state => state.loadEmployees);
-
+const {
+    employees,
+    loading,
+    isUpdateAvailable,
+    loadEmployees,
+    applyUpdates
+  } = useEmployeeStore(state => ({
+    employees: state.employees,
+    loading: state.loading,
+    isUpdateAvailable: state.isUpdateAvailable,
+    loadEmployees: state.loadEmployees,
+    applyUpdates: state.applyUpdates
+  }));
 
   useEffect(() => {
     // S'assurer que les employés sont chargés
@@ -30,6 +40,19 @@ function Home(): JSX.Element {
 
   return (
     <main className='pt-[225px] h-[699px] max-h-[700px] '>
+      {/* Notification de mise à jour */}
+      {isUpdateAvailable && (
+        <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-lg shadow-lg z-50 flex items-center space-x-4 animate-fade-in">
+          <span>New employee data available!</span>
+          <button
+            onClick={applyUpdates}
+            className="bg-white text-green-600 px-3 py-1 rounded font-semibold hover:bg-green-100 transition-colors"
+          >
+            Refresh
+          </button>
+        </div>
+      )}
+
       <div className='bg-white text-center fixed left-[50%] rounded-[25px] translate-x-[-50%] top-[200px] z-5'>
         <div className='px-[300px] py-[30px] bg-gray-900 rounded-[25px]'>
           <h2 className='text-center text-white font-bold text-4xl pb-[25px] whitespace-nowrap'>Current Employees</h2>
@@ -45,7 +68,14 @@ function Home(): JSX.Element {
       </div>
 
       <div className='xs:px-[10px] sm:px-[10px] md:px-[100px] lg:px-[150px]  max-h-[500px] mt-[200px] overflow-y-auto'>
-        <EmployeeTable employees={employees} />
+        {/* Spinner pendant le chargement initial */}
+        {loading && employees.length === 0 ? (
+          <div className="flex justify-center items-center h-64">
+            <DatabaseSpinner />
+          </div>
+        ) : (
+          <EmployeeTable employees={employees} />
+        )}
       </div>
     </main>
   );

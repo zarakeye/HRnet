@@ -6,28 +6,29 @@ import { getEmployees, updateEmployee, deleteEmployee, createEmployee } from '..
 
 export type EmployeesState = {
   employees: Employee[];
+  cachedEmployees: Employee[]; // for the data freshly fetched
   loading: boolean;
   error: string | null;
   lastFetched: number | null;
-  cacheVersion: number;
-  hasChanges: boolean;
+  isUpdateAvailable: boolean;
   loadEmployees: (preventInterval?: boolean) => Promise<void>;
   addEmployee: (employee: Omit<Employee, 'id'>) => Promise<void>;
   updateEmployee: (employee: Employee) => Promise<void>;
   removeEmployee: (id: string) => Promise<void>;
   silentUpdate: (employees: Employee[]) => void;
+  applyUpdates: () => void;
 };
 
 const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
   employees: [],
+  cachedEmployees: [],
   loading: false,
   error: null,
   lastFetched: null,
-  cacheVersion: 0,
-  hasChanges: false,
+  isUpdateAvailable: false,
 
   silentUpdate: (employees) => {
-    set({ employees, hasChanges: true });
+    set({ employees, isUpdateAvailable: true });
   },
 
   loadEmployees: async (preventInterval = false) => {
@@ -50,7 +51,6 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
       // Vérifiez s'il y a des différences
       let hasChanges = false;
 
-
       // 1. Vérifiez les modifications ou suppressions
       for (const [id, lastModified] of currentMap) {
         if (!freshMap.has(id) || freshMap.get(id) !== lastModified) {
@@ -59,20 +59,22 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
         }
       }
 
+      if (!hasChanges && freshMap.size !== currentMap.size) {
+        hasChanges = true;
+      }
+
       if (hasChanges) {
         set({
-          employees: freshEmployees,
+          cachedEmployees: freshEmployees,
           loading: false,
           lastFetched: now,
-          hasChanges: true,
-          cacheVersion: get().cacheVersion + 1
+          isUpdateAvailable: true,
         });
-        await saveEmployeesToCache(freshEmployees);
+        // await saveEmployeesToCache(freshEmployees);
       } else {
         set({
           lastFetched: now,
           loading: false,
-          hasChanges: false
         });
       }
 
@@ -102,8 +104,7 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
       set((state) => ({
         employees: [...state.employees, newEmployee],
         loading: false,
-        cacheVersion: state.cacheVersion + 1,
-        hasChanges: true
+        isUpdateAvailable: true
       }));
     
       await saveEmployeesToCache(get().employees);
@@ -121,8 +122,7 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
           e.id === employee.id ? updatedEmployee : e
         ),
         loading: false,
-        cacheVersion: state.cacheVersion + 1,
-        hasChanges: true
+        isUpdateAvailable: true
       }));
       await saveEmployeesToCache(get().employees);
     } catch (error: any) {
@@ -137,14 +137,24 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
       set((state) => ({
         employees: state.employees.filter(e => e.id !== id),
         loading: false,
-        cacheVersion: state.cacheVersion + 1,
-        hasChanges: true
+        isUpdateAvailable: true
       }));
       await saveEmployeesToCache(get().employees);
     } catch (error: any) {
       set({ error: error?.message, loading: false });
     }
   },
+
+  applyUpdates: () => {
+    set((state) => {
+      saveEmployeesToCache(state.employees);
+
+      return {
+        employees: state.cachedEmployees,
+        isUpdateAvailable: false
+      };
+    });
+  }
 })));
 
 export default useEmployeeStore;

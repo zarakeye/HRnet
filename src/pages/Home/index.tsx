@@ -1,13 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useEmployeeStore, { EmployeesState } from '../../app/hooks/store';
+import useEmployeeStore from '../../app/hooks/store';
 import EmployeeTable from '../../components/EmployeeTable';
-
-const selector = (state: EmployeesState) => ({
-  employees: state.employees,
-  loading: state.loading,
-  loadEmployees: state.loadEmployees
-});
 
 /**
  * Component that renders a table of employees in the store.
@@ -22,11 +16,9 @@ const selector = (state: EmployeesState) => ({
  */
 function Home(): JSX.Element {
   const navigate = useNavigate();
-  
-  // Utiliser un sélecteur optimisé avec shallow
   const employees = useEmployeeStore(state => state.employees);
   const loading = useEmployeeStore(state => state.loading);
-  const loadEmployees = useEmployeeStore(selector).loadEmployees;
+  const loadEmployees = useEmployeeStore(state => state.loadEmployees);
 
 
   useEffect(() => {

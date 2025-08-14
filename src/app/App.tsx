@@ -7,12 +7,14 @@ import UpdateNotification from '../components/UpdateNotification';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path='/create-employee' element={<CreateEmployee />} />
-      <Route path='/profile/:id' element={<Profile />} />
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path='/create-employee' element={<CreateEmployee />} />
+        <Route path='/profile/:id' element={<Profile />} />
+      </Routes>
       <UpdateNotification />
-    </Routes>
+    </>
   )
 }
 

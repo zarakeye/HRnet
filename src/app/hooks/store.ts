@@ -8,10 +8,11 @@ export type EmployeesState = {
   employees: Employee[];
   cachedEmployees: Employee[]; // for the data freshly fetched
   loading: boolean;
+  backgroundLoading: boolean;
   error: string | null;
   lastFetched: number | null;
   isUpdateAvailable: boolean;
-  loadEmployees: (preventInterval?: boolean) => Promise<void>;
+  loadEmployees: (preventInterval?: boolean, isBackground?: boolean) => Promise<void>;
   addEmployee: (employee: Omit<Employee, 'id'>) => Promise<void>;
   updateEmployee: (employee: Employee) => Promise<void>;
   removeEmployee: (id: string) => Promise<void>;
@@ -23,6 +24,7 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
   employees: [],
   cachedEmployees: [],
   loading: false,
+  backgroundLoading: false,
   error: null,
   lastFetched: null,
   isUpdateAvailable: false,
@@ -31,10 +33,19 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
     set({ employees, isUpdateAvailable: true });
   },
 
-  loadEmployees: async (preventInterval = false) => {
-    const cachedEmployees = await getCachedEmployees();
-    if (cachedEmployees.length > 0) {
-      set({ employees: cachedEmployees });
+  loadEmployees: async (preventInterval = false, isBackground = false) => {
+    if (!isBackground) {
+      const cachedEmployees = await getCachedEmployees();
+      if (cachedEmployees.length > 0) {
+        set({ employees: cachedEmployees });
+      }
+    }
+
+     // Définir le bon état de chargement
+    if (isBackground) {
+      set({ backgroundLoading: true, error: null });
+    } else {
+      set({ loading: true, error: null });
     }
 
     set({ loading: true, error: null });
@@ -66,7 +77,7 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
       if (hasChanges) {
         set({
           cachedEmployees: freshEmployees,
-          loading: false,
+          // loading: false,
           lastFetched: now,
           isUpdateAvailable: true,
         });
@@ -74,7 +85,7 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
       } else {
         set({
           lastFetched: now,
-          loading: false,
+          // loading: false,
         });
       }
 
@@ -85,14 +96,15 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
         }, 4 * 60 * 1000 + Math.random() * 60 * 1000);
       }
     } catch (error: any) {
-      set({
-        error: error.message,
-        loading: false,
-        lastFetched: Date.now()
-      });
+      if (isBackground) {
+        set({ backgroundLoading: false });
+      } else {
+        set({ loading: false });
+      }
+      set({ error: error.message, lastFetched: Date.now() });
       
       setTimeout(() => {
-        get().loadEmployees();
+        get().loadEmployees(false, isBackground);
       }, 30 * 1000);
     }
   },

@@ -20,23 +20,27 @@ function Home(): JSX.Element {
 const {
     employees,
     loading,
+    backgroundLoading,
     isUpdateAvailable,
+    lastFetched,
     loadEmployees,
     applyUpdates
   } = useEmployeeStore(state => ({
     employees: state.employees,
     loading: state.loading,
+    backgroundLoading: state.backgroundLoading,
     isUpdateAvailable: state.isUpdateAvailable,
+    lastFetched: state.lastFetched,
     loadEmployees: state.loadEmployees,
     applyUpdates: state.applyUpdates
   }));
 
   useEffect(() => {
     // S'assurer que les employés sont chargés
-    if (employees.length === 0 && !loading) {
+    if (employees.length === 0 && !loading && lastFetched === null) {
       loadEmployees();
     }
-  }, [employees.length, loading, loadEmployees]);
+  }, [employees.length, loading, lastFetched, loadEmployees]);
 
   return (
     <main className='pt-[225px] h-[699px] max-h-[700px] '>
@@ -50,6 +54,13 @@ const {
           >
             Refresh
           </button>
+        </div>
+      )}
+
+      {/* Indicateur de chargement en arrière-plan discret */}
+      {backgroundLoading && (
+        <div className="fixed top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded text-sm">
+          Syncing...
         </div>
       )}
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useEmployeeStore from '../app/hooks/store';
+import useEmployeeStore from '../../app/hooks/store';
 
 const UpdateNotification = () => {
   const hasChanges = useEmployeeStore(state => state.hasChanges);

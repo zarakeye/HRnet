@@ -20,7 +20,7 @@ function Home(): JSX.Element {
 const {
     employees,
     loading,
-    backgroundLoading,
+    // backgroundLoading,
     isUpdateAvailable,
     lastFetched,
     loadEmployees,
@@ -28,7 +28,7 @@ const {
   } = useEmployeeStore(state => ({
     employees: state.employees,
     loading: state.loading,
-    backgroundLoading: state.backgroundLoading,
+    // backgroundLoading: state.backgroundLoading,
     isUpdateAvailable: state.isUpdateAvailable,
     lastFetched: state.lastFetched,
     loadEmployees: state.loadEmployees,

@@ -34,7 +34,8 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
     city: employeeToUpdate?.city ?? '',
     state: employeeToUpdate?.state ?? '',
     zipCode: employeeToUpdate?.zipCode ?? '',
-    department: employeeToUpdate?.department ?? ''
+    department: employeeToUpdate?.department ?? '',
+    lastModified: employeeToUpdate?.lastModified ?? ''
   });
   const [fieldsErrors, setFieldsErrors] = useState<Employee>({
     id: '',
@@ -46,9 +47,9 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
     city: '',
     state: '',
     zipCode: '',
-    department: ''
+    department: '',
+    lastModified: ''
   });
-  // const [submitting, setSubmitting] = useState<boolean>(false);
   const [wrongValueType, setWrongValueType] = useState<Array<keyof Employee>>([]);
   const [zipCodeCandidate, setZipCodeCandidate] = useState<string>(employeeToUpdate?.zipCode as string);
 
@@ -148,7 +149,8 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
       city: sanitize(formData.city.trim()),
       state: sanitize(formData.state.trim()),
       zipCode: sanitize(formData.zipCode.trim()),
-      department: sanitize(formData.department.trim())
+      department: sanitize(formData.department.trim()),
+      lastModified: new Date().toISOString()
     };
 
     if (isSubmittableFormData(updatedEmployee)) {

@@ -7,12 +7,9 @@ import Container from './components/Container'
 import Header from './components/Header'
 import './index.css'
 import DatabaseSpinner from './components/DatabaseSpinner'
-// import { useDbStatus } from './app/hooks/useDbStatus'
 import useEmployeeStore from './app/hooks/store'
 
 const RootComponent = () => {
-  // const { isDbWaking } = useDbStatus();
-  // const [isLoading, setIsLoading] = useState(true);
   const loadEmployees = useEmployeeStore(state => state.loadEmployees);
   const loading = useEmployeeStore(state => state.loading);
   const lastFetched = useEmployeeStore(state => state.lastFetched);

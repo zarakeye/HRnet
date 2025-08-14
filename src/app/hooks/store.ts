@@ -43,14 +43,21 @@ const useEmployeeStore = create<EmployeesState>()(devtools((set, get) => ({
       const now = Date.now();
       const currentEmployees = get().employees;
 
-      // Vérification des changements
-      const hasChanges = (
-        freshEmployees.length !== currentEmployees.length ||
-        freshEmployees.some((emp, i) => 
-          emp.id !== currentEmployees[i]?.id &&
-          emp.lastModified !== currentEmployees[i]?.lastModified
-        )
-      );
+      // Créez des maps pour une comparaison efficace
+      const currentMap = new Map(currentEmployees.map(emp => [emp.id, emp.lastModified]));
+      const freshMap = new Map(freshEmployees.map(emp => [emp.id, emp.lastModified]));
+
+      // Vérifiez s'il y a des différences
+      let hasChanges = false;
+
+
+      // 1. Vérifiez les modifications ou suppressions
+      for (const [id, lastModified] of currentMap) {
+        if (!freshMap.has(id) || freshMap.get(id) !== lastModified) {
+          hasChanges = true;
+          break;
+        }
+      }
 
       if (hasChanges) {
         set({

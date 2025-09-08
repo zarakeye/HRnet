@@ -8,20 +8,34 @@ import Header from './components/Header'
 import './index.css'
 import DatabaseSpinner from './components/DatabaseSpinner'
 import useEmployeeStore from './app/hooks/store'
+import { check } from 'zod'
+import { is } from 'zod/locales'
 
+/**
+ * Le composant racine de l'application.
+ * Il charge les employés du store si cela n'a pas été fait récemment.
+ * Il définit un thème sombre pour l'ensemble de l'application.
+ * Il affiche un spinner de chargement si les employés ne sont pas encore chargés.
+ * Il affiche le header, le contenu et le footer de l'application.
+ * Il utilise le hook `useEmployeeStore` pour accéder au store des employés.
+ */
 const RootComponent = () => {
-  const loadEmployees = useEmployeeStore(state => state.loadEmployees);
   const loading = useEmployeeStore(state => state.loading);
-  const lastFetched = useEmployeeStore(state => state.lastFetched);
+  // const lastUpdates = useEmployeeStore(state => state.lastUpdates);
+  const isUpdateAvailable = useEmployeeStore(state => state.isUpdateAvailable);
+  const fetchEmployees = useEmployeeStore(state => state.fetchEmployees);
+  const checkForUpdates = useEmployeeStore(state => state.checkForUpdates);
 
   const employees = useEmployeeStore(state => state.employees);
 
   useEffect(() => {
     // Charger les employés seulement si nécessaire
-    if (!lastFetched || Date.now() - lastFetched > 5 * 6 * 1000) {
-      loadEmployees();
+    checkForUpdates();
+    
+    if (employees.length === 0 || isUpdateAvailable) {
+      fetchEmployees();
     }
-  }, [employees.length]);
+  }, [isUpdateAvailable]);
 
   const theme = {
     token: {

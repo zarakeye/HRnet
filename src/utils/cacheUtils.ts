@@ -26,3 +26,8 @@ export const clearCache = async () => {
   await localforage.removeItem(CACHE_KEY);
   await localforage.removeItem(CACHE_TIMESTAMP_KEY);
 }
+
+export const currentTimestamp = async (): Promise<number | null> => {
+  const timestamp = await localforage.getItem<number>(CACHE_TIMESTAMP_KEY);
+  return timestamp || null;
+}

@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/store';
 import EmployeeTable from '../../components/EmployeeTable';
 import DatabaseSpinner from '../../components/DatabaseSpinner';
+import { boolean, set } from 'zod';
 
 /**
  * Component that renders a table of employees in the store.
@@ -20,36 +21,73 @@ function Home(): JSX.Element {
 const {
     employees,
     loading,
-    // backgroundLoading,
     isUpdateAvailable,
-    lastFetched,
-    loadEmployees,
-    applyUpdates
+    lastUpdates,
+    checkForUpdates,
+    
   } = useEmployeeStore(state => ({
     employees: state.employees,
-    loading: state.loading,
-    // backgroundLoading: state.backgroundLoading,
-    isUpdateAvailable: state.isUpdateAvailable,
-    lastFetched: state.lastFetched,
     loadEmployees: state.loadEmployees,
-    applyUpdates: state.applyUpdates
+    loading: state.loading,
+    isUpdateAvailable: state.isUpdateAvailable,
+    lastUpdates: state.lastUpdates,
+    checkForUpdates: state.checkForUpdates,
   }));
+  const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
+  const [applyUpdates, setApplyUpdates] = useState<boolean>(false);
+  // // let employees = loadEmployees();
+
+  // useEffect(() => {
+  //   // S'assurer que les employés sont chargés
+  //   if (employees.length === 0 && !loading && lastFetched === null) {
+  //     loadEmployees();
+  //   }
+  // }, [employees.length, loading, lastFetched, loadEmployees]);
+
+
+
 
   useEffect(() => {
-    // S'assurer que les employés sont chargés
-    if (employees.length === 0 && !loading && lastFetched === null) {
-      loadEmployees();
+    checkForUpdates();
+    const intervalId = setInterval(checkForUpdates, 4 * 60 * 1000); // 4 minutes en millisecondes
+
+    // Nettoyer l'intervalle lorsque le composant est monté
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (isUpdateAvailable) {
+        setShowRefreshDialog(true);
+      }
+    }, 4 * 60 * 1000); // 4 minutes en millisecondes
+
+    // Nettoyer l'intervalle lorsque le composant est monté
+    return () => {
+      clearInterval(intervalId);
     }
-  }, [employees.length, loading, lastFetched, loadEmployees]);
+  }, [isUpdateAvailable]);
+
+  useEffect(() => {
+    if (applyUpdates) {
+      checkForUpdates();
+      setApplyUpdates(false);
+    }
+  }, [applyUpdates]);
 
   return (
     <main className='pt-[225px] h-[699px] max-h-[700px] '>
       {/* Notification de mise à jour */}
-      {isUpdateAvailable && (
+      {showRefrechDialog && (
         <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-lg shadow-lg z-50 flex items-center space-x-4 animate-fade-in">
           <span>New employee data available!</span>
           <button
-            onClick={applyUpdates}
+            onClick={() => {
+              setShowRefreshDialog(false);
+              setApplyUpdates(true);
+            }}
             className="bg-white text-green-600 px-3 py-1 rounded font-semibold hover:bg-green-100 transition-colors"
           >
             Refresh
@@ -58,11 +96,11 @@ const {
       )}
 
       {/* Indicateur de chargement en arrière-plan discret */}
-      {/* {backgroundLoading && (
+      {loading && (
         <div className="fixed top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded text-sm">
           Syncing...
         </div>
-      )} */}
+      )}
 
       <div className='bg-white text-center fixed left-[50%] rounded-[25px] translate-x-[-50%] top-[200px] z-5'>
         <div className='px-[300px] py-[30px] bg-gray-900 rounded-[25px]'>

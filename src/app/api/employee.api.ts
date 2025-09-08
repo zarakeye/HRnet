@@ -1,4 +1,5 @@
-import type { Employee } from "../../common/types";
+import type { Employee,  } from "../../common/types";
+import { lastUpdateResponseSchema } from "../../schemas/meta.schema";
 
 const API_URL =
   import.meta.env.MODE === "development"
@@ -69,6 +70,24 @@ export const deleteEmployee = async (id: string): Promise<void> => {
   if (!response.ok) {
     throw new Error("Failed to delete employee");
   }
+}
+
+export const getLastUpdateTimestamp = async (): Promise<number> => {
+  const response = await fetch(`${API_URL}/meta/last-update`);
+
+  if (!response.ok) {
+    throw new Error("Failed to get last update timestamp");
+  }
+
+  const data = await response.json();
+  const parsedData = lastUpdateResponseSchema.parse(data);
+
+  if (!parsedData.success) {
+    throw new Error(data.message || "Failed to get last update timestamp");
+  }
+
+  // Convertir le timestamp Unix en millisecondes
+  return data.timestampUnix;
 }
 
 

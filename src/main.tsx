@@ -8,8 +8,6 @@ import Header from './components/Header'
 import './index.css'
 import DatabaseSpinner from './components/DatabaseSpinner'
 import useEmployeeStore from './app/hooks/store'
-import { check } from 'zod'
-import { is } from 'zod/locales'
 
 /**
  * Le composant racine de l'application.
@@ -24,7 +22,7 @@ const RootComponent = () => {
   // const lastUpdates = useEmployeeStore(state => state.lastUpdates);
   const isUpdateAvailable = useEmployeeStore(state => state.isUpdateAvailable);
   const fetchEmployees = useEmployeeStore(state => state.fetchEmployees);
-  const checkForUpdates = useEmployeeStore(state => state.checkForUpdates);
+  const checkForUpdates = useEmployeeStore(state => state.checkForUpdate);
 
   const employees = useEmployeeStore(state => state.employees);
 

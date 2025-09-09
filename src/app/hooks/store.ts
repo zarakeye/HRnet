@@ -1,28 +1,97 @@
 import { create } from 'zustand';
-import { devtools, persist, createJSONStorage } from 'zustand/middleware';
-import { getCachedEmployees, saveEmployeesToCache, currentTimestamp, clearCache } from '../../utils/cacheUtils';
+import { devtools, persist, PersistStorage } from 'zustand/middleware';
 import type { Employee } from '../../common/types';
 import { getEmployees, updateEmployee, deleteEmployee, createEmployee, getLastUpdateTimestamp } from '../api/employee.api';
+import CryptoJS from 'crypto-js';
+import { StorageValue } from 'zustand/middleware';
+
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+// Encryption configuration
+const ENCRYPTION_CONFIG = {
+  keySize: 256 / 32,
+  iterations: 100000,
+}
+
+const createEncryptedStorage = (password: string): PersistStorage<{ employees: Employee[]; lastUpdate: number | null; }> => {
+  return {
+    getItem: async (name: string): Promise<StorageValue<{ employees: Employee[]; lastUpdate: number | null; }> | null> => {
+      try {
+        const cipherText = localStorage.getItem(name);
+        
+        if (!cipherText) {
+          return null;
+        }
+
+        // Extract salt and encrypted data 
+        const storedData = JSON.parse(cipherText);
+        const salt = CryptoJS.enc.Hex.parse(storedData.salt);
+        const key = CryptoJS.PBKDF2(password, salt, ENCRYPTION_CONFIG);
+
+        // Decrypt data
+        const bytes = CryptoJS.AES.decrypt(storedData.cipherText, key)
+        const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+
+        // Parse decrypted data into a StorageValue object
+        const parsedData: StorageValue<{ employees: Employee[]; lastUpdate: number | null; }> = JSON.parse(decryptedData);
+
+        return parsedData;
+      } catch (error) {
+        console.error('Error decrypting data:', error);
+        return null;
+      }
+    },
+
+    setItem: async (name: string, value: StorageValue<{ employees: Employee[]; lastUpdate: number | null; }>): Promise<void> => {
+      try {
+        // Generate salt
+        const salt = CryptoJS.lib.WordArray.random(128 / 8);
+
+        // Derive key 
+        const key = CryptoJS.PBKDF2(password, salt, ENCRYPTION_CONFIG);
+        
+        // Encrypt data
+        const cipherText = CryptoJS.AES.encrypt(JSON.stringify(value), key).toString();
+
+        // Store salt and encrypted data
+        const storedData = JSON.stringify({
+          salt: salt.toString(CryptoJS.enc.Hex),
+          cipherText
+        });
+
+        localStorage.setItem(name, storedData);
+      } catch (error) {
+        console.error('Error encrypting data:', error);
+      }
+    },
+
+    removeItem: async (name: string): Promise<void> => {
+      localStorage.removeItem(name);
+    }
+  }
+}
 
 export type EmployeesState = {
   employees: Employee[];
   loading: boolean;
   fetching: boolean;
   error: string | null;
-  lastUpdates: number | null;
+  lastUpdate: number | null;
   isUpdateAvailable: boolean;
+  password: string | null;
+  setPassword: (password: string) => void;
   loadEmployees: () => Promise<void>;
   fetchEmployees: () => Promise<void>;
-  checkForUpdates: () => Promise<void>;
+  checkForUpdate: () => Promise<void>;
   acknowledgeUpdate: () => void;
   clearError: () => void;
   addEmployee: (employee: Omit<Employee, 'id'>) => Promise<void>;
   updateEmployee: (employee: Employee) => Promise<void>;
   removeEmployee: (id: string) => Promise<void>;
+  clearCache: () => void;
 };
 
-// Clé de chiffrement (doit être stockée de manière sécurisée)
-const ENCRYPTION_KEY = process.env.REACT_APP_CACHE_ENCRYPTION_KEY || 'fallback-encryption-key';
+let tempPassword: string | null = null;
 
 const useEmployeeStore = create<EmployeesState>()(
   devtools(
@@ -32,8 +101,18 @@ const useEmployeeStore = create<EmployeesState>()(
         loading: false,
         fetching: false,
         error: null,
-        lastUpdates: null,
+        lastUpdate: null,
         isUpdateAvailable: false,
+        password: null,
+
+        /**
+         * Set the password used to encrypt and decrypt the data.
+         * @param {string} password The password to set.
+         */
+        setPassword: (password: string) => {
+          tempPassword = password;
+          set({ password });
+        },
 
         /**
          * Tente de charger les employés à partir du cache.
@@ -41,20 +120,28 @@ const useEmployeeStore = create<EmployeesState>()(
          * Si une erreur se produit, stocke l'erreur dans le store.
          */
         loadEmployees: async (): Promise<void> => {
+          const { password, lastUpdate } = get();
+          const currentPassword = password || tempPassword;
+
+          if (!currentPassword) {
+            set({
+              error: 'Password not set',
+              loading: false
+            })
+            return;
+          }
+
           set({ loading: true, fetching: false, error: null }, false, 'loadEmployees/start');
 
           try {
-            const cachedEmployees = await getCachedEmployees();
-
-            if (cachedEmployees && cachedEmployees.length > 0) {
-              set({
-                employees: cachedEmployees,
-                loading: false,
-                lastUpdates: await currentTimestamp(),
-                isUpdateAvailable: false
-              }, false, 'loadEmployees/success');
+            // Check if cache is valid
+            if (lastUpdate && Date.now() - lastUpdate < CACHE_TTL) {
+              // Use cache
+              set({ loading: false });
+              // Check for update in background
+              get().checkForUpdate();
             } else {
-              // Récupération des employés depuis l'API
+              // Cache is empty or expired, Fetch from API
               get().fetchEmployees();
             }
           } catch (error: any) {
@@ -74,26 +161,37 @@ const useEmployeeStore = create<EmployeesState>()(
          * It sets the `lastUpdated` state with the current timestamp and the `isUpdateAvailable` state to `false`.
          * @param {boolean} force if `true`, it will always fetch from the API, otherwise it will first try to fetch from the cache.
          */
-        fetchEmployees: async () => {
-          set({ fetching: true, error: null }, false, 'fetchEmployees/start');
+        fetchEmployees: async (): Promise<void> => {
+          const { password } = get();
+          const currentPassword = password || tempPassword;
+
+          if (!currentPassword) {
+            set({
+              error: 'Password not set',
+              fetching: false
+            })
+            return;
+          }
+
+          // Try to fetch
+          set({
+            fetching: true,
+            error: null,
+          }, false, 'fetchEmployees/start');
 
           try {
-            // Récupération des employés depuis l'API
             const freshEmployees = await getEmployees();
+
             set({
               employees: freshEmployees,
               fetching: false,
-              lastUpdates: Date.now(),
+              lastUpdate: Date.now(),
               isUpdateAvailable: false
             }, false, 'fetchEmployees/success');
-
-            // Sauvegarde des employés dans le cache
-            await saveEmployeesToCache(freshEmployees);
-            
           } catch (error: any) {
             set({
               error: error.message || 'Error fetching employees',
-              loading: false
+              fetching: false
             }, false, 'fetchEmployees/error');
           }
         },
@@ -104,19 +202,19 @@ const useEmployeeStore = create<EmployeesState>()(
          * If not, sets `isUpdateAvailable` to false.
          * If there is an error, sets `isUpdateAvailable` to false and logs the error.
          */
-        checkForUpdates: async () => {
-          const { lastUpdates } = get();
+        checkForUpdate: async (): Promise<void> => {
+          const { lastUpdate, password } = get();
+          const currentPassword = password || tempPassword;
 
-          if (lastUpdates === null) return;
+          if (!currentPassword || lastUpdate === null) return;
 
           try {
             // Cette fonction devrait être implémentée dans votre API
             // Elle doit retourner le timestamp de la dernière modification
             const freshLastUpdatesTimestamp = await getLastUpdateTimestamp();
 
-            if (freshLastUpdatesTimestamp > lastUpdates) {
+            if (freshLastUpdatesTimestamp > lastUpdate) {
               set({ isUpdateAvailable: true }, false, 'checkForUpdates/updateAvailable');
-              clearCache();
               get().fetchEmployees();
             }
           } catch (error: any) {
@@ -146,7 +244,19 @@ const useEmployeeStore = create<EmployeesState>()(
          * @returns A promise that resolves when the employee is added, or rejects
          * with an error if something goes wrong.
          */
-        addEmployee: async (employee) => {
+        addEmployee: async (employee: Omit<Employee, 'id'>): Promise<void> => {
+          const { password } = get();
+          const currentPassword = password || tempPassword;
+
+          if (!currentPassword) {
+            set({
+              error: 'Password not set',
+              loading: false
+            })
+            
+            throw new Error('Password not set');
+          }
+
           set({ loading: true, error: null }, false, 'addEmployee/start');
 
           try {
@@ -154,11 +264,8 @@ const useEmployeeStore = create<EmployeesState>()(
             set((state) => ({
               employees: [...state.employees, newEmployee],
               loading: false,
-              isUpdateAvailable: true
+              lastUpdate: Date.now(),
             }), false, 'addEmployee/success');
-          
-            // Sauvegarde des employés dans le cache
-            await saveEmployeesToCache(get().employees);
           } catch (error: any) {
             set({
               error: error.message,
@@ -175,7 +282,18 @@ const useEmployeeStore = create<EmployeesState>()(
          * @returns A promise that resolves when the employee is updated, or
          * rejects with an error if something goes wrong.
          */
-        updateEmployee: async (employee) => {
+        updateEmployee: async (employee: Employee) => {
+          const { password } = get();
+          const currentPassword = password || tempPassword;
+
+          if (!currentPassword) {
+            set({
+              error: 'Password not set',
+              loading: false
+            })
+            throw new Error('Password not set');
+          }
+
           set({ loading: true, error: null }, false, 'updateEmployee/start');
 
           try {
@@ -185,11 +303,8 @@ const useEmployeeStore = create<EmployeesState>()(
                 e.id === employee.id ? updatedEmployee : e
               ),
               loading: false,
-              lastUpdated: Date.now(),
+              lastUpdate: Date.now(),
             }), false, 'updateEmployee/success');
-
-            // Sauvegarde de la modification dans le cache
-            await saveEmployeesToCache(get().employees);
           } catch (error: any) {
             set({
               error: error.message || 'Error updating employee',
@@ -205,7 +320,18 @@ const useEmployeeStore = create<EmployeesState>()(
          * @returns A promise that resolves when the employee is removed, or
          * rejects with an error if something goes wrong.
          */
-        removeEmployee: async (id) => {
+        removeEmployee: async (id: string): Promise<void> => {
+          const { password } = get();
+          const currentPassword = password || tempPassword;
+
+          if (!currentPassword) {
+            set({
+              error: 'Password not set',
+              loading: false
+            })
+            throw new Error('Password not set');
+          }
+
           set({ loading: true, error: null }, false, 'removeEmployee/start');
 
           try {
@@ -213,11 +339,8 @@ const useEmployeeStore = create<EmployeesState>()(
             set((state) => ({
               employees: state.employees.filter(e => e.id !== id),
               loading: false,
-              lastUpdated: Date.now(),
+              lastUpdate: Date.now(),
             }), false, 'removeEmployee/success');
-
-            // Sauvegarde de la modification dans le cache
-            await saveEmployeesToCache(get().employees);
           } catch (error: any) {
             set({
               error: error?.message || 'Error removing employee',
@@ -226,14 +349,22 @@ const useEmployeeStore = create<EmployeesState>()(
             throw error;
           }
         },
+
+        clearCache: (): void => {
+          set({
+            employees: [],
+            lastUpdate: null,
+            isUpdateAvailable: false
+          }, false, 'clearCache');
+        }
       }),
       {
         name: 'employees-storage',
-        storage: createJSONStorage(() => localStorage),
+        storage: createEncryptedStorage(tempPassword || 'PlaceholderPassword'),
         // Optionnel: ne persister que certaines propriétés
-        partialize: (state) => ({
+        partialize: (state: EmployeesState ) => ({
           employees: state.employees,
-          lastUpdated: state.lastUpdates,
+          lastUpdate: state.lastUpdate,
         }),
       }
     ),

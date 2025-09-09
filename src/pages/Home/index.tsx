@@ -22,16 +22,16 @@ const {
     employees,
     loading,
     isUpdateAvailable,
-    lastUpdates,
-    checkForUpdates,
+    // lastUpdate,
+    checkForUpdate,
     
   } = useEmployeeStore(state => ({
     employees: state.employees,
     loadEmployees: state.loadEmployees,
     loading: state.loading,
     isUpdateAvailable: state.isUpdateAvailable,
-    lastUpdates: state.lastUpdates,
-    checkForUpdates: state.checkForUpdates,
+    lastUpdate: state.lastUpdate,
+    checkForUpdate: state.checkForUpdate,
   }));
   const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
   const [applyUpdates, setApplyUpdates] = useState<boolean>(false);
@@ -48,8 +48,8 @@ const {
 
 
   useEffect(() => {
-    checkForUpdates();
-    const intervalId = setInterval(checkForUpdates, 4 * 60 * 1000); // 4 minutes en millisecondes
+    checkForUpdate();
+    const intervalId = setInterval(checkForUpdate, 4 * 60 * 1000); // 4 minutes en millisecondes
 
     // Nettoyer l'intervalle lorsque le composant est monté
     return () => {
@@ -72,7 +72,7 @@ const {
 
   useEffect(() => {
     if (applyUpdates) {
-      checkForUpdates();
+      checkForUpdate();
       setApplyUpdates(false);
     }
   }, [applyUpdates]);

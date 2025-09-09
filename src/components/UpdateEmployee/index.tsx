@@ -2,7 +2,7 @@ import { DatePicker, Select } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
-import useEmployeeStore from '../../app/hooks/store';
+import useEmployeeStore from '../../app/hooks/useEmployeeStore';
 import { Employee, USStates } from '../../common/types';
 import {isSubmittableFormData, isNotOnlyDigits, isOnlyAlphanumeric, isOnlyLetters, isValidZipCode, sanitize, isZipCodeUnderConstruction} from '../../tools/validate';
 

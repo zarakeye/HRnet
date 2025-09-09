@@ -7,7 +7,7 @@ import Container from './components/Container'
 import Header from './components/Header'
 import './index.css'
 import DatabaseSpinner from './components/DatabaseSpinner'
-import useEmployeeStore from './app/hooks/store'
+import useEmployeeStore from './app/hooks/useEmployeeStore'
 
 /**
  * Le composant racine de l'application.

@@ -2,7 +2,7 @@ import type { FormProps } from "antd";
 import { Button, Checkbox, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useEmployeeStore from "../../app/hooks/store";
+import useEmployeeStore from "../../app/hooks/useEmployeeStore";
 
 type FieldType = {
   agree: boolean;

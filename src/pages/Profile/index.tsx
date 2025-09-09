@@ -1,6 +1,6 @@
 import { useState, lazy, ReactNode, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import useEmployeeStore from '../../app/hooks/store';
+import useEmployeeStore from '../../app/hooks/useEmployeeStore';
 import { Employee } from '../../common/types';
 
 const DeleteEmployee = lazy(() => import('../../components/DeleteEmployee'));

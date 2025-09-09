@@ -3,7 +3,7 @@ import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useEmployeeStore from '../../app/hooks/store';
+import useEmployeeStore from '../../app/hooks/useEmployeeStore';
 import { Employee, USStates } from '../../common/types';
 import { isOnlyLetters, isOnlyAlphanumeric, isValidZipCode, isSubmittableFormData, isZipCodeUnderConstruction, isNotOnlyDigits, sanitize } from "../../tools/validate";
 

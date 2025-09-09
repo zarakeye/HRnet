@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useEmployeeStore from '../../app/hooks/store';
+import useEmployeeStore from '../../app/hooks/useEmployeeStore';
+import { useAuthStore } from '../../app/hooks/useAuthStore';
 import EmployeeTable from '../../components/EmployeeTable';
 import DatabaseSpinner from '../../components/DatabaseSpinner';
+import PasswordModal from '../../components/PasswordModal';
 
 /**
  * Component that renders a table of employees in the store.
@@ -23,58 +25,80 @@ const {
     isUpdateAvailable,
     // lastUpdate,
     checkForUpdate,
+    // acknowledgeUpdate,
+    loadEmployees
     
-  } = useEmployeeStore(state => ({
+  } = useEmployeeStore(/*state => ({
     employees: state.employees,
     loadEmployees: state.loadEmployees,
     loading: state.loading,
     isUpdateAvailable: state.isUpdateAvailable,
     lastUpdate: state.lastUpdate,
     checkForUpdate: state.checkForUpdate,
-  }));
+    acknowledgeUpdate: state.acknowledgeUpdate
+  })*/);
+
+  const { isAuthenticated, login, error: authError } = useAuthStore();
   const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
   const [applyUpdates, setApplyUpdates] = useState<boolean>(false);
-  // // let employees = loadEmployees();
-
-  // useEffect(() => {
-  //   // S'assurer que les employés sont chargés
-  //   if (employees.length === 0 && !loading && lastFetched === null) {
-  //     loadEmployees();
-  //   }
-  // }, [employees.length, loading, lastFetched, loadEmployees]);
-
-
-
+  const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
 
   useEffect(() => {
-    checkForUpdate();
-    const intervalId = setInterval(checkForUpdate, 4 * 60 * 1000); // 4 minutes en millisecondes
+    if (isAuthenticated) {
+      loadEmployees();
+      // Check for updates every 4 minutes
+      const intervalId = setInterval(checkForUpdate, 4 * 60 * 1000); // 4 minutes en millisecondes
 
-    // Nettoyer l'intervalle lorsque le composant est monté
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+      // Nettoyer l'intervalle lorsque le composant est monté
+      return () => {
+        clearInterval(intervalId);
+      };
+    } else {
+      setShowPasswordModal(true);
+    }
+  }, [isAuthenticated, loadEmployees, checkForUpdate]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (isUpdateAvailable) {
-        setShowRefreshDialog(true);
-      }
-    }, 4 * 60 * 1000); // 4 minutes en millisecondes
+    // const intervalId = setInterval(() => {
+    //   if (isUpdateAvailable) {
+    //     setShowRefreshDialog(true);
+    //   }
+    // }, 4 * 60 * 1000); // 4 minutes en millisecondes
 
-    // Nettoyer l'intervalle lorsque le composant est monté
-    return () => {
-      clearInterval(intervalId);
+    // // Nettoyer l'intervalle lorsque le composant est monté
+    // return () => {
+    //   clearInterval(intervalId);
+    // }
+
+    if (applyUpdates) {
+      loadEmployees();
+      setApplyUpdates(false);
+    }
+  }, [applyUpdates, loadEmployees]);
+
+  useEffect(() => {
+    if (isUpdateAvailable) {
+      setShowRefreshDialog(true);
     }
   }, [isUpdateAvailable]);
 
-  useEffect(() => {
-    if (applyUpdates) {
-      checkForUpdate();
-      setApplyUpdates(false);
+  const handlePasswordSubmit = async (password: string) => {
+    const success = await login(password);
+    if (success) {
+      setShowPasswordModal(false);
     }
-  }, [applyUpdates]);
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <PasswordModal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        onSubmit={handlePasswordSubmit}
+        error={authError}
+      />
+    );
+  }
 
   return (
     <main className='pt-[225px] h-[699px] max-h-[700px] '>

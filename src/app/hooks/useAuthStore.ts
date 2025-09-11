@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { login, verifyToken } from '../api/auth.api';
-import { is } from 'zod/locales';
 
 interface AuthState {
   token: string | null;

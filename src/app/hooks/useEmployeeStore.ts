@@ -42,6 +42,7 @@ const useEmployeeStore = create<EmployeesState>()(
        */
       loadEmployees: async (): Promise<void> => {
         const token = useAuthStore.getState().token;
+        console.log('token: ', token);
 
         if (!token) {
           set({
@@ -69,7 +70,7 @@ const useEmployeeStore = create<EmployeesState>()(
               return;
             }
           } catch (error: any) {
-            console.log('No cxache data available, fetching from API fresh data');
+            console.log('No cache data available, fetching from API fresh data');
           }
 
           // if cache is empty or failed, fetch fresh data

@@ -28,15 +28,7 @@ const {
     // acknowledgeUpdate,
     loadEmployees
     
-  } = useEmployeeStore(/*state => ({
-    employees: state.employees,
-    loadEmployees: state.loadEmployees,
-    loading: state.loading,
-    isUpdateAvailable: state.isUpdateAvailable,
-    lastUpdate: state.lastUpdate,
-    checkForUpdate: state.checkForUpdate,
-    acknowledgeUpdate: state.acknowledgeUpdate
-  })*/);
+  } = useEmployeeStore();
 
   const { isAuthenticated, login, error: authError } = useAuthStore();
   const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
@@ -59,17 +51,6 @@ const {
   }, [isAuthenticated, loadEmployees, checkForUpdate]);
 
   useEffect(() => {
-    // const intervalId = setInterval(() => {
-    //   if (isUpdateAvailable) {
-    //     setShowRefreshDialog(true);
-    //   }
-    // }, 4 * 60 * 1000); // 4 minutes en millisecondes
-
-    // // Nettoyer l'intervalle lorsque le composant est monté
-    // return () => {
-    //   clearInterval(intervalId);
-    // }
-
     if (applyUpdates) {
       loadEmployees();
       setApplyUpdates(false);

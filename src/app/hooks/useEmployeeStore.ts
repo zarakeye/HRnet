@@ -4,6 +4,7 @@ import type { Employee } from '../../common/types';
 import { getEmployees, updateEmployee, deleteEmployee, createEmployee, getLastUpdateTimestamp } from '../api/employee.api';
 import { getCachedData, setCachedData } from '../api/cache.api';
 import { useAuthStore } from './useAuthStore';
+import { ca, de } from 'zod/locales';
 
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
@@ -49,6 +50,7 @@ const useEmployeeStore = create<EmployeesState>()(
             error: 'Authentification required',
             loading: false
           })
+          return;
         }
 
         set({ loading: true, error: null }, false, 'loadEmployees/start');
@@ -56,21 +58,32 @@ const useEmployeeStore = create<EmployeesState>()(
         try {
           // Try to fetch from cache
           try {
-            const cachedData = await getCachedData('employees', (token || ''));
+            const cachedData = await getCachedData('employees', (token));
 
-            if (cachedData && cachedData.employees.length > 0) {
-              set({
-                employees: cachedData.employees,
-                lastUpdate: cachedData.lastUpdate,
-                loading: false,
-              });
+            if (cachedData) {
+              const decryptedData = JSON.parse(cachedData.encrypted);
+
+              if (decryptedData && decryptedData.employees) {
+                set({
+                  employees: decryptedData.employees,
+                  loading: false,
+                  lastUpdate: decryptedData.lastUpdate,
+                  isUpdateAvailable: false,
+                }, false, 'loadEmployees/success');
+              }
 
               // Vérify in background if an update is available
               get().checkForUpdate();
               return;
             }
           } catch (error: any) {
-            console.log('No cache data available, fetching from API fresh data');
+            if (error.message === 'FORBIDDEN') {
+              // Token invalide, déconnecter l'utilisateur
+              useAuthStore.getState().logout();
+              set({ error: 'Session expired, please login again', loading: false });
+              return;
+            }
+            console.log('No cached data available, fetching fresh data');
           }
 
           // if cache is empty or failed, fetch fresh data
@@ -126,6 +139,13 @@ const useEmployeeStore = create<EmployeesState>()(
             token
           );
         } catch (error: any) {
+          if (error.message === 'FORBIDDEN') {
+            // Token invalide, déconnecter l'utilisateur
+            useAuthStore.getState().logout();
+            set({ error: 'Session expired, please login again', fetching: false });
+            return;
+          }
+
           set({
             error: error.message || 'Error fetching employees',
             fetching: false
@@ -157,7 +177,14 @@ const useEmployeeStore = create<EmployeesState>()(
             // get().fetchEmployees();
           }
         } catch (error: any) {
+          if (error.message === 'FORBIDDEN') {
+            // Token invalide, déconnecter l'utilisateur
+            useAuthStore.getState().logout();
+            set({ error: 'Session expired, please login again', fetching: false });
+            return;
+          }
           console.error('Error checking for updates:', error);
+          set({ isUpdateAvailable: false }, false, 'checkForUpdates/error');
         }
       },
 
@@ -208,6 +235,13 @@ const useEmployeeStore = create<EmployeesState>()(
             token
           );
         } catch (error: any) {
+          if (error.message === 'FORBIDDEN') {
+            // Token invalide, déconnecter l'utilisateur
+            useAuthStore.getState().logout();
+            set({ error: 'Session expired, please login again', loading: false });
+            return;
+          }
+
           set({
             error: error.message,
             loading: false
@@ -250,6 +284,13 @@ const useEmployeeStore = create<EmployeesState>()(
             token
           );
         } catch (error: any) {
+          if (error.message === 'FORBIDDEN') {
+            // Token invalide, déconnecter l'utilisateur
+            useAuthStore.getState().logout();
+            set({ error: 'Session expired, please login again', loading: false });
+            return;
+          }
+
           set({
             error: error.message || 'Error updating employee',
             loading: false
@@ -289,6 +330,13 @@ const useEmployeeStore = create<EmployeesState>()(
             token
           );
         } catch (error: any) {
+          if (error.message === 'FORBIDDEN') {
+            // Token invalide, déconnecter l'utilisateur
+            useAuthStore.getState().logout();
+            set({ error: 'Session expired, please login again', loading: false });
+            return;
+          }
+          
           set({
             error: error?.message || 'Error removing employee',
             loading: false

@@ -17,6 +17,11 @@ export const getCachedData = async (key: string, token: string): Promise<any> =>
       },
     });
 
+    if (response.status === 403) {
+      // Token invalide ou expiré
+      throw new Error('FORBIDDEN');
+    }
+
     if (!response.ok) {
       if (response.status === 404) {
         // Données non trouvées dans le cache, ce n'est pas une erreur
@@ -28,6 +33,9 @@ export const getCachedData = async (key: string, token: string): Promise<any> =>
     const data: CachedData = await response.json();
     return data;
   } catch (error) {
+    if (error instanceof Error && error.message === 'FORBIDDEN') {
+      throw error; // Propager l'erreur d'authentification
+    }
     console.error('Error getting cached data:', error);
     throw new Error('Failed to retrieve cached data');
   }
@@ -44,10 +52,18 @@ export const setCachedData = async (key: string, data: any, ttl: number, token: 
       body: JSON.stringify({ data, ttl }),
     });
 
+    if (response.status === 403) {
+      // Token invalide ou expiré
+      throw new Error('FORBIDDEN');
+    }
+
     if (!response.ok) {
       throw new Error(`Failed to store cached data: ${response.statusText}`);
     }
   } catch (error) {
+    if (error instanceof Error && error.message === 'FORBIDDEN') {
+      throw error; // Propager l'erreur d'authentification
+    }
     console.error('Error setting cached data:', error);
     throw new Error('Failed to store cached data');
   }
@@ -62,10 +78,18 @@ export const deleteCachedData = async (key: string, token: string): Promise<void
       },
     });
 
+    if (response.status === 403) {
+      // Token invalide ou expiré
+      throw new Error('FORBIDDEN');
+    }
+
     if (!response.ok) {
       throw new Error(`Failed to delete cached data: ${response.statusText}`);
     }
   } catch (error) {
+    if (error instanceof Error && error.message === 'FORBIDDEN') {
+      throw error; // Propager l'erreur d'authentification
+    }
     console.error('Error deleting cached data:', error);
     throw new Error('Failed to delete cached data');
   }
@@ -80,10 +104,18 @@ export const clearAllCache = async (token: string): Promise<void> => {
       },
     });
 
+    if (response.status === 403) {
+      // Token invalide ou expiré
+      throw new Error('FORBIDDEN');
+    }
+
     if (!response.ok) {
       throw new Error(`Failed to clear cache: ${response.statusText}`);
     }
   } catch (error) {
+    if (error instanceof Error && error.message === 'FORBIDDEN') {
+      throw error; // Propager l'erreur d'authentification
+    }
     console.error('Error clearing cache:', error);
     throw new Error('Failed to clear cache');
   }

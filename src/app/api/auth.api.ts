@@ -11,8 +11,8 @@ export const login = async (password: string): Promise<{ token: string }> => {
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error || 'Authentication failed');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Authentication failed: ${response.statusText} ${response.status}`);
   }
 
   return response.json();
@@ -27,7 +27,7 @@ export const verifyToken = async (token: string): Promise<{ valid: boolean }> =>
   });
 
   if (!response.ok) {
-    throw new Error('Token verification failed');
+    throw new Error(`Token verification failed: ${response.statusText} ${response.status}`);
   }
 
   return response.json();

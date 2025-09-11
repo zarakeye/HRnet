@@ -23,6 +23,12 @@ export const getCachedData = async (key: string, token: string): Promise<any> =>
     console.log(`Response status: ${response.status}`);
     console.log(`Response headers: ${JSON.stringify(response.headers)}`);
     console.log(`Response body: ${await response.text()}`);
+    console.log(`Cache API response status: ${response.status} for key: ${key}`);
+
+    if (response.status === 404) {
+      // Données non trouvées dans le cache, ce n'est pas une erreur
+      return null;
+    }
 
     if (response.status === 403) {
       // Token invalide ou expiré
@@ -32,7 +38,7 @@ export const getCachedData = async (key: string, token: string): Promise<any> =>
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Response error: ${errorText}`);
+      console.error(`Cache API error: ${response.status} - ${errorText}`);
       throw new Error(`Failed to retrieve cached data: ${response.statusText}`);
     }
 
@@ -66,6 +72,8 @@ export const setCachedData = async (key: string, data: any, ttl: number, token: 
     }
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Cache API error: ${response.status} - ${errorText}`);
       throw new Error(`Failed to store cached data: ${response.statusText}`);
     }
   } catch (error) {

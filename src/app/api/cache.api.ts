@@ -9,6 +9,9 @@ export interface CachedData {
 
 export const getCachedData = async (key: string, token: string): Promise<any> => {
   try {
+    console.log(`Requesting cached data for key: ${key}`);
+    console.log(`Using token: ${token}`);
+
     const response = await fetch(`${API_BASE_URL}/api/cache/${key}`, {
       method: 'GET',
       headers: {
@@ -17,22 +20,27 @@ export const getCachedData = async (key: string, token: string): Promise<any> =>
       },
     });
 
+    console.log(`Response status: ${response.status}`);
+    console.log(`Response headers: ${JSON.stringify(response.headers)}`);
+    console.log(`Response body: ${await response.text()}`);
+
     if (response.status === 403) {
       // Token invalide ou expiré
+      console.log('Forbidden access: Token might be invalid or expired');
       throw new Error('FORBIDDEN');
     }
 
     if (!response.ok) {
-      if (response.status === 404) {
-        // Données non trouvées dans le cache, ce n'est pas une erreur
-        return null;
-      }
+      const errorText = await response.text();
+      console.error(`Response error: ${errorText}`);
       throw new Error(`Failed to retrieve cached data: ${response.statusText}`);
     }
 
     const data: CachedData = await response.json();
+    console.log('Cached data retrieved successfully:', data);
     return data;
   } catch (error) {
+    console.error('Error getting cached data:', error);
     if (error instanceof Error && error.message === 'FORBIDDEN') {
       throw error; // Propager l'erreur d'authentification
     }

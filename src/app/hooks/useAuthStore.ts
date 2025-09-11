@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { login, verifyToken } from '../api/auth.api';
+import { is } from 'zod/locales';
 
 interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   error: string | null;
+  isInitialized: boolean;
   login: (password: string) => Promise<boolean>;
   logout: () => void;
   initialize: () => void;
@@ -50,12 +52,14 @@ export const useAuthStore = create<AuthState>()(
 
           try {
             await verifyToken(token);
-            set({ token, isAuthenticated: true });
+            set({ token, isAuthenticated: true, isInitialized: true });
           } catch (error) {
             // Token invalide, le supprimer
             localStorage.removeItem('authToken');
-            set({ token: null, isAuthenticated: false });
+            set({ token: null, isAuthenticated: false, isInitialized: true });
           }
+        } else {
+          set({ isInitialized: true });
         }
       }
     }),

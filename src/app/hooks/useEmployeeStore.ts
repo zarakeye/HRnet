@@ -4,7 +4,6 @@ import type { Employee } from '../../common/types';
 import { getEmployees, updateEmployee, deleteEmployee, createEmployee, getLastUpdateTimestamp } from '../api/employee.api';
 import { getCachedData, setCachedData } from '../api/cache.api';
 import { useAuthStore } from './useAuthStore';
-import { ca, de } from 'zod/locales';
 
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
@@ -336,7 +335,7 @@ const useEmployeeStore = create<EmployeesState>()(
             set({ error: 'Session expired, please login again', loading: false });
             return;
           }
-          
+
           set({
             error: error?.message || 'Error removing employee',
             loading: false

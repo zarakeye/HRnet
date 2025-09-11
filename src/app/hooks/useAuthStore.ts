@@ -7,7 +7,9 @@ interface AuthState {
   isAuthenticated: boolean;
   error: string | null;
   isInitialized: boolean;
+  encryptionPassword: string | null;
   login: (password: string) => Promise<boolean>;
+  setEncryptionPassword: (password: string) => void;
   logout: () => void;
   initialize: () => void;
 }
@@ -18,17 +20,24 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       error: null,
+      encryptionPassword: null,
 
       login: async (password: string) => {
         try {
           const { token } = await login(password);
-          set({ token, isAuthenticated: true, error: null });
+          set({ token, isAuthenticated: true, error: null, encryptionPassword: password });
           localStorage.setItem('authToken', token);
+          localStorage.setItem('encryptionPassword', password);
           return true;
         } catch (error: any) {
           set({ error: error?.message, isAuthenticated: false });
           return false;
         }
+      },
+
+      setEncryptionPassword: (password: string) => {
+        set({ encryptionPassword: password });
+        localStorage.setItem('encryptionPassword', password);
       },
 
       logout: () => {

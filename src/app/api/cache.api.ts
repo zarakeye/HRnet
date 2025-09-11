@@ -1,13 +1,24 @@
 // src/api/cache.api.ts
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
+// Configuration du chiffrement
+const ENCRYPTION_CONFIG = {
+  keySize: 256 / 32,
+  iterations: 100000
+};
+
+// Fonction pour dériver une clé à partir du mot de passe
+const deriveKeyFromPassword = (password: string, salt: string): CryptoJS.lib.WordArray => {
+  return CryptoJS.PBKDF2(password, salt, ENCRYPTION_CONFIG);
+};
+
 export interface CachedData {
   encrypted: string;
   iv: string;
   authTag: string;
 }
 
-export const getCachedData = async (key: string, token: string): Promise<any> => {
+export const getCachedData = async (key: string, token: string, password: string): Promise<any> => {
   try {
     console.log(`Requesting cached data for key: ${key}`);
     console.log(`Using token: ${token}`);
@@ -44,7 +55,21 @@ export const getCachedData = async (key: string, token: string): Promise<any> =>
 
     const data: CachedData = await response.json();
     console.log('Cached data retrieved successfully:', data);
-    return data;
+    
+    // Déchiffrer les données
+    try {
+      const salt = CryptoJS.enc.Hex.parse(data.iv);
+      const key = deriveKeyFromPassword(password, salt.toString());
+      
+      const bytes = CryptoJS.AES.decrypt(data.encrypted, key);
+      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      
+      console.log('Decrypted data:', decryptedData);
+      return JSON.parse(decryptedData);
+    } catch (decryptError) {
+      console.error('Decryption error:', decryptError);
+      throw new Error('Failed to decrypt cached data');
+    }
   } catch (error) {
     console.error('Error getting cached data:', error);
     if (error instanceof Error && error.message === 'FORBIDDEN') {
@@ -55,15 +80,27 @@ export const getCachedData = async (key: string, token: string): Promise<any> =>
   }
 };
 
-export const setCachedData = async (key: string, data: any, ttl: number, token: string): Promise<void> => {
+export const setCachedData = async (key: string, data: any, ttl: number, token: string, password: string): Promise<void> => {
   try {
+    // Chiffrer les données avant envoi
+    const salt = CryptoJS.lib.WordArray.random(128/8);
+    const derivedKey = deriveKeyFromPassword(password, salt.toString());
+    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), derivedKey).toString();
+
     const response = await fetch(`${API_BASE_URL}/api/cache/${key}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data, ttl }),
+      body: JSON.stringify({ 
+        data: {
+          encrypted,
+          iv: salt.toString(CryptoJS.enc.Hex),
+          authTag: '' // Pour compatibilité avec le backend existant
+        }, 
+        ttl 
+      }),
     });
 
     if (response.status === 403) {

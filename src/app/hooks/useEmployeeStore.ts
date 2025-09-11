@@ -41,10 +41,10 @@ const useEmployeeStore = create<EmployeesState>()(
        * Si une erreur se produit, stocke l'erreur dans le store.
        */
       loadEmployees: async (): Promise<void> => {
-        const token = useAuthStore.getState().token;
+        const { token, encryptionPassword } = useAuthStore.getState();
         console.log('token: ', token);
 
-        if (!token) {
+        if (!token || !encryptionPassword) {
           set({
             error: 'Authentification required',
             loading: false
@@ -57,7 +57,7 @@ const useEmployeeStore = create<EmployeesState>()(
         try {
           // Try to fetch from cache
           try {
-            const cachedData = await getCachedData('employees', (token));
+            const cachedData = await getCachedData('employees', token, encryptionPassword);
 
             if (cachedData) {
               const decryptedData = JSON.parse(cachedData.encrypted);
@@ -105,9 +105,9 @@ const useEmployeeStore = create<EmployeesState>()(
        * @param {boolean} force if `true`, it will always fetch from the API, otherwise it will first try to fetch from the cache.
        */
       fetchEmployees: async (): Promise<void> => {
-        const token = useAuthStore.getState().token;
+        const {token, encryptionPassword } = useAuthStore.getState();
 
-        if (!token) {
+        if (!token || !encryptionPassword) {
           set({
             error: 'Authentification required',
             fetching: false
@@ -135,7 +135,8 @@ const useEmployeeStore = create<EmployeesState>()(
             'employees',
             { employees: freshEmployees, lastUpdated: Date.now() },
             CACHE_TTL,
-            token
+            token,
+            encryptionPassword
           );
         } catch (error: any) {
           if (error.message === 'FORBIDDEN') {
@@ -210,8 +211,9 @@ const useEmployeeStore = create<EmployeesState>()(
        * with an error if something goes wrong.
        */
       addEmployee: async (employee: Omit<Employee, 'id'>): Promise<void> => {
-        const token = useAuthStore.getState().token;
-        if (!token) {
+        const { token, encryptionPassword} = useAuthStore.getState();
+
+        if (!token || !encryptionPassword) {
           set({ error: 'Authentication required', loading: false });
           throw new Error('Authentication required');
         }
@@ -231,7 +233,8 @@ const useEmployeeStore = create<EmployeesState>()(
             'employees',
             { employees: get().employees, lastUpdated: Date.now() },
             CACHE_TTL,
-            token
+            token,
+            encryptionPassword
           );
         } catch (error: any) {
           if (error.message === 'FORBIDDEN') {
@@ -257,8 +260,9 @@ const useEmployeeStore = create<EmployeesState>()(
        * rejects with an error if something goes wrong.
        */
       updateEmployee: async (employee: Employee) => {
-        const token = useAuthStore.getState().token;
-        if (!token) {
+        const { token, encryptionPassword} = useAuthStore.getState();
+
+        if (!token || !encryptionPassword) {
           set({ error: 'Authentication required', loading: false });
           throw new Error('Authentication required');
         }
@@ -280,7 +284,8 @@ const useEmployeeStore = create<EmployeesState>()(
             'employees',
             { employees: get().employees, lastUpdated: Date.now() },
             CACHE_TTL,
-            token
+            token,
+            encryptionPassword
           );
         } catch (error: any) {
           if (error.message === 'FORBIDDEN') {
@@ -305,8 +310,8 @@ const useEmployeeStore = create<EmployeesState>()(
        * rejects with an error if something goes wrong.
        */
       removeEmployee: async (id: string): Promise<void> => {
-        const token = useAuthStore.getState().token;
-        if (!token) {
+        const { token, encryptionPassword } = useAuthStore.getState();
+        if (!token || !encryptionPassword) {
           set({ error: 'Authentication required', loading: false });
           throw new Error('Authentication required');
         }
@@ -326,7 +331,8 @@ const useEmployeeStore = create<EmployeesState>()(
             'employees',
             { employees: get().employees, lastUpdated: Date.now() },
             CACHE_TTL,
-            token
+            token,
+            encryptionPassword
           );
         } catch (error: any) {
           if (error.message === 'FORBIDDEN') {

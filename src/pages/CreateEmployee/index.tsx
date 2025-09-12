@@ -148,6 +148,8 @@ function CreateEmployee (): JSX.Element {
       return;
     }
 
+    console.log(`isSubmittableFormData(formData): ${isSubmittableFormData(formData)}`);
+
     if (isSubmittableFormData(formData)) {
       try {
         await addEmployee({

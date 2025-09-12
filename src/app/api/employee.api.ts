@@ -10,6 +10,11 @@ console.log("DEV_URL: ", import.meta.env.VITE_API_URL_DEVELOPMENT);
 console.log("PROD_URL: ", import.meta.env.VITE_API_URL_PRODUCTION);
 console.log("API_URL: ", API_URL);
 
+/**
+ * Fetches the list of employees from the API.
+ * @returns A promise that resolves with an array of Employee objects.
+ * @throws An error if the request fails.
+ */
 export const getEmployees = async (): Promise<Employee[]> => {
   const response = await fetch(`${API_URL}`, {
     method: "GET",
@@ -29,6 +34,12 @@ export const getEmployees = async (): Promise<Employee[]> => {
   return employees;
 };
 
+/**
+ * Creates a new employee in the API.
+ * @param employee An Employee object without an id
+ * @returns A promise that resolves with the newly created Employee object
+ * @throws An error if the request fails
+ */
 export const createEmployee = async (employee: Omit<Employee, "id">): Promise<Employee> => {
   const response = await fetch(`${API_URL}/new`, {
     method: "POST",
@@ -37,6 +48,8 @@ export const createEmployee = async (employee: Omit<Employee, "id">): Promise<Em
     },
     body: JSON.stringify(employee),
   });
+
+  console.log(`response: ${response}`);
 
   if (!response.ok) {
     throw new Error("Failed to create employee");
@@ -55,6 +68,8 @@ export const updateEmployee = async (employee: Employee): Promise<Employee> => {
     body: JSON.stringify(rest),
   });
 
+  console.log(`response: ${response}`);
+
   if (!response.ok) {
     throw new Error("Failed to update employee");
   }
@@ -67,6 +82,8 @@ export const deleteEmployee = async (id: string): Promise<void> => {
     method: "DELETE",
   });
 
+  console.log(`response: ${response}`);
+
   if (!response.ok) {
     throw new Error("Failed to delete employee");
   }
@@ -78,6 +95,8 @@ export const getLastUpdateTimestamp = async (): Promise<number> => {
   if (!response.ok) {
     throw new Error("Failed to get last update timestamp");
   }
+
+  console.log(`response: ${response}`);
 
   const data = await response.json();
   const parsedData = lastUpdateResponseSchema.parse(data);

@@ -37,7 +37,7 @@ const useEmployeeStore = create<EmployeesState>()(
 
       /**
        * Tente de charger les employés à partir du cache.
-       * Si le cache est vide, charge les employés depuis l'API.
+       * Si le cache est vide, charge les employés depuis l'.
        * Si une erreur se produit, stocke l'erreur dans le store.
        */
       loadEmployees: async (): Promise<void> => {
@@ -222,6 +222,7 @@ const useEmployeeStore = create<EmployeesState>()(
 
         try {
           const newEmployee = await createEmployee(employee);
+          console.log('newEmployee: ', newEmployee);
           set((state) => ({
             employees: [...state.employees, newEmployee],
             loading: false,
@@ -236,6 +237,8 @@ const useEmployeeStore = create<EmployeesState>()(
             token,
             encryptionPassword
           );
+
+
         } catch (error: any) {
           if (error.message === 'FORBIDDEN') {
             // Token invalide, déconnecter l'utilisateur

@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/useEmployeeStore';
+import { useAuthStore } from "../../app/hooks/useAuthStore";
 import { Employee, USStates } from '../../common/types';
 import { isOnlyLetters, isOnlyAlphanumeric, isValidZipCode, isSubmittableFormData, isZipCodeUnderConstruction, isNotOnlyDigits, sanitize } from "../../tools/validate";
 
@@ -19,6 +20,7 @@ import { isOnlyLetters, isOnlyAlphanumeric, isValidZipCode, isSubmittableFormDat
  */
 function CreateEmployee (): JSX.Element {
   const addEmployee = useEmployeeStore(state => state.addEmployee);
+  const { token, encryptionPassword } = useAuthStore(state => state);
   const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const [states, setStates] = useState<Array<{label: string, value: string}>>([]);
@@ -52,6 +54,7 @@ function CreateEmployee (): JSX.Element {
   const [wrongValueType, setWrongValueType] = useState<Array<keyof Employee>>([]);
   const [zipCodeCandidate, setZipCodeCandidate] = useState<string>('');
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     
   /**
    * Updates the formData state with the value from the input element.
@@ -60,66 +63,66 @@ function CreateEmployee (): JSX.Element {
    * @param e The input element's change event, a Dayjs object, a string, or null.
    * @param dateId Optional key of the formData state to update when using a date picker.
    */
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement > | Dayjs | string | null, type?: string, dateId?: keyof Employee) => {
-      let targetId: keyof Employee;
-      let targetValue: string | number | null;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement > | Dayjs | string | null, type?: string, dateId?: keyof Omit<Employee, 'id' | 'lastModified'>) => {
+    let targetId: keyof Omit<Employee, 'id' | 'lastModified'>;
+    let targetValue: string | number | null;
 
-      if (dateId) {
-        targetId = dateId;
-        targetValue = (e as Dayjs)?.format('YYYY-MM-DD') || '';
-        setFieldsErrors(prev => ({...prev, [targetId]: ''}))
+    if (dateId) {
+      targetId = dateId;
+      targetValue = (e as Dayjs)?.format('YYYY-MM-DD') || '';
+      setFieldsErrors(prev => ({...prev, [targetId]: ''}))
+    } else {
+      targetId = (e as React.ChangeEvent<HTMLInputElement>).target.id as keyof Omit<Employee, 'id' | 'lastModified'>;
+      targetValue = sanitize((e as React.ChangeEvent<HTMLInputElement>).target.value);
+    }
+
+    // Check if the input element corresponds to an empty field
+    if (type === 'string') {
+      if (!isOnlyLetters(targetValue)) {
+        if (!wrongValueType.includes(targetId)) {
+          setWrongValueType(prev => [...prev, targetId])
+          setFieldsErrors(prev => ({...prev, [targetId]: 'This field must contain only letters !'}))
+        }
       } else {
-        targetId = (e as React.ChangeEvent<HTMLInputElement>).target.id as keyof Employee;
-        targetValue = sanitize((e as React.ChangeEvent<HTMLInputElement>).target.value);
-      }
-
-
-      if (type === 'string') {
-        if (!isOnlyLetters(targetValue)) {
-          if (!wrongValueType.includes(targetId)) {
-            setWrongValueType(prev => [...prev, targetId])
-            setFieldsErrors(prev => ({...prev, [targetId]: 'This field must contain only letters !'}))
-          }
-        } else {
-          setWrongValueType(prev => prev.filter(field => field !== targetId))
-          if (isOnlyLetters(targetValue)) {
-            setFormData(prev => ({...prev, [targetId]: sanitize(targetValue)}))
-            setFieldsErrors(prev => ({...prev, [targetId]: ''}))
-          }
-        }
-      } else if (type === 'zipCode') {
-        if (isNotOnlyDigits(targetValue)) {
-          if (!wrongValueType.includes(targetId)) {
-            setWrongValueType(prev => [...prev, targetId])
-            setFieldsErrors(prev => ({...prev, [targetId]: 'This field must be composed of 5 digits only !'}))
-            
-          }
-        } else {
-          setWrongValueType(prev => prev.filter(field => field !== targetId))
-          if (isZipCodeUnderConstruction(targetValue)) {
-            setZipCodeCandidate(targetValue)
-            setFieldsErrors(prev => ({...prev, [targetId]: ''}))
-          }
-        }
-      } else if (type === 'alphaNumeric') {
-        if (!isOnlyAlphanumeric(targetValue)) {
-          if (!wrongValueType.includes(targetId)) {
-            setWrongValueType(prev => [...prev, targetId])
-            setFieldsErrors(prev => ({...prev, [targetId]: 'This field must contain only letters and digits !'}))
-          }
-        } else {
-          setWrongValueType(prev => prev.filter(field => field !== targetId))
+        setWrongValueType(prev => prev.filter(field => field !== targetId))
+        if (isOnlyLetters(targetValue)) {
           setFormData(prev => ({...prev, [targetId]: sanitize(targetValue)}))
           setFieldsErrors(prev => ({...prev, [targetId]: ''}))
         }
+      }
+    } else if (type === 'zipCode') {
+      if (isNotOnlyDigits(targetValue)) {
+        if (!wrongValueType.includes(targetId)) {
+          setWrongValueType(prev => [...prev, targetId])
+          setFieldsErrors(prev => ({...prev, [targetId]: 'This field must be composed of 5 digits only !'}))
+          
+        }
       } else {
+        setWrongValueType(prev => prev.filter(field => field !== targetId))
+        if (isZipCodeUnderConstruction(targetValue)) {
+          setZipCodeCandidate(targetValue)
+          setFieldsErrors(prev => ({...prev, [targetId]: ''}))
+        }
+      }
+    } else if (type === 'alphaNumeric') {
+      if (!isOnlyAlphanumeric(targetValue)) {
+        if (!wrongValueType.includes(targetId)) {
+          setWrongValueType(prev => [...prev, targetId])
+          setFieldsErrors(prev => ({...prev, [targetId]: 'This field must contain only letters and digits !'}))
+        }
+      } else {
+        setWrongValueType(prev => prev.filter(field => field !== targetId))
         setFormData(prev => ({...prev, [targetId]: sanitize(targetValue)}))
+        setFieldsErrors(prev => ({...prev, [targetId]: ''}))
       }
-
-      if (emptyFields.includes(targetId)) {
-        setEmptyFields(prev => prev.filter(field => field !== targetId))
-      }
+    } else {
+      setFormData(prev => ({...prev, [targetId]: sanitize(targetValue)}))
     }
+
+    if (emptyFields.includes(targetId)) {
+      setEmptyFields(prev => prev.filter(field => field !== targetId))
+    }
+  }
 
   /**
    * Submits the form and adds a new employee to the store.
@@ -128,30 +131,53 @@ function CreateEmployee (): JSX.Element {
    * displays a success modal, and redirects to the homepage.
    * @param e The form's submit event.
    */
-   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    console.log('Form submitted', formData);
+    console.log('Token available:', !!token);
+    console.log('Encryption password available:', !!encryptionPassword);
 
     // Validation des champs
     let hasEmptyField = false;
-    const newEmptyFields: Array<keyof Employee> = [];
+    const newEmptyFields: Array<keyof Omit<Employee, 'id' | 'lastModified'>> = [];
     
     for (const key in formData) {
       if (key !== 'id' && formData[key as keyof Employee] === '') {
         setFieldsErrors(prev => ({...prev, [key]: 'This field  is required !'}))
-        newEmptyFields.push(key as keyof Employee);
+        newEmptyFields.push(key as keyof Omit<Employee, 'id' | 'lastModified'>);
         hasEmptyField = true;
       }
     }
 
     if (hasEmptyField) {
       setEmptyFields(newEmptyFields);
+      setIsSubmitting(false);
       return;
     }
 
+    if (wrongValueType.length > 0) {
+      setIsSubmitting(false);
+      setSubmitError("Please correct the fields highlighted in red before submitting.");
+    }
+
+    if (!token || !encryptionPassword) {
+      setSubmitError('Authentication required. Please log in again.');
+      setIsSubmitting(false);
+      return;
+    }
     console.log(`isSubmittableFormData(formData): ${isSubmittableFormData(formData)}`);
 
-    if (isSubmittableFormData(formData)) {
+    if (isSubmittableFormData(formData) && isSubmitting) {
       try {
+        if (!token || !encryptionPassword) {
+          setCreationSuccess(false);
+          setSubmitError("Failed to create employee. Please try again.");
+          return;
+        }
+
         await addEmployee({
           firstName: formData.firstName.trim(),
           lastName: formData.lastName.trim(),
@@ -170,8 +196,9 @@ function CreateEmployee (): JSX.Element {
       } catch (error) {
         setCreationSuccess(false);
         setSubmitError("Failed to create employee. Please try again.");
-        console.error("Creation error:", error);
-
+        console.error("Creation error in handleSubmit:", error);
+      } finally {
+        setIsSubmitting(false);
       }
     }
   }
@@ -199,7 +226,36 @@ function CreateEmployee (): JSX.Element {
       lastModified: ''
     });
     setEmptyFields([]);
+    setWrongValueType([]);
+    setZipCodeCandidate('');
   }
+
+  /**
+   * Updates the formData state with the value from the department input element.
+   * Removes the 'department' field from the emptyFields array if it is not empty.
+   */
+    const handleDepartmentChange = (value: string) => {
+    setFormData(prev => ({...prev, department: sanitize(value)}));
+    setFieldsErrors(prev => ({...prev, department: ''}));
+    
+    if (emptyFields.includes('department')) {
+      setEmptyFields(prev => prev.filter(field => field !== 'department'));
+    }
+  };
+
+  /**
+   * Updates the formData state with the value from the state input element.
+   * Removes the 'state' field from the emptyFields array if it is not empty.
+   * @param value The value of the state input element.
+   */
+  const handleStateChange = (value: string) => {
+  setFormData(prev => ({...prev, state: sanitize(value)}));
+  setFieldsErrors(prev => ({...prev, state: ''}));
+  
+  if (emptyFields.includes('state')) {
+    setEmptyFields(prev => prev.filter(field => field !== 'state'));
+  }
+};
 
   useEffect(() => {
     const statesArray = Object.values(USStates).map(state => ({
@@ -218,6 +274,22 @@ function CreateEmployee (): JSX.Element {
     }
   }, [zipCodeCandidate])
 
+  useEffect(() => {
+  const statesArray = Object.values(USStates).map(state => ({
+    label: state,
+    value: state
+  }));
+  setStates(statesArray);
+}, []);
+
+useEffect(() => {
+  if (isValidZipCode(zipCodeCandidate)) {
+    setFormData(prev => ({...prev, zipCode: sanitize(zipCodeCandidate)}));
+  } else {
+    setFormData(prev => ({...prev, zipCode: ''}));
+  }
+}, [zipCodeCandidate]);
+
   return (
     <main className="mt-[250px] mb-[100px]">
       <div className="bg-gray-300 rounded-[80px] w-[500px] mt-[25px]">
@@ -225,29 +297,29 @@ function CreateEmployee (): JSX.Element {
         <div className='flex flex-col items-center justify-center pt-[25px] pb-[50px] border-b-2 border-x-2 border-gray-900 rounded-b-[80px]'>
           <form ref={formRef} onSubmit={handleSubmit} >
             <div className="flex flex-col gap-[15px]">
-                <div className="w-full">
-                  <div className="flex items-center h-[29px]">
-                    {fieldsErrors.firstName && <p className='text-red-600 font-bold'>{fieldsErrors.firstName}</p>}
-                  </div>
-
-                  <div className='w-full flex flex-col gap-[5px] px-[15px] pt-[5px] pb-[10px] bg-gray-900 border-2 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
-                    <label htmlFor="firstName" className='block text-white font-bold'>First Name</label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      placeholder="John"
-                      value={formData.firstName}
-                      onChange={e => handleChange(e, 'string')}
-                      onBlur={e => {
-                        if (e.target.value === '') {
-                          setFieldsErrors(prev => ({...prev, firstName: 'The First name field is required !'}))
-                          setWrongValueType(prev => prev.filter(field => field !== 'firstName'))
-                        }
-                      }}
-                      className='block text-white placeholder:text-gray-400 py-[5px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
-                    />
-                  </div>
+              <div className="w-full">
+                <div className="flex items-center h-[29px]">
+                  {fieldsErrors.firstName && <p className='text-red-600 font-bold'>{fieldsErrors.firstName}</p>}
                 </div>
+
+                <div className='w-full flex flex-col gap-[5px] px-[15px] pt-[5px] pb-[10px] bg-gray-900 border-2 border-gray-500 rounded-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe]'>
+                  <label htmlFor="firstName" className='block text-white font-bold'>First Name</label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    placeholder="John"
+                    value={formData.firstName}
+                    onChange={e => handleChange(e, 'string')}
+                    onBlur={e => {
+                      if (e.target.value === '') {
+                        setFieldsErrors(prev => ({...prev, firstName: 'The First name field is required !'}))
+                        setWrongValueType(prev => prev.filter(field => field !== 'firstName'))
+                      }
+                    }}
+                    className='block text-white placeholder:text-gray-400 py-[5px] outline-none pl-[10px] hover:shadow-[0_0_7px_0px_#7f7fbe] rounded-[10px]'
+                  />
+                </div>
+              </div>
               
               <div className="w-full">
                 <div className="flex items-center h-[29px]">
@@ -393,10 +465,7 @@ function CreateEmployee (): JSX.Element {
                         showSearch
                         placeholder="Select a state"
                         value={formData.state.length ? formData.state : null}
-                        onChange={(value: string) => {
-                          setFormData(prev => ({...prev, state: sanitize(value)}))
-                          setFieldsErrors(prev => ({...prev, state: ''}))
-                        }}
+                        onChange={handleStateChange}
                         style={{
                           width: '100%',
                           height: '35px',
@@ -449,10 +518,7 @@ function CreateEmployee (): JSX.Element {
                       placeholder="Select a department"
                       optionFilterProp="label"
                       value={formData.department.length ? formData.department : null}
-                      onChange={(value: string) => {
-                        setFormData(prev => ({...prev, department: sanitize(value)}))
-                        setFieldsErrors(prev => ({...prev, department: ''}))
-                      }}
+                      onChange={handleDepartmentChange}
                       style={{
                         width: '100%',
                         height: '35px',
@@ -488,9 +554,10 @@ function CreateEmployee (): JSX.Element {
             <div className='flex mt-[50px] gap-[15px] justify-center'>
               <button
                 type='submit'
-                className='bg-[#105924]/80 hover:bg-[#105924] text-white font-bold rounded-[20px] px-[15px] py-[8px] hover:shadow-[0_0_7px_1px_#7f7fbe]'
+                disabled={isSubmitting}
+                className={`bg-[#105924]/80 hover:bg-[#105924] text-white font-bold rounded-[20px] px-[15px] py-[8px] hover:shadow-[0_0_7px_1px_#7f7fbe] ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                Save
+                {isSubmitting ? 'Saving...' : 'Save'}
               </button>
               
               <button
@@ -504,12 +571,42 @@ function CreateEmployee (): JSX.Element {
           </form>
 
           <Modal
-            open={creationSuccess === true}
+            open={creationSuccess !== null}
             centered
             footer={[
+              creationSuccess ? (
+                <>
+                  <Button
+                    key="back"
+                    onClick={() => navigate('/')}
+                    style={{
+                      backgroundColor: '#105924',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '20px',
+                      padding: '0 15px'
+                    }}
+                  >
+                    Back to employees list
+                  </Button>,
+                  <Button
+                    key="submit"
+                    style={{
+                      backgroundColor: '#B30000',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '20px',
+                      padding: '0 15px'
+                    }}
+                    onClick={handleModalClick}
+                  >
+                    Create another employee
+                  </Button>
+                </>
+              ) : (
                 <Button
-                  key="back"
-                  onClick={() => navigate('/')}
+                  key="close"
+                  onClick={handleModalClick}
                   style={{
                     backgroundColor: '#105924',
                     color: 'white',
@@ -518,22 +615,9 @@ function CreateEmployee (): JSX.Element {
                     padding: '0 15px'
                   }}
                 >
-                  Back to employees list
-                </Button>,
-                <Button
-                  key="submit"
-                  style={{
-                    backgroundColor: '#B30000',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '20px',
-                    padding: '0 15px'
-                  }}
-                  onClick={handleModalClick}
-                >
-                  Create another employee
-                </Button>,
-
+                  Close
+                </Button>
+              )
             ]}
             closeIcon={false}
             
@@ -541,8 +625,11 @@ function CreateEmployee (): JSX.Element {
               color: 'white'
             }}
           >
-            <p className='text-center text-red-500'>{submitError && "Error creating employee"}</p>
-            <p className='text-center'>{submitError === null && "Employee created successfully"}</p>
+            {creationSuccess ? (
+              <p className='text-center text-green-600'>Employee created successfully!</p>
+            ) : (
+              <p className='text-center text-red-600'>{submitError || "Error creating employee"}</p>
+            )}
           </Modal>
         </div>
       </div>

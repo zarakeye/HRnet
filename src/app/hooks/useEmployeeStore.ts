@@ -212,6 +212,7 @@ const useEmployeeStore = create<EmployeesState>()(
        */
       addEmployee: async (employee: Omit<Employee, 'id'>): Promise<void> => {
         const { token, encryptionPassword} = useAuthStore.getState();
+        console.log(`Token: ${token}, Password: ${encryptionPassword}`);
 
         if (!token || !encryptionPassword) {
           set({ error: 'Authentication required', loading: false });

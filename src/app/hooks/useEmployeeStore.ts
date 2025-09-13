@@ -42,9 +42,13 @@ const useEmployeeStore = create<EmployeesState>()(
        */
       loadEmployees: async (): Promise<void> => {
         const { token, encryptionPassword } = useAuthStore.getState();
-        console.log('token: ', token);
+        
+        console.log('loadEmployees called');
+        console.log('Token available:', !!token);
+        console.log('Encryption password available:', !!encryptionPassword);
 
         if (!token || !encryptionPassword) {
+          console.log('Authentification required');
           set({
             error: 'Authentification required',
             loading: false
@@ -57,7 +61,9 @@ const useEmployeeStore = create<EmployeesState>()(
         try {
           // Try to fetch from cache
           try {
+            console.log('Trying to get from cache');
             const cachedData = await getCachedData('employees', token, encryptionPassword);
+            console.log('Cached data:', cachedData);
 
             if (cachedData) {
               const decryptedData = JSON.parse(cachedData.encrypted);
@@ -238,15 +244,13 @@ const useEmployeeStore = create<EmployeesState>()(
             token,
             encryptionPassword
           );
-
-
         } catch (error: any) {
-          if (error.message === 'FORBIDDEN') {
-            // Token invalide, déconnecter l'utilisateur
-            useAuthStore.getState().logout();
-            set({ error: 'Session expired, please login again', loading: false });
-            return;
-          }
+          // if (error.message === 'FORBIDDEN') {
+          //   // Token invalide, déconnecter l'utilisateur
+          //   useAuthStore.getState().logout();
+          //   set({ error: 'Session expired, please login again', loading: false });
+          //   return;
+          // }
 
           set({
             error: error.message,

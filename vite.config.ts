@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  optimizeDeps: {
+    include: ['dayjs, crypto-js']
+  },
   css: {
     preprocessorOptions: {
       less: {
@@ -27,6 +30,9 @@ export default defineConfig({
           dayjs: ['dayjs'],
         }
       }
+    },
+    commonjsOptions: {
+      include: [ 'crypto-js', 'node_modules/**' ]
     },
     minify: 'esbuild'
   }

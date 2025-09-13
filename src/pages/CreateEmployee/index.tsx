@@ -275,20 +275,20 @@ function CreateEmployee (): JSX.Element {
   }, [zipCodeCandidate])
 
   useEffect(() => {
-  const statesArray = Object.values(USStates).map(state => ({
-    label: state,
-    value: state
-  }));
-  setStates(statesArray);
-}, []);
+    const statesArray = Object.values(USStates).map(state => ({
+      label: state,
+      value: state
+    }));
+    setStates(statesArray);
+  }, []);
 
-useEffect(() => {
-  if (isValidZipCode(zipCodeCandidate)) {
-    setFormData(prev => ({...prev, zipCode: sanitize(zipCodeCandidate)}));
-  } else {
-    setFormData(prev => ({...prev, zipCode: ''}));
-  }
-}, [zipCodeCandidate]);
+  useEffect(() => {
+    if (isValidZipCode(zipCodeCandidate)) {
+      setFormData(prev => ({...prev, zipCode: sanitize(zipCodeCandidate)}));
+    } else {
+      setFormData(prev => ({...prev, zipCode: ''}));
+    }
+  }, [zipCodeCandidate]);
 
   return (
     <main className="mt-[250px] mb-[100px]">

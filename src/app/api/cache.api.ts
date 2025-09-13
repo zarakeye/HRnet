@@ -1,3 +1,5 @@
+import CryptoJS from 'crypto-js';
+
 // src/api/cache.api.ts
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 

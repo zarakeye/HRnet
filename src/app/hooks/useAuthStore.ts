@@ -47,24 +47,17 @@ export const useAuthStore = create<AuthState>()(
 
       initialize: async () => {
         const token = localStorage.getItem('authToken');
+        const encryptionPassword  = localStorage.getItem('encryptionPassword');
 
         if (token) {
-          // verifyToken(token)
-          //   .then(() => {
-          //     set({ token, isAuthenticated: true });
-          //   })
-          //   .catch(() => {
-          //     localStorage.removeItem('authToken');
-          //     set({ token: null, isAuthenticated: false });
-          //   });
-
           try {
             await verifyToken(token);
-            set({ token, isAuthenticated: true, isInitialized: true });
+            set({ token, isAuthenticated: true, isInitialized: true, encryptionPassword });
           } catch (error) {
             // Token invalide, le supprimer
             localStorage.removeItem('authToken');
-            set({ token: null, isAuthenticated: false, isInitialized: true });
+            localStorage.removeItem('encryptionPassword');
+            set({ token: null, isAuthenticated: false, isInitialized: true, encryptionPassword: null });
           }
         } else {
           set({ isInitialized: true });

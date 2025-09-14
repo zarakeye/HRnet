@@ -1,5 +1,6 @@
 import type { Employee,  } from "../../common/types";
 import { lastUpdateResponseSchema } from "../../schemas/meta.schema";
+import { useAuthStore } from "../../app/hooks/useAuthStore";
 
 const API_URL =
   import.meta.env.MODE === "development"
@@ -16,22 +17,37 @@ console.log("API_URL: ", API_URL);
  * @throws An error if the request fails.
  */
 export const getEmployees = async (): Promise<Employee[]> => {
-  const response = await fetch(`${API_URL}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    cache: "no-store",
-  });
+  try {
+    const { token } = useAuthStore.getState();
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch employees");
+    if (!token) {
+      throw new Error("Authentication required");
+    }
+
+    const response = await fetch(`${API_URL}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      // cache: "no-store",
+    });
+
+    console.log(`Employees API response status: ${response.status}`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Employees API error: ${errorText}`);
+      throw new Error(`Failed to fetch employees: ${response.statusText}`);
+    }
+
+    const employees = await response.json();
+    console.log(`Employees data: ${JSON.stringify(employees)}`);
+    return employees;
+  } catch (error) {
+    console.error(`Error in getEmployees: ${error}`);
+    throw error;
   }
-  
-  const employees: Employee[] = await response.json();
-  console.log(employees);
-  
-  return employees;
 };
 
 /**

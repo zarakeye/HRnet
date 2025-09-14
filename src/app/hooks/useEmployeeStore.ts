@@ -65,7 +65,7 @@ const useEmployeeStore = create<EmployeesState>()(
             const cachedData = await getCachedData('employees', token, encryptionPassword);
             console.log('Cached data:', cachedData);
 
-            if (cachedData) {
+            if (cachedData && cachedData.encrypted) {
               const decryptedData = JSON.parse(cachedData.encrypted);
 
               if (decryptedData && decryptedData.employees) {
@@ -127,7 +127,10 @@ const useEmployeeStore = create<EmployeesState>()(
         }, false, 'fetchEmployees/start');
 
         try {
+          console.log('Fetching fresh employees from API');
           const freshEmployees = await getEmployees();
+          console.log('Fresh employees received:', freshEmployees);
+
 
           set({
             employees: freshEmployees,
@@ -136,14 +139,21 @@ const useEmployeeStore = create<EmployeesState>()(
             isUpdateAvailable: false
           }, false, 'fetchEmployees/success');
 
-          // Update cache
-          await setCachedData(
-            'employees',
-            { employees: freshEmployees, lastUpdated: Date.now() },
-            CACHE_TTL,
-            token,
-            encryptionPassword
-          );
+          // Mettre à jour le cache
+          try {
+            console.log('Updating cache with fresh data');
+            await setCachedData(
+              'employees', 
+              { employees: freshEmployees, lastUpdated: Date.now() },
+              CACHE_TTL,
+              token,
+              encryptionPassword
+            );
+            console.log('Cache updated successfully');
+          } catch (cacheError) {
+            console.error('Error updating cache:', cacheError);
+            // Ne pas propager l'erreur car les données fraîches ont été récupérées avec succès
+          }
         } catch (error: any) {
           if (error.message === 'FORBIDDEN') {
             // Token invalide, déconnecter l'utilisateur

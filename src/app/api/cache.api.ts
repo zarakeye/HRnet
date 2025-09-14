@@ -61,10 +61,18 @@ export const getCachedData = async (key: string, token: string, password: string
     // Déchiffrer les données
     try {
       const salt = CryptoJS.enc.Hex.parse(data.iv);
-      const key = deriveKeyFromPassword(password, salt.toString());
+      const derivedKey = deriveKeyFromPassword(password, salt.toString());
+      // const derivedKey = CryptoJS.PBKDF2(password, salt, ENCRYPTION_CONFIG);
+      const decrypted = CryptoJS.AES.decrypt(data.encrypted, derivedKey, {
+        iv: salt,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+      });
+
+      const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
       
-      const bytes = CryptoJS.AES.decrypt(data.encrypted, key);
-      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      // const bytes = CryptoJS.AES.decrypt(data.encrypted, key);
+      // const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
       
       console.log('Decrypted data:', decryptedData);
       return JSON.parse(decryptedData);
@@ -84,10 +92,24 @@ export const getCachedData = async (key: string, token: string, password: string
 
 export const setCachedData = async (key: string, data: any, ttl: number, token: string, password: string): Promise<void> => {
   try {
+    console.log(`Setting cached data for key: ${key}`);
+    console.log('Data to cache:', data);
+    console.log('Password available:', !!password);
+    
+    if (!password) {
+      throw new Error('Encryption password is required');
+    }
+
     // Chiffrer les données avant envoi
     const salt = CryptoJS.lib.WordArray.random(128/8);
     const derivedKey = deriveKeyFromPassword(password, salt.toString());
-    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), derivedKey).toString();
+    // const derivedKey = CryptoJS.PBKDF2(password, salt, ENCRYPTION_CONFIG);
+    // const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), derivedKey).toString();
+    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), derivedKey, {
+      iv: salt,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
+    }).toString();
 
     const response = await fetch(`${API_BASE_URL}/api/cache/${key}`, {
       method: 'POST',

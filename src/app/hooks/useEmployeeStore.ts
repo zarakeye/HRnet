@@ -131,6 +131,10 @@ const useEmployeeStore = create<EmployeesState>()(
           const freshEmployees = await getEmployees();
           console.log('Fresh employees received:', freshEmployees);
 
+          // Vérifier que les données sont valides avant de les stocker
+          if (!Array.isArray(freshEmployees)) {
+            throw new Error('Invalid data received from server');
+          }
 
           set({
             employees: freshEmployees,
@@ -139,20 +143,24 @@ const useEmployeeStore = create<EmployeesState>()(
             isUpdateAvailable: false
           }, false, 'fetchEmployees/success');
 
-          // Mettre à jour le cache
-          try {
-            console.log('Updating cache with fresh data');
-            await setCachedData(
-              'employees', 
-              { employees: freshEmployees, lastUpdated: Date.now() },
-              CACHE_TTL,
-              token,
-              encryptionPassword
-            );
-            console.log('Cache updated successfully');
-          } catch (cacheError) {
-            console.error('Error updating cache:', cacheError);
-            // Ne pas propager l'erreur car les données fraîches ont été récupérées avec succès
+          if (freshEmployees.length > 0) {
+            // Mettre à jour le cache
+            try {
+              console.log('Updating cache with fresh data');
+              await setCachedData(
+                'employees', 
+                { employees: freshEmployees, lastUpdated: Date.now() },
+                CACHE_TTL,
+                token,
+                encryptionPassword
+              );
+              console.log('Cache updated successfully');
+            } catch (cacheError) {
+              console.error('Error updating cache:', cacheError);
+              // Ne pas propager l'erreur car les données fraîches ont été récupérées avec succès
+            }
+          } else {
+            console.log('No data to cache - Employees array is empty');
           }
         } catch (error: any) {
           if (error.message === 'FORBIDDEN') {

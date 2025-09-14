@@ -57,21 +57,37 @@ export const getEmployees = async (): Promise<Employee[]> => {
  * @throws An error if the request fails
  */
 export const createEmployee = async (employee: Omit<Employee, "id">): Promise<Employee> => {
-  const response = await fetch(`${API_URL}/new`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(employee),
-  });
+  try {
+    const { token } = useAuthStore.getState();
 
-  console.log(`response: ${response}`);
+    if (!token) {
+      throw new Error("Authentication required");
+    }
 
-  if (!response.ok) {
-    throw new Error("Failed to create employee");
+    const response = await fetch(`${API_URL}/new`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(employee),
+    });
+
+    console.log(`response: ${response}`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Create employee API error: ${errorText}`);
+      throw new Error("Failed to create employee: " + response.statusText);
+    }
+
+    const newEmployee = await response.json();
+    console.log(`New employee data: ${JSON.stringify(newEmployee)}`);
+    return newEmployee;
+  } catch (error) {
+    console.error(`Error in createEmployee: ${error}`);
+    throw error;
   }
-
-  return response.json();
 }
 
 export const updateEmployee = async (employee: Employee): Promise<Employee> => {

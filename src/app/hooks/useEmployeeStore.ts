@@ -235,14 +235,17 @@ const useEmployeeStore = create<EmployeesState>()(
             lastUpdate: Date.now(),
           }), false, 'addEmployee/success');
 
-          // Update cache
-          await setCachedData(
-            'employees',
-            { employees: get().employees, lastUpdated: Date.now() },
-            CACHE_TTL,
-            token,
-            encryptionPassword
-          );
+          try {
+            await setCachedData(
+              'employees',
+              { employees: get().employees, lastUpdated: Date.now() },
+              CACHE_TTL,
+              token,
+              encryptionPassword
+            );
+          } catch (cacheError) {
+            console.error('Error updating cache:', cacheError);
+          }
         } catch (error: any) {
           // if (error.message === 'FORBIDDEN') {
           //   // Token invalide, déconnecter l'utilisateur
@@ -250,7 +253,7 @@ const useEmployeeStore = create<EmployeesState>()(
           //   set({ error: 'Session expired, please login again', loading: false });
           //   return;
           // }
-
+          console.error('Error adding employee:', error);
           set({
             error: error.message,
             loading: false

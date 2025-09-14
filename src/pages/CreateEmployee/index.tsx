@@ -24,8 +24,7 @@ function CreateEmployee (): JSX.Element {
   const [creationSuccess, setCreationSuccess] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const [states, setStates] = useState<Array<{label: string, value: string}>>([]);
-  const [formData, setFormData] = useState<Employee>({
-    id: '',
+  const [formData, setFormData] = useState<Omit<Employee, 'id' | 'lastModified'>>({
     firstName: '',
     lastName: '',
     dateOfBirth: '',
@@ -35,10 +34,8 @@ function CreateEmployee (): JSX.Element {
     state: '',
     zipCode: '',
     department: '',
-    lastModified: ''
   });
-  const [fieldsErrors, setFieldsErrors] = useState<Employee>({
-    id: '',
+  const [fieldsErrors, setFieldsErrors] = useState<Record<keyof Omit<Employee, 'id' | 'lastModified'>, string>>({
     firstName: '',
     lastName: '',
     dateOfBirth: '',
@@ -48,10 +45,9 @@ function CreateEmployee (): JSX.Element {
     state: '',
     zipCode: '',
     department: '',
-    lastModified: ''
   });
-  const [emptyFields, setEmptyFields] = useState<Array<keyof Employee>>([]);
-  const [wrongValueType, setWrongValueType] = useState<Array<keyof Employee>>([]);
+  const [emptyFields, setEmptyFields] = useState<Array<keyof Omit<Employee, 'id' | 'lastModified'>>>([]);
+  const [wrongValueType, setWrongValueType] = useState<Array<keyof Omit<Employee, 'id' | 'lastModified'>>>([]);
   const [zipCodeCandidate, setZipCodeCandidate] = useState<string>('');
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -145,7 +141,7 @@ function CreateEmployee (): JSX.Element {
     const newEmptyFields: Array<keyof Omit<Employee, 'id' | 'lastModified'>> = [];
     
     for (const key in formData) {
-      if (key !== 'id' && formData[key as keyof Employee] === '') {
+      if (key !== 'id' && key !== 'lastModified' && formData[key as keyof Omit<Employee, 'id' | 'lastModified'>] === '') {
         setFieldsErrors(prev => ({...prev, [key]: 'This field  is required !'}))
         newEmptyFields.push(key as keyof Omit<Employee, 'id' | 'lastModified'>);
         hasEmptyField = true;
@@ -161,6 +157,7 @@ function CreateEmployee (): JSX.Element {
     if (wrongValueType.length > 0) {
       setIsSubmitting(false);
       setSubmitError("Please correct the fields highlighted in red before submitting.");
+      return;
     }
 
     if (!token || !encryptionPassword) {
@@ -170,37 +167,42 @@ function CreateEmployee (): JSX.Element {
     }
     console.log(`isSubmittableFormData(formData): ${isSubmittableFormData(formData)}`);
 
-    if (isSubmittableFormData(formData) && isSubmitting) {
-      try {
-        if (!token || !encryptionPassword) {
-          setCreationSuccess(false);
-          setSubmitError("Failed to create employee. Please try again.");
-          return;
-        }
-
-        await addEmployee({
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
-          dateOfBirth: formData.dateOfBirth.trim(),
-          startDate: formData.startDate.trim(),
-          street: formData.street.trim(),
-          city: formData.city.trim(),
-          state: formData.state.trim(),
-          zipCode: formData.zipCode.trim(),
-          department: formData.department.trim(),
-          lastModified: new Date().toISOString()
-        });
-
-        setCreationSuccess(true);
-        setSubmitError(null);
-      } catch (error) {
-        setCreationSuccess(false);
-        setSubmitError("Failed to create employee. Please try again.");
-        console.error("Creation error in handleSubmit:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
+    if (!isSubmittableFormData(formData)) {
+      setSubmitError("Please complete all required fields before submitting.");
+      setIsSubmitting(false);
+      return;
     }
+
+    try {
+      // if (!token || !encryptionPassword) {
+      //   setCreationSuccess(false);
+      //   setSubmitError("Failed to create employee. Please try again.");
+      //   return;
+      // }
+
+      await addEmployee({
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        dateOfBirth: formData.dateOfBirth.trim(),
+        startDate: formData.startDate.trim(),
+        street: formData.street.trim(),
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        zipCode: formData.zipCode.trim(),
+        department: formData.department.trim(),
+        lastModified: new Date().toISOString()
+      });
+
+      setCreationSuccess(true);
+      setSubmitError(null);
+    } catch (error) {
+      setCreationSuccess(false);
+      setSubmitError("Failed to create employee. Please try again.");
+      console.error("Creation error in handleSubmit:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+    // }
   }
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -213,7 +215,6 @@ function CreateEmployee (): JSX.Element {
     setCreationSuccess(null);
 
     setFormData({
-      id: '',
       firstName: '',
       lastName: '',
       dateOfBirth: '',
@@ -223,7 +224,6 @@ function CreateEmployee (): JSX.Element {
       state: '',
       zipCode: '',
       department: '',
-      lastModified: ''
     });
     setEmptyFields([]);
     setWrongValueType([]);
@@ -249,22 +249,13 @@ function CreateEmployee (): JSX.Element {
    * @param value The value of the state input element.
    */
   const handleStateChange = (value: string) => {
-  setFormData(prev => ({...prev, state: sanitize(value)}));
-  setFieldsErrors(prev => ({...prev, state: ''}));
-  
-  if (emptyFields.includes('state')) {
-    setEmptyFields(prev => prev.filter(field => field !== 'state'));
-  }
-};
-
-  useEffect(() => {
-    const statesArray = Object.values(USStates).map(state => ({
-      label: state,
-      value: state
-    }));
-
-    setStates(statesArray);
-  }, [])
+    setFormData(prev => ({...prev, state: sanitize(value)}));
+    setFieldsErrors(prev => ({...prev, state: ''}));
+    
+    if (emptyFields.includes('state')) {
+      setEmptyFields(prev => prev.filter(field => field !== 'state'));
+    }
+  };
 
   useEffect(() => {
     setFormData(prev => ({...prev, zipCode: ''}))
@@ -281,14 +272,6 @@ function CreateEmployee (): JSX.Element {
     }));
     setStates(statesArray);
   }, []);
-
-  useEffect(() => {
-    if (isValidZipCode(zipCodeCandidate)) {
-      setFormData(prev => ({...prev, zipCode: sanitize(zipCodeCandidate)}));
-    } else {
-      setFormData(prev => ({...prev, zipCode: ''}));
-    }
-  }, [zipCodeCandidate]);
 
   return (
     <main className="mt-[250px] mb-[100px]">
@@ -626,9 +609,15 @@ function CreateEmployee (): JSX.Element {
             }}
           >
             {creationSuccess ? (
-              <p className='text-center text-green-600'>Employee created successfully!</p>
+              <div className="text-center">
+                <p className="text-green-600 text-lg font-bold">Employee created successfully!</p>
+                <p className="text-gray-600 mt-2">The new employee has been added to the database.</p>
+              </div>
             ) : (
-              <p className='text-center text-red-600'>{submitError || "Error creating employee"}</p>
+              <div className="text-center">
+                <p className="text-red-600 text-lg font-bold">Error creating employee</p>
+                <p className="text-gray-600 mt-2">{submitError || "Please try again later."}</p>
+              </div>
             )}
           </Modal>
         </div>

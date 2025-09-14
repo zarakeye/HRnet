@@ -26,16 +26,36 @@ export function checkEmptyFields(formData: Employee, ): Array<keyof Employee> {
  * @param formData The employee form data to validate.
  * @returns True if all required fields are filled, false otherwise.
  */
-export function isSubmittableFormData(formData: Employee): boolean {
-  return formData.firstName.length > 0
-    && formData.lastName.length > 0
-    && formData.dateOfBirth.length > 0
-    && formData.startDate.length > 0
-    && formData.street.length > 0
-    && formData.city.length > 0
-    && formData.state.length > 0
-    && formData.zipCode.length > 0
-    && formData.department.length > 0
+export function isSubmittableFormData(formData: Omit<Employee, 'id' | 'lastModified'>): boolean {
+  // return formData.firstName.length > 0
+  //   && formData.lastName.length > 0
+  //   && formData.dateOfBirth.length > 0
+  //   && formData.startDate.length > 0
+  //   && formData.street.length > 0
+  //   && formData.city.length > 0
+  //   && formData.state.length > 0
+  //   && formData.zipCode.length > 0
+  //   && formData.department.length > 0
+
+  // Vérifier que tous les champs requis sont remplis
+  const requiredFields: Array<keyof Omit<Employee, 'id' | 'lastModified'>> = [
+    'firstName', 'lastName', 'dateOfBirth', 'startDate', 
+    'street', 'city', 'state', 'zipCode', 'department'
+  ];
+  
+  for (const field of requiredFields) {
+    if (!formData[field] || formData[field].trim() === '') {
+      return false;
+    }
+  }
+  
+  // Vérifier que le code postal est valide
+  if (!isValidZipCode(formData.zipCode)) {
+    return false;
+  }
+  
+  // Ajouter d'autres validations si nécessaire
+  return true;
 }
 
 /**

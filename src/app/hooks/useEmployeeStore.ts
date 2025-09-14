@@ -116,7 +116,7 @@ const useEmployeeStore = create<EmployeesState>()(
         if (!token || !encryptionPassword) {
           set({
             error: 'Authentification required',
-            fetching: false
+            fetching: false,
           })
           return;
         }
@@ -140,7 +140,9 @@ const useEmployeeStore = create<EmployeesState>()(
             employees: freshEmployees,
             fetching: false,
             lastUpdate: Date.now(),
-            isUpdateAvailable: false
+            isUpdateAvailable: false,
+            error: null,
+            loading: false
           }, false, 'fetchEmployees/success');
 
           if (freshEmployees.length > 0) {

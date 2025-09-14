@@ -1,4 +1,5 @@
 import CryptoJS from 'crypto-js';
+// import { Employee } from '../../common/types';
 
 // src/api/cache.api.ts
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
@@ -20,7 +21,7 @@ export interface CachedData {
   authTag: string;
 }
 
-export const getCachedData = async (key: string, token: string, password: string): Promise<any> => {
+export const getCachedData = async (key: string, token: string, password: string): Promise< any> => {
   try {
     console.log(`Requesting cached data for key: ${key}`);
     console.log(`Using token: ${token}`);
@@ -69,12 +70,14 @@ export const getCachedData = async (key: string, token: string, password: string
         padding: CryptoJS.pad.Pkcs7
       });
 
+      console.log('Decrypted data:', decrypted);
+
       const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
       
       // const bytes = CryptoJS.AES.decrypt(data.encrypted, key);
       // const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
       
-      console.log('Decrypted data:', decryptedData);
+      console.log('Decrypted data after toString:', decryptedData);
       return JSON.parse(decryptedData);
     } catch (decryptError) {
       console.error('Decryption error:', decryptError);
@@ -95,7 +98,7 @@ export const setCachedData = async (key: string, data: any, ttl: number, token: 
     console.log(`Setting cached data for key: ${key}`);
     console.log('Data to cache:', data);
     console.log('Password available:', !!password);
-    
+
     if (!password) {
       throw new Error('Encryption password is required');
     }

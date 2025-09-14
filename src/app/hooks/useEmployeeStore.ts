@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { Employee } from '../../common/types';
 import { getEmployees, updateEmployee, deleteEmployee, createEmployee, getLastUpdateTimestamp } from '../api/employee.api';
-import { getCachedData, setCachedData } from '../api/cache.api';
+import { getCachedData, setCachedData, checkCacheAvailability } from '../api/cache.api';
 import { useAuthStore } from './useAuthStore';
 
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
@@ -43,61 +43,40 @@ const useEmployeeStore = create<EmployeesState>()(
       loadEmployees: async (): Promise<void> => {
         const { token, encryptionPassword } = useAuthStore.getState();
         
-        console.log('loadEmployees called');
-        console.log('Token available:', !!token);
-        console.log('Encryption password available:', !!encryptionPassword);
-
-        if (!token || !encryptionPassword) {
-          console.log('Authentification required');
-          set({
-            error: 'Authentification required',
-            loading: false
-          })
+        if (!token) {
+          set({ error: 'Authentication required', loading: false });
           return;
         }
 
-        set({ loading: true, error: null }, false, 'loadEmployees/start');
+        set({ loading: true, error: null });
 
         try {
-          // Try to fetch from cache
-          try {
-            console.log('Trying to get from cache');
-            const cachedData = await getCachedData('employees', token, encryptionPassword);
-            console.log('Cached data:', cachedData);
+          // Vérifier la disponibilité du cache
+          const cacheAvailable = await checkCacheAvailability(token);
+          
+          if (cacheAvailable && encryptionPassword) {
+            try {
+              const cachedData = await getCachedData('employees', token, encryptionPassword);
 
-            if (cachedData && cachedData.encrypted) {
-              const decryptedData = JSON.parse(cachedData.encrypted);
-
-              if (decryptedData && decryptedData.employees) {
+              if (cachedData && cachedData.employees) {
                 set({
-                  employees: decryptedData.employees,
-                  loading: false,
-                  lastUpdate: decryptedData.lastUpdate,
-                  isUpdateAvailable: false,
-                }, false, 'loadEmployees/success');
+                  employees: cachedData.employees,
+                  lastUpdate: cachedData.lastUpdated,
+                  loading: false
+                });
+                
+                get().checkForUpdate();
+                return;
               }
-
-              // Vérify in background if an update is available
-              get().checkForUpdate();
-              return;
+            } catch (error: any) {
+              console.log('Cache unavailable, fetching fresh data', error);
             }
-          } catch (error: any) {
-            if (error.message === 'FORBIDDEN') {
-              // Token invalide, déconnecter l'utilisateur
-              useAuthStore.getState().logout();
-              set({ error: 'Session expired, please login again', loading: false });
-              return;
-            }
-            console.log('No cached data available, fetching fresh data');
           }
-
-          // if cache is empty or failed, fetch fresh data
-          get().fetchEmployees();
+          
+          await get().fetchEmployees();
         } catch (error: any) {
-          set({
-            error: error?.message || 'Error loading employees',
-            loading: false,
-          });
+          console.error('Error in loadEmployees:', error);
+          set({ error: error.message, loading: false });
         }
       },
       

@@ -14,7 +14,7 @@ function Header (): JSX.Element {
   return (
     <header className='w-full fixed flex flex-row justify-between items-end flex-1 bg-transparent backdrop-blur-md py-[20px] pl-[20px] z-10'>
       {/* <div> */}
-        <div>
+        <div className='flex flex-row'>
           <figure className='flex flex-col items-center justify-center bg-white mr-[20px]'>
             <img src={logo} alt="WealthHealth Logo" className='h-[70px] w-[70.67px] cursor-pointer' onClick={() => navigate('/')} />
             <figcaption className='font-bold text-[#5B7006]'>

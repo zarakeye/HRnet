@@ -34,11 +34,14 @@ const useEmployeeStore = create<EmployeesState>()(
       error: null,
       lastUpdate: null,
       isUpdateAvailable: false,
-
       /**
-       * Tente de charger les employés à partir du cache.
-       * Si le cache est vide, charge les employés depuis l'.
-       * Si une erreur se produit, stocke l'erreur dans le store.
+       * Loads the employees from the cache or the API.
+       * If the token is invalid, logs the user out and throws an error.
+       * If the cache is available and the encryption password is valid, it
+       * fetches the employees from the cache and sets the `lastUpdate` state.
+       * If the cache is unavailable, it fetches fresh employees from the API.
+       * If an error occurs while loading the employees, it sets an error state
+       * and logs an error to the console.
        */
       loadEmployees: async (): Promise<void> => {
         const { token, encryptionPassword } = useAuthStore.getState();
@@ -79,15 +82,12 @@ const useEmployeeStore = create<EmployeesState>()(
           set({ error: error.message, loading: false });
         }
       },
-      
       /**
-       * Fetches the list of employees from the API or from the cache.
-       * If `force` is `true`, it will always fetch from the API, otherwise it will first try to fetch from the cache.
-       * If the cache is empty or the fetch from the cache fails, it will fetch from the API.
-       * It saves the fetched employees in the cache.
-       * It sets the `loading` state to `true` while fetching and sets the `error` state if an error occurs.
-       * It sets the `lastUpdated` state with the current timestamp and the `isUpdateAvailable` state to `false`.
-       * @param {boolean} force if `true`, it will always fetch from the API, otherwise it will first try to fetch from the cache.
+       * Fetches fresh employees from the API.
+       * If the token is invalid, logs the user out and throws an error.
+       * If the fetch is successful, updates the cache.
+       * If the fetch fails, sets an error state and throws an error.
+       * @throws Error If the token is invalid or the fetch fails.
        */
       fetchEmployees: async (): Promise<void> => {
         const {token, encryptionPassword } = useAuthStore.getState();
@@ -157,12 +157,15 @@ const useEmployeeStore = create<EmployeesState>()(
           }, false, 'fetchEmployees/error');
         }
       },
-
       /**
-       * Checks if there are newer updates available on the server like the lastUpdated timestamp.
-       * If yes, sets `isUpdateAvailable` to true.
-       * If not, sets `isUpdateAvailable` to false.
-       * If there is an error, sets `isUpdateAvailable` to false and logs the error.
+       * Checks if an update is available by comparing the last update timestamp
+       * stored in the cache with the latest timestamp from the API.
+       * If the latest timestamp is greater than the last update timestamp, it
+       * sets the `isUpdateAvailable` state to `true`.
+       * If the token is invalid or the last update timestamp is null, it returns
+       * immediately without doing anything.
+       * If an error occurs while checking for updates, it sets the `isUpdateAvailable`
+       * state to `false` and logs an error to the console.
        */
       checkForUpdate: async (): Promise<void> => {
         const { lastUpdate } = get();
@@ -179,7 +182,6 @@ const useEmployeeStore = create<EmployeesState>()(
 
           if (freshLastUpdatesTimestamp > lastUpdate) {
             set({ isUpdateAvailable: true }, false, 'checkForUpdates/updateAvailable');
-            // get().fetchEmployees();
           }
         } catch (error: any) {
           if (error.message === 'FORBIDDEN') {
@@ -192,29 +194,16 @@ const useEmployeeStore = create<EmployeesState>()(
           set({ isUpdateAvailable: false }, false, 'checkForUpdates/error');
         }
       },
-
       /**
-       * Resets the `isUpdateAvailable` flag to false, indicating that the
-       * user has acknowledged the available update.
+       * Acknowledge that an update is available.
+       * This will reset the `isUpdateAvailable` state to `false`.
        */
       acknowledgeUpdate: () => {
         set({ isUpdateAvailable: false }, false, 'acknowledgeUpdate');
       },
-
-      /**
-       * Resets the `error` field to null, effectively clearing the
-       * last error that occurred.
-       */
       clearError: () => {
         set({ error: null }, false, 'clearError');
       },
-    
-      /**
-       * Adds a new employee to the list of employees.
-       * @param employee The employee to add, with all fields except `id` set.
-       * @returns A promise that resolves when the employee is added, or rejects
-       * with an error if something goes wrong.
-       */
       addEmployee: async (employee: Omit<Employee, 'id'>): Promise<void> => {
         const { token, encryptionPassword} = useAuthStore.getState();
         console.log(`Token: ${token}, Password: ${encryptionPassword}`);
@@ -247,12 +236,6 @@ const useEmployeeStore = create<EmployeesState>()(
             console.error('Error updating cache:', cacheError);
           }
         } catch (error: any) {
-          // if (error.message === 'FORBIDDEN') {
-          //   // Token invalide, déconnecter l'utilisateur
-          //   useAuthStore.getState().logout();
-          //   set({ error: 'Session expired, please login again', loading: false });
-          //   return;
-          // }
           console.error('Error adding employee:', error);
           set({
             error: error.message,
@@ -261,13 +244,13 @@ const useEmployeeStore = create<EmployeesState>()(
           throw error;
         }
       },
-
       /**
-       * Updates an existing employee in the list of employees.
-       * @param employee The employee to update, with all fields except `id`
-       * set to the new values.
-       * @returns A promise that resolves when the employee is updated, or
-       * rejects with an error if something goes wrong.
+       * Updates an employee in the store.
+       * If the token is invalid, logs the user out and throws an error.
+       * If the update is successful, updates the cache.
+       * If the update fails, sets an error state and throws an error.
+       * @param employee The employee to update.
+       * @throws Error If the token is invalid or the update fails.
        */
       updateEmployee: async (employee: Employee) => {
         const { token, encryptionPassword} = useAuthStore.getState();
@@ -312,12 +295,13 @@ const useEmployeeStore = create<EmployeesState>()(
           throw error;
         }
       },
-
       /**
-       * Removes an employee from the list of employees.
+       * Removes an employee from the store.
+       * If the token is invalid, logs the user out and throws an error.
+       * If the deletion is successful, updates the cache.
+       * If the deletion fails, sets an error state and throws an error.
        * @param id The id of the employee to remove.
-       * @returns A promise that resolves when the employee is removed, or
-       * rejects with an error if something goes wrong.
+       * @throws Error If the token is invalid or the deletion fails.
        */
       removeEmployee: async (id: string): Promise<void> => {
         const { token, encryptionPassword } = useAuthStore.getState();
@@ -360,6 +344,10 @@ const useEmployeeStore = create<EmployeesState>()(
         }
       },
 
+      /**
+       * Clears the EmployeeStore state, removing all employees and resetting
+       * the lastUpdate and isUpdateAvailable flags.
+       */
       clearCache: (): void => {
         set({
           employees: [],

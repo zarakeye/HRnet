@@ -1,6 +1,13 @@
 // src/api/auth.api.ts
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
+/**
+ * Logs in the user using the provided password.
+ * Returns a promise resolving to an object containing the authentication token.
+ * If the login fails, it throws an error with a message containing the error or the HTTP status code.
+ * @param {string} password The password to use for logging in.
+ * @returns {Promise<{ token: string }>} A promise resolving to an object containing the authentication token.
+ */
 export const login = async (password: string): Promise<{ token: string }> => {
   const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
     method: 'POST',

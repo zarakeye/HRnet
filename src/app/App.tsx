@@ -5,6 +5,14 @@ import Profile from '../pages/Profile';
 import '@ant-design/v5-patch-for-react-19';
 import UpdateNotification from '../components/UpdateNotification';
 
+/**
+ * The main App component that renders the routes for the application.
+ * It renders three routes: '/', '/create-employee', and '/profile/:id'.
+ * The '/' route renders the Home component.
+ * The '/create-employee' route renders the CreateEmployee component.
+ * The '/profile/:id' route renders the Profile component.
+ * The App component also renders the UpdateNotification component.
+ */
 function App() {
   return (
     <>

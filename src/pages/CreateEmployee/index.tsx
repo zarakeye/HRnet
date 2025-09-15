@@ -174,12 +174,6 @@ function CreateEmployee (): JSX.Element {
     }
 
     try {
-      // if (!token || !encryptionPassword) {
-      //   setCreationSuccess(false);
-      //   setSubmitError("Failed to create employee. Please try again.");
-      //   return;
-      // }
-
       await addEmployee({
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
@@ -202,7 +196,6 @@ function CreateEmployee (): JSX.Element {
     } finally {
       setIsSubmitting(false);
     }
-    // }
   }
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -230,10 +223,10 @@ function CreateEmployee (): JSX.Element {
     setZipCodeCandidate('');
   }
 
-  /**
-   * Updates the formData state with the value from the department input element.
-   * Removes the 'department' field from the emptyFields array if it is not empty.
-   */
+    /**
+     * Updates the formData state with the value from the department input element.
+     * Removes the 'department' field from the emptyFields array if it is not empty.
+     */
     const handleDepartmentChange = (value: string) => {
     setFormData(prev => ({...prev, department: sanitize(value)}));
     setFieldsErrors(prev => ({...prev, department: ''}));

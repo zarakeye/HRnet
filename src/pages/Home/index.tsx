@@ -7,28 +7,22 @@ import DatabaseSpinner from '../../components/DatabaseSpinner';
 import PasswordModal from '../../components/PasswordModal';
 
 /**
- * Component that renders a table of employees in the store.
- * The table includes columns for the employee's first name, last name, date of birth, start date, street, city, state, zip code, and department.
- * The table also includes a button to add a new employee.
- * The component uses the useEmployeeStore hook to get the employees from the store.
- * The component uses the navigate hook to navigate to the /create-employee page when the add button is clicked.
- * The component uses the Table component from react-ts-tab-lib to render the table.
- * The component uses a custom renderer for the date columns to format the date as 'DD/MM/YYYY'.
- * The component uses a custom renderer for the last name column to format the last name as all uppercase.
- * The component uses a custom renderer for the search bar to add a search icon.
+ * Page displaying the list of current employees.
+ * If the user is not authenticated, a password modal is displayed.
+ * If the user is authenticated, the page displays a button to add a new employee and a table displaying the list of current employees.
+ * A notification is displayed if new employee data is available.
+ * A spinner is displayed in the center of the page if the employee data is being loaded.
+ * The page is responsive and the layout adapts to different screen sizes.
  */
 function Home(): JSX.Element {
   const navigate = useNavigate();
-const {
-    employees,
-    loading,
-    isUpdateAvailable,
-    // lastUpdate,
-    checkForUpdate,
-    // acknowledgeUpdate,
-    loadEmployees
-    
-  } = useEmployeeStore();
+  const {
+      employees,
+      loading,
+      isUpdateAvailable,
+      checkForUpdate,
+      loadEmployees
+    } = useEmployeeStore();
 
   const { isAuthenticated, login, error: authError } = useAuthStore();
   const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
@@ -63,6 +57,11 @@ const {
     }
   }, [isUpdateAvailable]);
 
+  /**
+   * Handles the submission of the password in the password modal.
+   * If the login is successful, the password modal is closed.
+   * @param {string} password The password to be submitted to the login function.
+   */
   const handlePasswordSubmit = async (password: string) => {
     const success = await login(password);
     if (success) {

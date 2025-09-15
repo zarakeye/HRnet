@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// Schema 
 export const lastUpdateResponseSchema = z.object({
   success: z.boolean(),
   message: z.string().optional(),

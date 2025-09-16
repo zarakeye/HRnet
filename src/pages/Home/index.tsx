@@ -6,6 +6,7 @@ import EmployeeTable from '../../components/EmployeeTable';
 import DatabaseSpinner from '../../components/DatabaseSpinner';
 import PasswordModal from '../../components/PasswordModal';
 import closeIcon from '../../assets/close.svg';
+import UpdateNotification from '../../components/UpdateNotification';
 
 /**
  * Page displaying the list of current employees.
@@ -34,23 +35,33 @@ function Home(): JSX.Element {
     if (isAuthenticated) {
       loadEmployees();
       // Check for updates every 4 minutes
-      const intervalId = setInterval(checkForUpdate, 4 * 60 * 1000); // 4 minutes en millisecondes
+      // const intervalId = setInterval(checkForUpdate, 4 * 60 * 1000); // 4 minutes en millisecondes
 
-      // Nettoyer l'intervalle lorsque le composant est monté
-      return () => {
-        clearInterval(intervalId);
-      };
+      // // Nettoyer l'intervalle lorsque le composant est monté
+      // return () => {
+      //   clearInterval(intervalId);
+      // };
     } else {
       setShowPasswordModal(true);
     }
-  }, [isAuthenticated, loadEmployees, checkForUpdate]);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const intervalId = setInterval(checkForUpdate, 1 * 60 * 1000);
+
+      return () => {
+        clearInterval(intervalId);
+      }
+    }
+  }, [isAuthenticated])
 
   useEffect(() => {
     if (applyUpdates) {
       loadEmployees();
       setApplyUpdates(false);
     }
-  }, [applyUpdates, loadEmployees]);
+  }, [applyUpdates]);
 
   useEffect(() => {
     if (isUpdateAvailable) {
@@ -134,7 +145,9 @@ function Home(): JSX.Element {
         ) : (
           <EmployeeTable employees={employees} />
         )}
+
       </div>
+      <UpdateNotification />
     </main>
   );
 }

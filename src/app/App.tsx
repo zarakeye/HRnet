@@ -3,7 +3,7 @@ import Home from '../pages/Home';
 import CreateEmployee from '../pages/CreateEmployee';
 import Profile from '../pages/Profile';
 import '@ant-design/v5-patch-for-react-19';
-import UpdateNotification from '../components/UpdateNotification';
+// import UpdateNotification from '../components/UpdateNotification';
 
 /**
  * The main App component that renders the routes for the application.
@@ -21,7 +21,7 @@ function App() {
         <Route path='/create-employee' element={<CreateEmployee />} />
         <Route path='/profile/:id' element={<Profile />} />
       </Routes>
-      <UpdateNotification />
+      {/* <UpdateNotification /> */}
     </>
   )
 }

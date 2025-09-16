@@ -27,7 +27,7 @@ const RootComponent = () => {
     if (employees.length === 0 || isUpdateAvailable) {
       fetchEmployees();
     }
-  }, [isUpdateAvailable]);
+  }, []);
 
   const theme = {
     token: {

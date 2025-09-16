@@ -5,6 +5,7 @@ import { useAuthStore } from '../../app/hooks/useAuthStore';
 import EmployeeTable from '../../components/EmployeeTable';
 import DatabaseSpinner from '../../components/DatabaseSpinner';
 import PasswordModal from '../../components/PasswordModal';
+import closeIcon from '../../assets/close.svg';
 
 /**
  * Page displaying the list of current employees.
@@ -84,16 +85,21 @@ function Home(): JSX.Element {
     <main className='pt-[225px] h-[699px] max-h-[700px] '>
       {/* Notification de mise à jour */}
       {showRefrechDialog && (
-        <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-lg shadow-lg z-50 flex items-center space-x-4 animate-fade-in">
-          <span>New employee data available!</span>
-          <button
-            onClick={() => {
-              setShowRefreshDialog(false);
-              setApplyUpdates(true);
-            }}
-            className="bg-white text-green-600 px-3 py-1 rounded font-semibold hover:bg-green-100 transition-colors"
-          >
-            Refresh
+        <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-lg shadow-lg z-50 flex flex-row items-center space-x-4 animate-fade-in">
+          <div className="flex align-center">
+            <span>New employees data available!</span>
+            <button
+              onClick={() => {
+                setShowRefreshDialog(false);
+                setApplyUpdates(true);
+              }}
+              className="bg-white text-green-600 px-3 py-1 rounded font-semibold hover:bg-green-100 transition-colors"
+            >
+              Refresh
+            </button>
+          </div>
+          <button>
+            <img src={closeIcon} alt="Close" className='h-[20px] w-[20px] cursor-pointer' onClick={() => setShowRefreshDialog(false)} />
           </button>
         </div>
       )}

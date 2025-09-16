@@ -8,6 +8,14 @@ interface PasswordModalProps {
   error: string | null;
 }
 
+/**
+ * A React component that renders a modal to authenticate the user.
+ * The modal prompts the user to enter a password and calls the onSubmit function with the password input.
+ * The modal also displays an error message if the error prop is not null.
+ * The modal is closed when the user clicks the cancel button or when the onSubmit function is called successfully.
+ * @example
+ * <PasswordModal isOpen={true} onClose={() => {}} onSubmit={(password) => {}} error={null} />
+ */
 const PasswordModal: React.FC<PasswordModalProps> = ({ 
   isOpen, 
   onClose, 
@@ -17,15 +25,24 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  /**
+   * Handles the submission of the password modal form.
+   * Prevents the default form submission behavior.
+   * If the password input is empty, does nothing.
+   * Otherwise, sets the isLoading state to true, calls the onSubmit function with the password input, and sets the isLoading state to false after the onSubmit function has finished executing.
+   */
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!password) return;
     
     setIsLoading(true);
-    await onSubmit(password);
+    onSubmit(password);
     setIsLoading(false);
   };
 
+  /**
+   * Resets the password input and closes the password modal.
+   */
   const handleClose = () => {
     setPassword('');
     onClose();

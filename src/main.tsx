@@ -18,17 +18,11 @@ import useEmployeeStore from './app/hooks/useEmployeeStore'
  * Il utilise le hook `useEmployeeStore` pour accéder au store des employés.
  */
 const RootComponent = () => {
-  const loading = useEmployeeStore(state => state.loading);
-  // const lastUpdates = useEmployeeStore(state => state.lastUpdates);
-  const isUpdateAvailable = useEmployeeStore(state => state.isUpdateAvailable);
-  const fetchEmployees = useEmployeeStore(state => state.fetchEmployees);
-  const checkForUpdates = useEmployeeStore(state => state.checkForUpdate);
-
-  const employees = useEmployeeStore(state => state.employees);
-
+  const { employees, loading, isUpdateAvailable, fetchEmployees, checkForUpdate } = useEmployeeStore();
+  
   useEffect(() => {
     // Charger les employés seulement si nécessaire
-    checkForUpdates();
+    checkForUpdate();
     
     if (employees.length === 0 || isUpdateAvailable) {
       fetchEmployees();
@@ -95,13 +89,12 @@ const RootComponent = () => {
       <Router>
         <ConfigProvider theme={theme}>
           {loading && <DatabaseSpinner />}  {/* Spinner au niveau racine */}
-
-
-        <div className={loading ? 'blur-sm' : ''}>
-          <Header />
-          <Container>
-            <App />
-          </Container>
+          
+          <div className={loading ? 'blur-sm' : ''}>
+            <Header />
+            <Container>
+              <App />
+            </Container>
           </div>
         </ConfigProvider>
       </Router>

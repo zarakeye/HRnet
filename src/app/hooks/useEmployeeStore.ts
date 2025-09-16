@@ -169,7 +169,7 @@ const useEmployeeStore = create<EmployeesState>()(
        */
       checkForUpdate: async (): Promise<void> => {
         const { lastUpdate } = get();
-        const token = useAuthStore.getState().token;
+        const { token } = useAuthStore.getState();
 
         if (!token || lastUpdate === null) {
           return;

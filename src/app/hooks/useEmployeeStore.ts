@@ -186,7 +186,7 @@ const useEmployeeStore = create<EmployeesState>()(
             set({ isUpdateAvailable: true }, false, 'checkForUpdates/updateAvailable');
           }
         } catch (error: any) {
-          if (error.message === 'FORBIDDEN') {
+          if (error.message === 'FORBIDDEN' || error.message.includes('401')) {
             // Token invalide, déconnecter l'utilisateur
             useAuthStore.getState().logout();
             set({ error: 'Session expired, please login again', fetching: false });

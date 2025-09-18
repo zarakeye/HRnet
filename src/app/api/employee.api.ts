@@ -1,5 +1,5 @@
 import type { Employee,  } from "../../common/types";
-import { lastUpdateResponseSchema } from "../../schemas/meta.schema";
+// import { lastUpdateResponseSchema } from "../../schemas/meta.schema";
 import { useAuthStore } from "../../app/hooks/useAuthStore";
 
 const API_URL =
@@ -128,31 +128,45 @@ export const deleteEmployee = async (id: string): Promise<void> => {
  * @throws An error if the request fails.
  */
 export const getLastUpdateTimestamp = async (token: string): Promise<number> => {
-  const response = await fetch(`${API_URL}/meta/last-update`,
-    {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+  try {
+    const response = await fetch(`${API_URL}/meta/last-update`,
+      {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('FORBIDDEN');
+      }
+      throw new Error(`Failed to get last update timestamp: ${response.statusText}`);
     }
-  );
 
-  if (!response.ok) {
-    throw new Error("Failed to get last update timestamp");
+    const data = await response.json();
+    // const parsedData = lastUpdateResponseSchema.parse(data);
+
+    // if (!parsedData.success) {
+    //   throw new Error(data.message || "Failed to get last update timestamp");
+    // }
+
+    // // Convertir le timestamp Unix en millisecondes
+    // return data.timestampUnix;
+
+    console.log(`Last update response: ${data}`);
+    
+    if (!data.timestampUnix) {
+      throw new Error('Invalid response format');
+    }
+
+    return data.timestampUnix;
+  } catch (error) {
+    console.error(`Error in getLastUpdateTimestamp: ${error}`);
+    throw error;
   }
-
-  console.log(`response: ${response}`);
-
-  const data = await response.json();
-  const parsedData = lastUpdateResponseSchema.parse(data);
-
-  if (!parsedData.success) {
-    throw new Error(data.message || "Failed to get last update timestamp");
-  }
-
-  // Convertir le timestamp Unix en millisecondes
-  return data.timestampUnix;
 }
 
 

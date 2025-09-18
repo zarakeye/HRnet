@@ -159,11 +159,11 @@ export const getLastUpdateTimestamp = async (token: string): Promise<number> => 
     const dataParsed = JSON.parse(data);
     console.log(`Last update response: ${dataParsed}`);
     
-    if (!data.timestampUnix) {
+    if (!dataParsed.timestampUnix) {
       throw new Error('Invalid response format');
     }
 
-    return data.timestampUnix;
+    return dataParsed.timestampUnix;
   } catch (error) {
     console.error(`Error in getLastUpdateTimestamp: ${error}`);
     throw error;

@@ -139,11 +139,21 @@ export const getLastUpdateTimestamp = async (token: string): Promise<number> => 
       }
     );
 
+    console.log(`Last update response status: ${response.status}`);
+
+    const constentType = response.headers.get('content-type');
+    console.log(`Last update response content-type: ${constentType}`);
+
     if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('FORBIDDEN');
-      }
-      throw new Error(`Failed to get last update timestamp: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error(`Server error: ${errorText}`);
+      throw new Error(`Failed to get last update timestamp: ${response.status} ${response.statusText}`);
+    }
+
+    if (!constentType || !constentType.startsWith('application/json')) {
+      const text = await response.text();
+      console.error(`Expected JSON but got: ${constentType}, response: ${text}`);
+      throw new Error(`Server returned non-JSON response`);
     }
 
     const data = await response.json();

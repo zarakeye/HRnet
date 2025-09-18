@@ -56,12 +56,14 @@ const useEmployeeStore = create<EmployeesState>()(
         try {
           // Vérifier la disponibilité du cache
           const cacheAvailable = await checkCacheAvailability(token);
+          console.log(`In loadEmployees: cacheAvailable = ${cacheAvailable} `)
           
           if (cacheAvailable && encryptionPassword) {
             try {
               const cachedData = await getCachedData('employees', token, encryptionPassword);
 
               if (cachedData && cachedData.employees) {
+                console.log(`In loadEmployees, cachedData.employees: ${cachedData.employees}`);
                 set({
                   employees: cachedData.employees,
                   lastUpdate: cachedData.lastUpdated,

@@ -7,6 +7,7 @@ import DatabaseSpinner from '../../components/DatabaseSpinner';
 import PasswordModal from '../../components/PasswordModal';
 import closeIcon from '../../assets/close.svg';
 import UpdateNotification from '../../components/UpdateNotification';
+import { Employee } from '../../common/types';
 
 /**
  * Page displaying the list of current employees.
@@ -30,6 +31,7 @@ function Home(): JSX.Element {
   const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
   const [applyUpdates, setApplyUpdates] = useState<boolean>(false);
   const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
+  let rows: Employee[] | null = [];
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -49,6 +51,7 @@ function Home(): JSX.Element {
   useEffect(() => {
     if (isAuthenticated) {
       const intervalId = setInterval(checkForUpdate, 1 * 60 * 1000);
+      console.log(`boucle checkForUpdate => employees: ${employees}`);
 
       return () => {
         clearInterval(intervalId);

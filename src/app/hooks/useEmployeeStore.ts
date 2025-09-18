@@ -173,7 +173,10 @@ const useEmployeeStore = create<EmployeesState>()(
         const { lastUpdate } = get();
         const { token } = useAuthStore.getState();
 
+        console.log('Checking for updates: ', { lastUpdate, hasToken: !!token });
+
         if (!token || lastUpdate === null) {
+          console.log('No token or last update timestamp found, skipping update check');
           return;
         }
 
@@ -182,10 +185,21 @@ const useEmployeeStore = create<EmployeesState>()(
           // Elle doit retourner le timestamp de la dernière modification
           const freshLastUpdatesTimestamp = await getLastUpdateTimestamp(token);
 
+          console.log('Update check results: ', {
+            freshTimestamp: freshLastUpdatesTimestamp,
+            currentTimestamp: lastUpdate,
+            needsUpdate: freshLastUpdatesTimestamp > lastUpdate
+          })
+
           if (freshLastUpdatesTimestamp > lastUpdate) {
+            console.log('Update available');
             set({ isUpdateAvailable: true }, false, 'checkForUpdates/updateAvailable');
+          } else {
+            console.log('No update available');
+            set({ isUpdateAvailable: false }, false, 'checkForUpdates/noUpdateAvailable');
           }
         } catch (error: any) {
+          console.error('Error checking for updates:', error);
           if (error.message === 'FORBIDDEN' || error.message.includes('401')) {
             // Token invalide, déconnecter l'utilisateur
             useAuthStore.getState().logout();

@@ -234,7 +234,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                   name='dateOfBirth'
                   inputReadOnly={true}
                   defaultValue={dayjs(employeeToUpdate?.dateOfBirth)}
-                  format='MM/DD/YYYY'
+                  format='DD/MM/YYYY'
                   onChange={e => handleChange(e, 'date', 'dateOfBirth')}
                   maxDate={dayjs().subtract(18, 'year')}
                   style={{
@@ -260,7 +260,7 @@ function UpdateEmployee({ id, setUpdating }: UpdateEmployeeProps): JSX.Element {
                   name='start-date'
                   inputReadOnly={true}
                   defaultValue={dayjs(employeeToUpdate?.startDate)}
-                  format='MM/DD/YYYY'
+                  format='DD/MM/YYYY'
                   onChange={e => handleChange(e, 'date', 'startDate')}
                   maxDate={dayjs()}
                   style={{

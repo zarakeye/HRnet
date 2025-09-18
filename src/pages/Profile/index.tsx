@@ -1,7 +1,8 @@
-import { useState, lazy, ReactNode, useEffect } from 'react';
+import { useState, lazy, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useEmployeeStore from '../../app/hooks/useEmployeeStore';
 import { Employee } from '../../common/types';
+import renderDate from '../../app/reactNode/renderDate';
 
 const DeleteEmployee = lazy(() => import('../../components/DeleteEmployee'));
 const UpdateEmployee = lazy(() => import('../../components/UpdateEmployee'));
@@ -29,20 +30,6 @@ function Profile(): JSX.Element {
     const employee = employees.find((employee) => employee.id === id);
     setEmployee(employee);
   }, [employees, id]);
-
-  /**
-   * Converts a date string into a formatted JSX span element.
-   * The date is formatted as 'DD/MM/YYYY', where days and months are zero-padded if necessary.
-   * @param dateString A string representation of a date.
-   * @returns A ReactNode containing the formatted date.
-   */
-  function renderDate(dateString: string):ReactNode {
-    const date = new Date(dateString);
-    
-    return (
-      <span>{date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}/{(date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}/{date.getFullYear()}</span>
-    )
-  }
 
   return (
     <main className='flex flex-col justify-center rounded-[80px] mt-[250px] mb-[100px]'>

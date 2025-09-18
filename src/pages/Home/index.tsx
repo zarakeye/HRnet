@@ -7,7 +7,7 @@ import DatabaseSpinner from '../../components/DatabaseSpinner';
 import PasswordModal from '../../components/PasswordModal';
 import closeIcon from '../../assets/close.svg';
 import UpdateNotification from '../../components/UpdateNotification';
-import { Employee } from '../../common/types';
+// import { Employee } from '../../common/types';
 
 /**
  * Page displaying the list of current employees.

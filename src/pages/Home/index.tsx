@@ -23,11 +23,12 @@ function Home(): JSX.Element {
       loading,
       isUpdateAvailable,
       checkForUpdate,
-      loadEmployees
+      loadEmployees,
+      acknowledgeUpdate,
     } = useEmployeeStore();
 
   const { isAuthenticated, login, error: authError } = useAuthStore();
-  const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
+  // const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
   const [applyUpdates, setApplyUpdates] = useState<boolean>(false);
   const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
   const [updatesApplied, setUpdatesApplied] = useState<boolean>(false);
@@ -53,17 +54,16 @@ function Home(): JSX.Element {
 
   useEffect(() => {
     if (isUpdateAvailable) {
-      setShowRefreshDialog(true);
+      // setShowRefreshDialog(true);
       setApplyUpdates(false);
       setUpdatesApplied(false);
     }
-    console.log(`isUpdateAvailable: ${isUpdateAvailable}, showRefrechDialog: ${showRefrechDialog}`);
   }, [isUpdateAvailable]);
 
   useEffect(() => {
     if (applyUpdates) {
       loadEmployees();
-      setShowRefreshDialog(false);
+      // setShowRefreshDialog(false);
       setApplyUpdates(false);
       setUpdatesApplied(true);
     }
@@ -81,6 +81,10 @@ function Home(): JSX.Element {
     }
   };
 
+  const handleCloseRefreshDialog = () => {
+    acknowledgeUpdate();
+  };
+
   if (!isAuthenticated) {
     return (
       <PasswordModal
@@ -95,13 +99,13 @@ function Home(): JSX.Element {
   return (
     <main className='pt-[225px] h-[699px] max-h-[700px] '>
       {/* Notification de mise à jour */}
-      {showRefrechDialog && (
+      {isUpdateAvailable && (
         <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-lg shadow-lg z-50 flex flex-row items-center space-x-4 animate-fade-in">
           <div className="flex align-center">
             <span>New employees data available!</span>
             <button
               onClick={() => {
-                setShowRefreshDialog(false);
+                acknowledgeUpdate();
                 setApplyUpdates(true);
                 setUpdatesApplied(true);
               }}
@@ -111,7 +115,7 @@ function Home(): JSX.Element {
             </button>
           </div>
           <button>
-            <img src={closeIcon} alt="Close" className='h-[20px] w-[20px] cursor-pointer' onClick={() => setShowRefreshDialog(false)} />
+            <img src={closeIcon} alt="Close" className='h-[20px] w-[20px] cursor-pointer' onClick={handleCloseRefreshDialog} />
           </button>
         </div>
       )}

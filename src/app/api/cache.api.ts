@@ -2,9 +2,9 @@ import CryptoJS from 'crypto-js';
 // import { Employee } from '../../common/types';
 
 // src/api/cache.api.ts
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
-let cacheAvailable = true;
+// let cacheAvailable = true;
 
 // Configuration du chiffrement
 const ENCRYPTION_CONFIG = {
@@ -20,66 +20,82 @@ const deriveKeyFromPassword = (password: string, salt: string): CryptoJS.lib.Wor
 export interface CachedData {
   encrypted: string;
   iv: string;
-  authTag: string;
+  expires: number;
 }
 
-export const checkCacheAvailability = async (token: string): Promise<boolean> => {
+export const checkCacheAvailability = /*async*/ (/*token: string*/): boolean /* Promise<boolean>*/ => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/cache/health`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    // const response = await fetch(`${API_BASE_URL}/api/cache/health`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Authorization': `Bearer ${token}`,
+    //   },
+    // });
     
-    cacheAvailable = response.ok;
-    return cacheAvailable;
+    // console.log(`Cache health esponse status: ${response.status}`);
+    // cacheAvailable = response.ok;
+    // return cacheAvailable;
+    return typeof window !== 'undefined' && window.localStorage !== undefined;
   } catch (error) {
-    console.error('Error checking cache availability:', error);
-    cacheAvailable = false;
+    // console.error('Error checking cache availability:', error);
+    // cacheAvailable = false;
     return false;
   }
 };
 
-export const getCachedData = async (key: string, token: string, password: string): Promise< any> => {
-  if (!cacheAvailable) {
+export const getCachedData = async (key: string/*, token: string*/, password: string): Promise< any> => {
+  if (!checkCacheAvailability/*!cacheAvailable*/) {
     console.log('Cache API is not available: skipping cache retrieval');
     return null;
   }
   
   try {
-    console.log(`Requesting cached data for key: ${key}`);
-    console.log(`Using token: ${token}`);
+  //   console.log(`Requesting cached data for key: ${key}`);
+  //   console.log(`Using token: ${token}`);
 
-    const response = await fetch(`${API_BASE_URL}/api/cache/${key}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+  //   const response = await fetch(`${API_BASE_URL}/api/cache/${key}`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`,
+  //       'Content-Type': 'application/json',
+  //     },
+  //   });
 
-    console.log(`Response status: ${response.status}`);
+  //   console.log(`Response status: ${response.status}`);
 
-    if (response.status === 404) {
-      console.log('No cached data found (404)');
+  //   if (response.status === 404) {
+  //     console.log('No cached data found (404)');
+  //     return null;
+  //   }
+
+  //   if (response.status === 403) {
+  //     // Token invalide ou expiré
+  //     console.log('Forbidden access: Token might be invalid or expired');
+  //     throw new Error('FORBIDDEN');
+  //   }
+
+  //   if (!response.ok) {
+  //     cacheAvailable = false;
+  //     return null;
+  //   }
+
+  //   const data: CachedData = await response.json();
+  //   console.log('Cached data retrieved successfully:', data);
+
+    const stored = localStorage.getItem(key);
+    if (!stored) {
       return null;
     }
-
-    if (response.status === 403) {
-      // Token invalide ou expiré
-      console.log('Forbidden access: Token might be invalid or expired');
-      throw new Error('FORBIDDEN');
-    }
-
-    if (!response.ok) {
-      cacheAvailable = false;
-      return null;
-    }
-
-    const data: CachedData = await response.json();
-    console.log('Cached data retrieved successfully:', data);
     
+    const data = JSON.parse(stored);
+    console.log('Cached data retrieved successfully:', data);
+
+    if (data.expires && data.expires < Date.now()) {
+      console.log('Cached data expired');
+      localStorage.removeItem(key);
+      return null;
+    }
+
     // Déchiffrer les données
     try {
       const salt = CryptoJS.enc.Hex.parse(data.iv);
@@ -91,7 +107,12 @@ export const getCachedData = async (key: string, token: string, password: string
       });
 
       const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
-      console.log('Decrypted data after toString:', decryptedData);
+      // console.log('Decrypted data after toString:', decryptedData);
+
+      if(!decryptedData) {
+        console.error('Failed to decrypt cached data - possibly invalid password');
+        return null;
+      }
       return JSON.parse(decryptedData);
     } catch (decryptError) {
       console.error('Decryption error:', decryptError);
@@ -103,13 +124,13 @@ export const getCachedData = async (key: string, token: string, password: string
       throw error; // Propager l'erreur d'authentification
     }
 
-    cacheAvailable = false;
+    // cacheAvailable = false;
     return null;
   }
 };
 
-export const setCachedData = async (key: string, data: any, ttl: number, token: string, password: string): Promise<void> => {
-  if (!cacheAvailable) {
+export const setCachedData = async (key: string, data: any, ttl: number, /*, token: string,*/ password: string): Promise<void> => {
+  if (/*!cacheAvailable*/ !checkCacheAvailability) {
     console.log('Cache API is not available: skipping cache storage');
     return;
   }
@@ -134,91 +155,110 @@ export const setCachedData = async (key: string, data: any, ttl: number, token: 
       padding: CryptoJS.pad.Pkcs7
     }).toString();
 
-    const response = await fetch(`${API_BASE_URL}/api/cache/${key}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        data: {
-          encrypted,
-          iv: salt.toString(CryptoJS.enc.Hex),
-          authTag: '' // Pour compatibilité avec le backend existant
-        }, 
-        ttl 
-      }),
-    });
+    const expires = Date.now() + ttl;
 
-    if (response.status === 403) {
-      // Token invalide ou expiré
-      throw new Error('FORBIDDEN');
-    }
+    // const response = await fetch(`${API_BASE_URL}/api/cache/${key}`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Authorization': `Bearer ${token}`,
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ 
+    //     data: {
+    //       encrypted,
+    //       iv: salt.toString(CryptoJS.enc.Hex),
+    //       authTag: '' // Pour compatibilité avec le backend existant
+    //     }, 
+    //     ttl 
+    //   }),
+    // });
 
-    if (!response.ok) {
-      // const errorText = await response.text();
-      // console.error(`Cache API error: ${response.status} - ${errorText}`);
-      // throw new Error(`Failed to store cached data: ${response.statusText}`);
-      cacheAvailable = false;
-    }
+  //   if (response.status === 403) {
+  //     // Token invalide ou expiré
+  //     throw new Error('FORBIDDEN');
+  //   }
+
+  //   if (!response.ok) {
+  //     // const errorText = await response.text();
+  //     // console.error(`Cache API error: ${response.status} - ${errorText}`);
+  //     // throw new Error(`Failed to store cached data: ${response.statusText}`);
+  //     cacheAvailable = false;
+  //   }
+
+  const cacheData: CachedData = {
+    encrypted,
+    iv: salt.toString(CryptoJS.enc.Hex),
+    expires,
+  };
+
+  localStorage.setItem(key, JSON.stringify(cacheData));
   } catch (error) {
-    // if (error instanceof Error && error.message === 'FORBIDDEN') {
-    //   throw error; // Propager l'erreur d'authentification
-    // }
-    // console.error('Error setting cached data:', error);
-    // throw new Error('Failed to store cached data');
-    cacheAvailable = false;
+  //   // if (error instanceof Error && error.message === 'FORBIDDEN') {
+  //   //   throw error; // Propager l'erreur d'authentification
+  //   // }
+  //   // console.error('Error setting cached data:', error);
+  //   // throw new Error('Failed to store cached data');
+  //   cacheAvailable = false;
+  console.error('Error setting cached data:', error);
   }
 };
 
-export const deleteCachedData = async (key: string, token: string): Promise<void> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/cache/${key}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+export const deleteCachedData = async (key: string/*, token: string*/): Promise<void> => {
+  // try {
+  //   const response = await fetch(`${API_BASE_URL}/api/cache/${key}`, {
+  //     method: 'DELETE',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`,
+  //     },
+  //   });
 
-    if (response.status === 403) {
-      // Token invalide ou expiré
-      throw new Error('FORBIDDEN');
-    }
+  //   if (response.status === 403) {
+  //     // Token invalide ou expiré
+  //     throw new Error('FORBIDDEN');
+  //   }
 
-    if (!response.ok) {
-      throw new Error(`Failed to delete cached data: ${response.statusText}`);
-    }
-  } catch (error) {
-    if (error instanceof Error && error.message === 'FORBIDDEN') {
-      throw error; // Propager l'erreur d'authentification
-    }
-    console.error('Error deleting cached data:', error);
-    throw new Error('Failed to delete cached data');
+  //   if (!response.ok) {
+  //     throw new Error(`Failed to delete cached data: ${response.statusText}`);
+  //   }
+  // } catch (error) {
+  //   if (error instanceof Error && error.message === 'FORBIDDEN') {
+  //     throw error; // Propager l'erreur d'authentification
+  //   }
+  //   console.error('Error deleting cached data:', error);
+  //   throw new Error('Failed to delete cached data');
+  // }
+
+  if (checkCacheAvailability()) {
+    localStorage.removeItem(key);
   }
 };
 
-export const clearAllCache = async (token: string): Promise<void> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/cache`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+export const clearAllCache = async (/*token: string*/): Promise<void> => {
+  // try {
+  //   const response = await fetch(`${API_BASE_URL}/api/cache`, {
+  //     method: 'DELETE',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`,
+  //     },
+  //   });
 
-    if (response.status === 403) {
-      // Token invalide ou expiré
-      throw new Error('FORBIDDEN');
-    }
+  //   if (response.status === 403) {
+  //     // Token invalide ou expiré
+  //     throw new Error('FORBIDDEN');
+  //   }
 
-    if (!response.ok) {
-      throw new Error(`Failed to clear cache: ${response.statusText}`);
-    }
-  } catch (error) {
-    if (error instanceof Error && error.message === 'FORBIDDEN') {
-      throw error; // Propager l'erreur d'authentification
-    }
-    console.error('Error clearing cache:', error);
-    throw new Error('Failed to clear cache');
+  //   if (!response.ok) {
+  //     throw new Error(`Failed to clear cache: ${response.statusText}`);
+  //   }
+  // } catch (error) {
+  //   if (error instanceof Error && error.message === 'FORBIDDEN') {
+  //     throw error; // Propager l'erreur d'authentification
+  //   }
+  //   console.error('Error clearing cache:', error);
+  //   throw new Error('Failed to clear cache');
+  // }
+
+  if (checkCacheAvailability()) {
+    localStorage.clear();
   }
 };

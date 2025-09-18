@@ -44,26 +44,26 @@ const useEmployeeStore = create<EmployeesState>()(
        * and logs an error to the console.
        */
       loadEmployees: async (): Promise<void> => {
-        const { token, encryptionPassword } = useAuthStore.getState();
+        const { /*token,*/ encryptionPassword } = useAuthStore.getState();
         
-        if (!token) {
-          set({ error: 'Authentication required', loading: false });
-          return;
-        }
+        // if (!token) {
+        //   set({ error: 'Authentication required', loading: false });
+        //   return;
+        // }
 
         set({ loading: true, error: null });
 
         try {
           // Vérifier la disponibilité du cache
-          const cacheAvailable = await checkCacheAvailability(token);
+          const cacheAvailable = await checkCacheAvailability(/*token*/);
           console.log(`In loadEmployees: cacheAvailable = ${cacheAvailable} `)
           
           if (cacheAvailable && encryptionPassword) {
             try {
-              const cachedData = await getCachedData('employees', token, encryptionPassword);
+              const cachedData = await getCachedData('employees', /*token*/ encryptionPassword);
 
               if (cachedData && cachedData.employees) {
-                console.log(`In loadEmployees, cachedData.employees: ${cachedData.employees}`);
+                console.log(`In loadEmployees, from cahe: ${cachedData.employees.length} employees found`);
                 set({
                   employees: cachedData.employees,
                   lastUpdate: cachedData.lastUpdated,
@@ -94,7 +94,7 @@ const useEmployeeStore = create<EmployeesState>()(
       fetchEmployees: async (): Promise<void> => {
         const {token, encryptionPassword } = useAuthStore.getState();
 
-        if (!token || !encryptionPassword) {
+        if (!token/* || !encryptionPassword */) {
           set({
             error: 'Authentification required',
             fetching: false,
@@ -110,7 +110,7 @@ const useEmployeeStore = create<EmployeesState>()(
         try {
           console.log('Fetching fresh employees from API');
           const freshEmployees = await getEmployees();
-          console.log('Fresh employees received:', freshEmployees);
+          console.log('Fresh employees received:', freshEmployees.length);
 
           // Vérifier que les données sont valides avant de les stocker
           if (!Array.isArray(freshEmployees)) {
@@ -126,7 +126,7 @@ const useEmployeeStore = create<EmployeesState>()(
             loading: false
           }, false, 'fetchEmployees/success');
 
-          if (freshEmployees.length > 0) {
+          if (freshEmployees.length > 0 && encryptionPassword) {
             // Mettre à jour le cache
             try {
               console.log('Updating cache with fresh data');
@@ -134,7 +134,7 @@ const useEmployeeStore = create<EmployeesState>()(
                 'employees', 
                 { employees: freshEmployees, lastUpdated: Date.now() },
                 CACHE_TTL,
-                token,
+                // token,
                 encryptionPassword
               );
               console.log('Cache updated successfully');
@@ -231,7 +231,7 @@ const useEmployeeStore = create<EmployeesState>()(
               'employees',
               { employees: get().employees, lastUpdated: Date.now() },
               CACHE_TTL,
-              token,
+              // token,
               encryptionPassword
             );
           } catch (cacheError) {
@@ -279,7 +279,7 @@ const useEmployeeStore = create<EmployeesState>()(
             'employees',
             { employees: get().employees, lastUpdated: Date.now() },
             CACHE_TTL,
-            token,
+            // token,
             encryptionPassword
           );
         } catch (error: any) {
@@ -327,7 +327,7 @@ const useEmployeeStore = create<EmployeesState>()(
             'employees',
             { employees: get().employees, lastUpdated: Date.now() },
             CACHE_TTL,
-            token,
+            // token,
             encryptionPassword
           );
         } catch (error: any) {

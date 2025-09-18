@@ -156,7 +156,8 @@ export const getLastUpdateTimestamp = async (token: string): Promise<number> => 
     // // Convertir le timestamp Unix en millisecondes
     // return data.timestampUnix;
 
-    console.log(`Last update response: ${data}`);
+    const dataParsed = JSON.parse(data);
+    console.log(`Last update response: ${dataParsed}`);
     
     if (!data.timestampUnix) {
       throw new Error('Invalid response format');

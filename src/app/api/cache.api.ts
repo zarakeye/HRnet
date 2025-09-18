@@ -34,7 +34,8 @@ export const checkCacheAvailability = async (token: string): Promise<boolean> =>
     
     cacheAvailable = response.ok;
     return cacheAvailable;
-  } catch {
+  } catch (error) {
+    console.error('Error checking cache availability:', error);
     cacheAvailable = false;
     return false;
   }

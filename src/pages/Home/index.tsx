@@ -57,7 +57,7 @@ function Home(): JSX.Element {
         clearInterval(intervalId);
       }
     }
-  }, [/*isAuthenticated*/]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (applyUpdates) {

@@ -157,15 +157,6 @@ export const getLastUpdateTimestamp = async (token: string): Promise<number> => 
     }
 
     const data = await response.json();
-    // const parsedData = lastUpdateResponseSchema.parse(data);
-
-    // if (!parsedData.success) {
-    //   throw new Error(data.message || "Failed to get last update timestamp");
-    // }
-
-    // // Convertir le timestamp Unix en millisecondes
-    // return data.timestampUnix;
-    console.log(`Last update response data: ${data}`);
     
     if (data.success && data.timestampUnix) {
       return data.timestampUnix;

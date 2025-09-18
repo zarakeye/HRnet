@@ -7,7 +7,6 @@ import DatabaseSpinner from '../../components/DatabaseSpinner';
 import PasswordModal from '../../components/PasswordModal';
 import closeIcon from '../../assets/close.svg';
 import UpdateNotification from '../../components/UpdateNotification';
-// import { Employee } from '../../common/types';
 
 /**
  * Page displaying the list of current employees.
@@ -31,18 +30,11 @@ function Home(): JSX.Element {
   const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
   const [applyUpdates, setApplyUpdates] = useState<boolean>(false);
   const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
-  // let rows: Employee[] | null = [];
+  const [updatesApplied, setUpdatesApplied] = useState<boolean>(false);
 
   useEffect(() => {
     if (isAuthenticated) {
       loadEmployees();
-      // Check for updates every 4 minutes
-      // const intervalId = setInterval(checkForUpdate, 4 * 60 * 1000); // 4 minutes en millisecondes
-
-      // // Nettoyer l'intervalle lorsque le composant est monté
-      // return () => {
-      //   clearInterval(intervalId);
-      // };
     } else {
       setShowPasswordModal(true);
     }
@@ -60,17 +52,22 @@ function Home(): JSX.Element {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (applyUpdates) {
-      loadEmployees();
-      setApplyUpdates(false);
-    }
-  }, [applyUpdates]);
-
-  useEffect(() => {
     if (isUpdateAvailable) {
       setShowRefreshDialog(true);
+      setApplyUpdates(false);
+      setUpdatesApplied(false);
     }
+    console.log(`isUpdateAvailable: ${isUpdateAvailable}, showRefrechDialog: ${showRefrechDialog}`);
   }, [isUpdateAvailable]);
+
+  useEffect(() => {
+    if (applyUpdates) {
+      loadEmployees();
+      setShowRefreshDialog(false);
+      setApplyUpdates(false);
+      setUpdatesApplied(true);
+    }
+  }, [applyUpdates]);
 
   /**
    * Handles the submission of the password in the password modal.
@@ -106,6 +103,7 @@ function Home(): JSX.Element {
               onClick={() => {
                 setShowRefreshDialog(false);
                 setApplyUpdates(true);
+                setUpdatesApplied(true);
               }}
               className="bg-white text-green-600 px-3 py-1 rounded font-semibold hover:bg-green-100 transition-colors"
             >
@@ -150,7 +148,9 @@ function Home(): JSX.Element {
         )}
 
       </div>
-      <UpdateNotification />
+      {updatesApplied && (
+        <UpdateNotification />
+      )}
     </main>
   );
 }

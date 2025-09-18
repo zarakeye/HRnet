@@ -24,6 +24,7 @@ function Home(): JSX.Element {
       isUpdateAvailable,
       checkForUpdate,
       loadEmployees,
+      fetchEmployees,
       acknowledgeUpdate,
     } = useEmployeeStore();
 
@@ -62,7 +63,7 @@ function Home(): JSX.Element {
 
   useEffect(() => {
     if (applyUpdates) {
-      loadEmployees();
+      fetchEmployees();
       // setShowRefreshDialog(false);
       setApplyUpdates(false);
       setUpdatesApplied(true);

@@ -55,7 +55,7 @@ const useEmployeeStore = create<EmployeesState>()(
 
         try {
           // Vérifier la disponibilité du cache
-          const cacheAvailable = await checkCacheAvailability(/*token*/);
+          const cacheAvailable = checkCacheAvailability(/*token*/);
           console.log(`In loadEmployees: cacheAvailable = ${cacheAvailable} `)
           
           if (cacheAvailable && encryptionPassword) {

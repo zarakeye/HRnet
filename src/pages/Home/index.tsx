@@ -31,7 +31,7 @@ function Home(): JSX.Element {
   const [showRefrechDialog, setShowRefreshDialog] = useState<boolean>(false);
   const [applyUpdates, setApplyUpdates] = useState<boolean>(false);
   const [showPasswordModal, setShowPasswordModal] = useState<boolean>(false);
-  let rows: Employee[] | null = [];
+  // let rows: Employee[] | null = [];
 
   useEffect(() => {
     if (isAuthenticated) {

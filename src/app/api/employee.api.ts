@@ -127,11 +127,12 @@ export const deleteEmployee = async (id: string): Promise<void> => {
  * @returns A promise that resolves with the last update timestamp in milliseconds.
  * @throws An error if the request fails.
  */
-export const getLastUpdateTimestamp = async (): Promise<number> => {
+export const getLastUpdateTimestamp = async (token: string): Promise<number> => {
   const response = await fetch(`${API_URL}/meta/last-update`,
     {
       method: "GET",
       headers: {
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     }

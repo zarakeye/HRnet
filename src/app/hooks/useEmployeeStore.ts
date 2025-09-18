@@ -180,7 +180,7 @@ const useEmployeeStore = create<EmployeesState>()(
         try {
           // Cette fonction devrait être implémentée dans votre API
           // Elle doit retourner le timestamp de la dernière modification
-          const freshLastUpdatesTimestamp = await getLastUpdateTimestamp();
+          const freshLastUpdatesTimestamp = await getLastUpdateTimestamp(token);
 
           if (freshLastUpdatesTimestamp > lastUpdate) {
             set({ isUpdateAvailable: true }, false, 'checkForUpdates/updateAvailable');

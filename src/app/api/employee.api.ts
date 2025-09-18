@@ -121,8 +121,21 @@ export const deleteEmployee = async (id: string): Promise<void> => {
   }
 }
 
+/**
+ * Fetches the last update timestamp from the API.
+ * The last update timestamp is returned as a Unix timestamp in milliseconds.
+ * @returns A promise that resolves with the last update timestamp in milliseconds.
+ * @throws An error if the request fails.
+ */
 export const getLastUpdateTimestamp = async (): Promise<number> => {
-  const response = await fetch(`${API_URL}/meta/last-update`);
+  const response = await fetch(`${API_URL}/meta/last-update`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Failed to get last update timestamp");
